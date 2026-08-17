@@ -17,8 +17,8 @@ android {
         applicationId = "ai.ki_kompetenz_training_org.free"
         minSdk = 26
         targetSdk = 35
-        versionCode = 8
-        versionName = "1.1.0"
+        versionCode = 9
+        versionName = "1.1.1"
 
         // API base URL: override with -PapiBaseUrl=https://... on the command line.
         val apiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: "https://ki-kompetenz-training.org"

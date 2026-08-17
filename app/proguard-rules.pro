@@ -31,9 +31,9 @@
 }
 
 # ── App-specific ─────────────────────────────────────────────────────
--keep class de.kikompetenz.app.data.api.** { *; }
--keep class de.kikompetenz.app.data.db.** { *; }
--keep class de.kikompetenz.app.BuildConfig { *; }
+-keep class ai.ki_kompetenz_training_org.data.api.** { *; }
+-keep class ai.ki_kompetenz_training_org.data.db.** { *; }
+-keep class ai.ki_kompetenz_training_org.BuildConfig { *; }
 
 # ── Security Crypto (Tink dependency) ────────────────────────────────
 -dontwarn com.google.errorprone.annotations.**
