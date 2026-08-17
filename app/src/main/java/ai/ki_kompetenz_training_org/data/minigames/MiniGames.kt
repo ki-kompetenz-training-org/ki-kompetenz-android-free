@@ -46,9 +46,9 @@ enum class Difficulty(val displayNameDe: String, val displayNameEn: String, val 
     EXPERT("Experte", "Expert", 1.5f)
 }
 
-/** Aktuelle App-Sprache (de oder en — Fallback de). */
-fun currentLang(): String {
-    val l = Locale.getDefault().language
+/** Aktuelle App-Sprache (de oder en — Fallback en). */
+fun currentLang(appLang: String? = null): String {
+    val l = if (appLang == null) Locale.getDefault().language else appLang
     return if (l == "de") "de" else "en"
 }
 
