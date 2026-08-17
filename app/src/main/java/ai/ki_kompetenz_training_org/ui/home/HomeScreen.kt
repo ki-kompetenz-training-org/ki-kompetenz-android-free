@@ -9,12 +9,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
@@ -27,6 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.ui.kibot.KiBotModel
+import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
+import ai.ki_kompetenz_training_org.ui.kibot.GrowthStage
+import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
 
 @Composable
 fun HomeScreen(
@@ -54,39 +53,37 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // ── KiBot placeholder (Task 3 replaces with real 3D) ──
+        // ── KiBot ──
+        val kibotState = KiBotState.from(
+            level = state.level,
+            xp = state.xp,
+            xpIntoLevel = state.xpIntoLevel,
+            xpNeeded = state.xpNeeded,
+            streak = state.streak,
+            daysSinceCheckIn = daysSinceLastCheckIn(state.lastCheckInDay),
+            checkedInToday = state.checkedInToday,
+        )
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { /* KiBot tap reaction — wired in Task 4 */ },
+                .height(180.dp)
+                .semantics { contentDescription = "Dein KI-Begleiter, Level ${state.level}" },
             shape = RoundedCornerShape(20.dp),
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .background(
                         Brush.linearGradient(
                             listOf(Color(0xFF3B82F6), Color(0xFF6366F1), Color(0xFF8B5CF6))
                         )
-                    )
-                    .padding(vertical = 24.dp, horizontal = 24.dp),
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("🤖", style = MaterialTheme.typography.displaySmall)
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "KiBot",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        "Level ${state.level}",
-                        color = Color(0xFFFDE68A),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                }
+                KiBotModel(
+                    stage = kibotState.growthStage,
+                    modifier = Modifier.size(160.dp),
+                )
             }
         }
 
