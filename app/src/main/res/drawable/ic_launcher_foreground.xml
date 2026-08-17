@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Foreground: neuronales Netz (KI-Motiv) in der Safe-Zone -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Verbindungslinien des Netzes -->
+    <path
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M54,31 L54,77 M31,54 L77,54 M38,38 L70,70 M70,38 L38,70" />
+
+    <!-- Äußere Neuronen-Knoten -->
+    <path
+        android:fillColor="#F2FFFFFF"
+        android:pathData="M47,31 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 z" />
+    <path
+        android:fillColor="#F2FFFFFF"
+        android:pathData="M24,54 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 z" />
+    <path
+        android:fillColor="#F2FFFFFF"
+        android:pathData="M70,54 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 z" />
+    <path
+        android:fillColor="#F2FFFFFF"
+        android:pathData="M47,77 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 z" />
+
+    <!-- Kleine Zwischen-Knoten -->
+    <path
+        android:fillColor="#B3FFFFFF"
+        android:pathData="M35,35 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 z" />
+    <path
+        android:fillColor="#B3FFFFFF"
+        android:pathData="M65,65 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 z" />
+    <path
+        android:fillColor="#B3FFFFFF"
+        android:pathData="M65,35 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 z" />
+    <path
+        android:fillColor="#B3FFFFFF"
+        android:pathData="M35,65 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 z" />
+
+    <!-- Zentraler Kern (gelb, markant) -->
+    <path
+        android:fillColor="#FDE68A"
+        android:pathData="M40,54 a14,14 0 1,0 28,0 a14,14 0 1,0 -28,0 z" />
+    <!-- Kern-Detail: kleiner dunkler Punkt -->
+    <path
+        android:fillColor="#4F46E5"
+        android:pathData="M51,54 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 z" />
+</vector>

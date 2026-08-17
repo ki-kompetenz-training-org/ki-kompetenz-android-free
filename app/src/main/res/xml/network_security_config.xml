@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Production: Pin to ki-kompetenz-training.org -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">ki-kompetenz-training.org</domain>
+        <pin-set>
+            <!-- Let's Encrypt ISRG Root X1 (valid until 2035) -->
+            <pin digest="SHA-256">C5+QZ7bIdAgDIv124DbL2hNZTHs9j7KL+1lBkLMxH+s=</pin>
+            <!-- Let's Encrypt ISRG Root X2 (backup) -->
+            <pin digest="SHA-256">sRHDCd32IXie4jX2nODN7x7dJc6j0OU9/vHcGHqrIco=</pin>
+            <!-- Backup: Cloudflare origin certificate (if CDN is added later) -->
+            <pin digest="SHA-256">YLh1dUR9y6Kja30RrAn07JKOMewxf6jquOLdd8YriT4=</pin>
+        </pin-set>
+    </domain-config>
+
+    <!-- Allow Android system CA for all other domains -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <trust-anchors>
+                <certificates src="system" />
+            </trust-anchors>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

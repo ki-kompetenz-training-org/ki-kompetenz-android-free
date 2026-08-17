@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AI Competence</string>
+
+    <!-- Home -->
+    <string name="home_title">AI Competence</string>
+    <string name="home_hero_question">How AI-fit are you?</string>
+    <string name="home_hero_answer">Find out the playful way.</string>
+    <string name="home_quiz_cta">Take the AI Score</string>
+    <string name="home_quiz_subtitle">10 questions · 5 levels · share your result</string>
+    <string name="home_level">⭐ Level %1$s</string>
+    <string name="home_xp">%1$s XP</string>
+    <string name="home_streak">🔥 %1$s day streak</string>
+    <string name="home_checkin">Daily check-in</string>
+    <string name="home_checked_in">✓ Checked in</string>
+    <string name="home_login_cta">Log in for team &amp; premium</string>
+    <string name="home_premium_active">✓ Premium active</string>
+    <string name="home_premium_upsell">Basic — Unlock Premium now</string>
+    <string name="home_feature_lessons">Lessons</string>
+    <string name="home_feature_lessons_desc">14 lessons on the EU AI Act — lessons 1-8 free</string>
+    <string name="home_feature_lessons_action">Open lessons</string>
+    <string name="home_feature_quiz">AI Score Quiz</string>
+    <string name="home_feature_quiz_desc">10 questions · 5 levels · share your result</string>
+    <string name="home_feature_quiz_action">Start quiz</string>
+    <string name="home_feature_games">AI Mini-Games</string>
+    <string name="home_feature_games_desc">Human or AI? · Fact or Hallucination? · High-Risk Blitz</string>
+    <string name="home_feature_games_action">Play</string>
+    <string name="home_feature_profile">Profile &amp; Badges</string>
+    <string name="home_feature_profile_desc">XP · Level · Streak · 10 badges</string>
+    <string name="home_feature_profile_action">View</string>
+    <string name="home_feature_srs">Review (SRS)</string>
+    <string name="home_feature_srs_desc">Spaced repetition — cards in the optimal rhythm</string>
+    <string name="home_feature_srs_action">Review</string>
+    <string name="home_feature_premium">Premium</string>
+    <string name="home_feature_premium_desc">All lessons · Spaced repetition · Certificate · Team ranking</string>
+    <string name="home_feature_premium_action">View Premium</string>
+    <string name="home_feature_premium_action_active">Use Premium features</string>
+    <string name="home_feature_team">Team &amp; Ranking</string>
+    <string name="home_feature_team_desc">Who is the most AI-fit in your team?</string>
+    <string name="home_feature_team_action">Open team ranking</string>
+    <string name="home_dsgvo_note">GDPR-compliant: Only name, score and level are visible in a team. Email addresses are never shown.</string>
+    <string name="team">Team</string>
+
+    <!-- Quiz (AI Score) -->
+    <string name="quiz_title">AI Score</string>
+    <string name="quiz_back">Back</string>
+    <string name="quiz_subtitle">How AI-fit are you?</string>
+    <string name="quiz_start">Start the quiz</string>
+    <string name="quiz_question_count">Question %1$d of %2$d</string>
+    <string name="quiz_correct_count">%1$d/%2$d correct</string>
+    <string name="quiz_no_questions">No questions available</string>
+    <string name="quiz_next">Next question</string>
+    <string name="quiz_my_result">My result</string>
+    <string name="quiz_good_to_know">💡 Good to know: </string>
+    <string name="quiz_correct">✅ Correct! </string>
+    <string name="quiz_share">Share result</string>
+    <string name="quiz_play_again">Play again</string>
+    <string name="quiz_your_score">Your AI Score</string>
+    <string name="quiz_stats_questions">Questions</string>
+    <string name="quiz_stats_minutes">Minutes</string>
+    <string name="quiz_stats_levels">Levels</string>
+    <string name="quiz_correct_answered">Answered correctly</string>
+    <string name="quiz_hit_rate">Hit rate</string>
+    <string name="quiz_score_share_text">Share result</string>
+
+    <!-- Mini-Games -->
+    <string name="games_title">AI Mini-Games</string>
+    <string name="games_back">Back</string>
+    <string name="games_subtitle">Quick learning games — every round brings XP and a learning moment.</string>
+    <string name="games_round_count">%1$d rounds · +10 XP per correct answer · 💯 perfect bonus</string>
+    <string name="games_premium_round_count">%1$d rounds · +15 XP per correct answer · 💯 perfect bonus</string>
+    <string name="games_premium_locked">Premium required — %1$d rounds · +15 XP/answer</string>
+    <string name="games_premium_header">⭐ Premium Games</string>
+    <string name="games_premium_subtitle">Advanced deep-dives with higher XP rewards (+15 instead of +10 per answer).</string>
+    <string name="games_dsgvo_note">💡 The mini-games are part of the gamification system — XP, levels and badges are stored locally on your device (GDPR-compliant, no server).</string>
+    <string name="game_round">Round %1$d of %2$d</string>
+    <string name="game_correct_count">%1$d/%2$d correct</string>
+    <string name="game_no_rounds">No rounds available</string>
+    <string name="game_result">Result</string>
+    <string name="game_play_again">Play again</string>
+    <string name="game_perfect">💯 Perfect!</string>
+    <string name="game_xp_earned">+%1$d XP</string>
+    <string name="game_next_round">Next round</string>
+    <string name="game_view_result">View result</string>
+    <string name="game_correct_feedback">✅ Correct! </string>
+    <string name="game_info_feedback">💡 Good to know: </string>
+
+    <!-- Premium -->
+    <string name="premium_title">Premium</string>
+    <string name="premium_back">Back</string>
+    <string name="premium_plan_name">AI Quiz — Premium</string>
+    <string name="premium_price">€6.99/month per seat · billed per user</string>
+    <string name="premium_f1">14 interactive lessons</string>
+    <string name="premium_f1_desc">Complete EU AI Act Art. 4 curriculum</string>
+    <string name="premium_f2">300+ practice questions</string>
+    <string name="premium_f2_desc">Spaced repetition for lasting learning</string>
+    <string name="premium_f3">Audit-ready certificate</string>
+    <string name="premium_f3_desc">Personal AI competence proof</string>
+    <string name="premium_f4">Team dashboard &amp; ranking</string>
+    <string name="premium_f4_desc">Who is the most AI-fit in your team?</string>
+    <string name="premium_f5">Annual refresher</string>
+    <string name="premium_f5_desc">Content stays up to date</string>
+    <string name="premium_f6">Cancel anytime</string>
+    <string name="premium_f6_desc">Monthly, no commitment</string>
+    <string name="premium_cta">Subscribe to Premium now</string>
+    <string name="srs_no_cards">No cards available</string>
+    <string name="premium_trust">Secure payments via Stripe · 30-day money-back guarantee</string>
+
+    <!-- Gamification / Profile -->
+    <string name="profile_title">Your Profile</string>
+    <string name="profile_back">Back</string>
+    <string name="profile_level">Level %1$s</string>
+    <string name="profile_xp">%1$s XP</string>
+    <string name="profile_xp_to_next">%1$s / %2$s XP to level %3$s</string>
+    <string name="profile_streak_days">%1$s days in a row</string>
+    <string name="profile_no_streak">No streak yet</string>
+    <string name="profile_checkin">Check-in</string>
+    <string name="profile_checked_in">✓ Checked in</string>
+    <string name="profile_lessons">Lessons</string>
+    <string name="profile_lessons_progress">%1$s of %2$s completed</string>
+    <string name="profile_badges">Badges (%1$d/%2$d unlocked)</string>
+    <string name="profile_dsgvo">GDPR: XP, level, streak and badges are stored exclusively on your device — no data is sent to servers.</string>
+
+    <!-- Lessons -->
+    <string name="lessons_title">Lessons</string>
+    <string name="lessons_back">Back</string>
+    <string name="lessons_subtitle">14 lessons on EU AI Act Art. 4 — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
+    <string name="lessons_premium">Premium</string>
+    <string name="lessons_unlock_cta">Unlock all lessons — Premium</string>
+    <string name="lesson_mark_complete">✓ Complete lesson (+%1$d XP)</string>
+    <string name="lesson_premium_gate_title">Premium lesson</string>
+    <string name="lesson_premium_gate_text">Lesson %1$s is part of the Premium training. Unlock Premium to get all 14 lessons, spaced repetition and the certificate.</string>
+    <string name="lesson_premium_cta">Unlock Premium now</string>
+    <string name="lesson_premium_price">€6.99/month per seat · cancel anytime</string>
+
+    <!-- Team -->
+    <string name="team_title">Team &amp; Ranking</string>
+    <string name="team_back">Back</string>
+    <string name="team_login_required">Team &amp; ranking requires an account.</string>
+    <string name="team_login_note">Only name, AI score and level are visible in a team. Email addresses are never shown (GDPR).</string>
+    <string name="team_login">Log in</string>
+    <string name="team_create_web">Create team on the web</string>
+    <string name="team_no_team">You are not in a team yet.</string>
+    <string name="team_no_team_note">Invite colleagues and find out who is the most AI-fit.</string>
+    <string name="team_create_web_btn">Create team (web)</string>
+    <string name="team_ranking">🏆 Team Ranking</string>
+    <string name="team_your_rank">Your rank: #%1$s</string>
+    <string name="team_members_avg">%1$s members · Ø score %2$s</string>
+    <string name="team_no_scores">No scores in the team yet — take the AI Score and claim rank 1!</string>
+    <string name="team_anon">Anonymous</string>
+
+    <!-- SRS -->
+    <string name="srs_title">Review (SRS)</string>
+    <string name="srs_back">Back</string>
+    <string name="srs_login_required">Spaced repetition requires an account.</string>
+    <string name="srs_login_note">Review cards are stored per user so your learning progress stays in sync across devices.</string>
+    <string name="srs_login">Log in</string>
+    <string name="srs_all_done">🎉</string>
+    <string name="srs_all_done_title">All done!</string>
+    <string name="srs_all_done_note">No cards due for review. Check back tomorrow or learn new lessons.</string>
+    <string name="srs_card_progress">Card %1$d of %2$d</string>
+    <string name="srs_reveal_answer">Show answer</string>
+    <string name="srs_answer">Answer</string>
+    <string name="srs_rating_question">How well did you know the answer?</string>
+    <string name="srs_finished_title">Session complete!</string>
+    <string name="srs_finished_count">%1$d cards reviewed</string>
+    <string name="srs_xp_earned">+%1$d XP earned</string>
+    <string name="srs_done">Done</string>
+
+    <!-- Auth -->
+    <string name="auth_title">Log in</string>
+    <string name="auth_back">Back</string>
+    <string name="auth_logged_in">✓ Logged in!</string>
+
+    <!-- Navigation content descriptions -->
+    <string name="nav_back">Back</string>
+    <string name="nav_team">Team</string>
+
+    <!-- Common -->
+    <string name="common_retry">Retry</string>
+    <string name="common_no_data">No data found</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_error">Please wait…</string>
+    <string name="common_premium_badge">Unlock Premium</string>
+    <string name="common_premium_gate_desc">is part of the Premium training. Unlock Premium to access all 14 lessons, Spaced Repetition, and the certificate.</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_streak_fire">Day streak</string>
+    <string name="a11y_lessons_book">Lessons</string>
+    <string name="a11y_quiz_result">Share quiz result</string>
+    <string name="a11y_star">Star / Premium</string>
+    <string name="a11y_lock">Locked</string>
+    <string name="a11y_check_circle">Confirmed</string>
+    <string name="a11y_share">Share</string>
+    <string name="a11y_login">Log in</string>
+    <string name="a11y_points">Points</string>
+</resources>

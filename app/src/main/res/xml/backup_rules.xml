@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Include only gamification prefs and local database -->
+    <include domain="sharedpref" path="gamification_prefs.xml" />
+    <include domain="database" path="kikompetenz.db" />
+</full-backup-content>

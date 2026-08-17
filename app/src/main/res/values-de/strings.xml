@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KI-Kompetenz</string>
+
+    <!-- Home -->
+    <string name="home_title">KI-Kompetenz</string>
+    <string name="home_hero_question">Wie KI-fit bist du?</string>
+    <string name="home_hero_answer">Finde es spielerisch heraus.</string>
+    <string name="home_quiz_cta">KI-Score spielen</string>
+    <string name="home_quiz_subtitle">10 Fragen · 5 Level · Ergebnis teilen</string>
+    <string name="home_level">⭐ Level %1$s</string>
+    <string name="home_xp">%1$s XP</string>
+    <string name="home_streak">🔥 %1$s Tage Serie</string>
+    <string name="home_checkin">Daily Check-in</string>
+    <string name="home_checked_in">✓ Gecheckt</string>
+    <string name="home_login_cta">Anmelden für Team &amp; Premium</string>
+    <string name="home_premium_active">✓ Premium aktiv</string>
+    <string name="home_premium_upsell">Basic — Jetzt Premium freischalten</string>
+    <string name="home_feature_lessons">Lektionen</string>
+    <string name="home_feature_lessons_desc">14 Lektionen zum EU AI Act — Lektion 1-8 kostenlos</string>
+    <string name="home_feature_lessons_action">Lektionen öffnen</string>
+    <string name="home_feature_quiz">KI-Score Quiz</string>
+    <string name="home_feature_quiz_desc">10 Fragen · 5 Level · Ergebnis teilen</string>
+    <string name="home_feature_quiz_action">Quiz starten</string>
+    <string name="home_feature_games">KI-Mini-Spiele</string>
+    <string name="home_feature_games_desc">KI oder Mensch? · Fakt oder Halluzination? · Hochrisiko-Blitz</string>
+    <string name="home_feature_games_action">Spielen</string>
+    <string name="home_feature_profile">Profil &amp; Abzeichen</string>
+    <string name="home_feature_profile_desc">XP · Level · Tages-Serie · 10 Badges</string>
+    <string name="home_feature_profile_action">Ansehen</string>
+    <string name="home_feature_srs">Wiederholen (SRS)</string>
+    <string name="home_feature_srs_desc">Spaced Repetition — Karten im optimalen Rhythmus</string>
+    <string name="home_feature_srs_action">Wiederholen</string>
+    <string name="home_feature_premium">Premium</string>
+    <string name="home_feature_premium_desc">Alle Lektionen · Spaced Repetition · Zertifikat · Team-Ranking</string>
+    <string name="home_feature_premium_action">Premium ansehen</string>
+    <string name="home_feature_premium_action_active">Premium-Features nutzen</string>
+    <string name="home_feature_team">Team &amp; Ranking</string>
+    <string name="home_feature_team_desc">Wer ist im Team am KI-fitesten?</string>
+    <string name="home_feature_team_action">Team-Ranking öffnen</string>
+    <string name="home_dsgvo_note">DSGVO-konform: Im Team sind nur Name, Score und Level sichtbar. E-Mail-Adressen werden nie angezeigt.</string>
+    <string name="team">Team</string>
+
+    <!-- Quiz (KI-Score) -->
+    <string name="quiz_title">KI-Score</string>
+    <string name="quiz_back">Zurück</string>
+    <string name="quiz_subtitle">Wie KI-fit bist du?</string>
+    <string name="quiz_start">Spiel starten</string>
+    <string name="quiz_question_count">Frage %1$d von %2$d</string>
+    <string name="quiz_correct_count">%1$d/%2$d richtig</string>
+    <string name="quiz_no_questions">Keine Fragen verfügbar</string>
+    <string name="quiz_next">Nächste Frage</string>
+    <string name="quiz_my_result">Mein Ergebnis</string>
+    <string name="quiz_good_to_know">💡 Gut zu wissen: </string>
+    <string name="quiz_correct">✅ Richtig! </string>
+    <string name="quiz_share">Ergebnis teilen</string>
+    <string name="quiz_play_again">Nochmal spielen</string>
+    <string name="quiz_your_score">Dein KI-Score</string>
+    <string name="quiz_stats_questions">Fragen</string>
+    <string name="quiz_stats_minutes">Minuten</string>
+    <string name="quiz_stats_levels">Level</string>
+    <string name="quiz_correct_answered">Richtig beantwortet</string>
+    <string name="quiz_hit_rate">Trefferquote</string>
+    <string name="quiz_score_share_text">Ergebnis teilen</string>
+
+    <!-- Mini-Games -->
+    <string name="games_title">KI-Mini-Spiele</string>
+    <string name="games_back">Zurück</string>
+    <string name="games_subtitle">Kurzweilige Lernspiele — jede Runde bringt XP und einen Lernmoment.</string>
+    <string name="games_round_count">%1$d Runden · +10 XP pro richtige Antwort · 💯 Perfekt-Bonus</string>
+    <string name="games_premium_round_count">%1$d Runden · +15 XP pro richtige Antwort · 💯 Perfekt-Bonus</string>
+    <string name="games_premium_locked">Premium erforderlich — %1$d Runden · +15 XP/richtig</string>
+    <string name="games_premium_header">⭐ Premium-Spiele</string>
+    <string name="games_premium_subtitle">Fortgeschrittene Deep-Dives mit höheren XP-Belohnungen (+15 statt +10 pro Antwort).</string>
+    <string name="games_dsgvo_note">💡 Die Mini-Spiele sind Teil des Gamification-Systems — XP, Level und Badges werden lokal auf deinem Gerät gespeichert (DSGVO-konform, ohne Server).</string>
+    <string name="game_round">Runde %1$d von %2$d</string>
+    <string name="game_correct_count">%1$d/%2$d richtig</string>
+    <string name="game_no_rounds">Keine Runden verfügbar</string>
+    <string name="game_result">Ergebnis</string>
+    <string name="game_play_again">Nochmal spielen</string>
+    <string name="game_perfect">💯 Perfekt!</string>
+    <string name="game_xp_earned">+%1$d XP</string>
+    <string name="game_next_round">Nächste Runde</string>
+    <string name="game_view_result">Ergebnis ansehen</string>
+    <string name="game_correct_feedback">✅ Richtig! </string>
+    <string name="game_info_feedback">💡 Gut zu wissen: </string>
+
+    <!-- Premium -->
+    <string name="premium_title">Premium</string>
+    <string name="premium_back">Zurück</string>
+    <string name="premium_plan_name">KI Quiz — Premium</string>
+    <string name="premium_price">€6,99/Monat pro Sitzplatz · jeder Nutzer individuell</string>
+    <string name="premium_f1">14 interaktive Lektionen</string>
+    <string name="premium_f1_desc">Kompletter EU AI Act Art. 4 Lehrplan</string>
+    <string name="premium_f2">300+ Praxis-Fragen</string>
+    <string name="premium_f2_desc">Spaced Repetition für nachhaltiges Lernen</string>
+    <string name="premium_f3">Audit-fähiges Zertifikat</string>
+    <string name="premium_f3_desc">Persönlicher KI-Kompetenz-Nachweis</string>
+    <string name="premium_f4">Team-Dashboard &amp; Ranking</string>
+    <string name="premium_f4_desc">Wer ist im Team am KI-fitesten?</string>
+    <string name="premium_f5">Jährliche Auffrischung</string>
+    <string name="premium_f5_desc">Inhalte bleiben aktuell</string>
+    <string name="premium_f6">Jederzeit kündbar</string>
+    <string name="premium_f6_desc">Monatlich, ohne Bindung</string>
+    <string name="premium_cta">Premium in der Google-Play-App entdecken</string>
+    <string name="srs_no_cards">Keine Karte verfügbar</string>
+    <string name="premium_trust">Diese Open-Source-Edition enthält 8 kostenlose Spiele. Alle 16 Spiele + 14 Lektionen: Google-Play-Version</string>
+
+    <!-- Gamification / Profile -->
+    <string name="profile_title">Dein Profil</string>
+    <string name="profile_back">Zurück</string>
+    <string name="profile_level">Level %1$s</string>
+    <string name="profile_xp">%1$s XP</string>
+    <string name="profile_xp_to_next">%1$s / %2$s XP bis Level %3$s</string>
+    <string name="profile_streak_days">%1$s Tage in Folge</string>
+    <string name="profile_no_streak">Noch keine Serie</string>
+    <string name="profile_checkin">Check-in</string>
+    <string name="profile_checked_in">✓ Gecheckt</string>
+    <string name="profile_lessons">Lektionen</string>
+    <string name="profile_lessons_progress">%1$s von %2$s abgeschlossen</string>
+    <string name="profile_badges">Abzeichen (%1$d/%2$d freigeschaltet)</string>
+    <string name="profile_dsgvo">DSGVO: XP, Level, Serie und Abzeichen werden ausschließlich lokal auf deinem Gerät gespeichert — keine Übermittlung an Server.</string>
+
+    <!-- Lessons -->
+    <string name="lessons_title">Lektionen</string>
+    <string name="lessons_back">Zurück</string>
+    <string name="lessons_subtitle">14 Lektionen zum EU AI Act Art. 4 — Lektion 1-8 sind kostenlos (Basic), Lektion 9-14 sind Premium.</string>
+    <string name="lessons_premium">Premium</string>
+    <string name="lessons_unlock_cta">Alle Lektionen freischalten — Premium</string>
+    <string name="lesson_mark_complete">✓ Lektion abschließen (+%1$d XP)</string>
+    <string name="lesson_premium_gate_title">Premium-Lektion</string>
+    <string name="lesson_premium_gate_text">Lektion %1$s ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Spaced Repetition und das Zertifikat zu erhalten.</string>
+    <string name="lesson_premium_cta">Jetzt Premium freischalten</string>
+    <string name="lesson_premium_price">€6,99/Monat pro Sitzplatz · jederzeit kündbar</string>
+
+    <!-- Team -->
+    <string name="team_title">Team &amp; Ranking</string>
+    <string name="team_back">Zurück</string>
+    <string name="team_login_required">Team &amp; Ranking braucht ein Konto.</string>
+    <string name="team_login_note">Im Team sichtbar sind nur Name, KI-Score und Level. E-Mail-Adressen werden nicht angezeigt (DSGVO).</string>
+    <string name="team_login">Anmelden</string>
+    <string name="team_create_web">Team im Web erstellen</string>
+    <string name="team_no_team">Du bist noch in keinem Team.</string>
+    <string name="team_no_team_note">Lade Kolleg:innen ein und finde heraus, wer am KI-fitesten ist.</string>
+    <string name="team_create_web_btn">Team erstellen (Web)</string>
+    <string name="team_ranking">🏆 Team-Ranking</string>
+    <string name="team_your_rank">Dein Platz: #%1$s</string>
+    <string name="team_members_avg">%1$s Mitglieder · Ø Score %2$s</string>
+    <string name="team_no_scores">Noch kein Score im Team — mach den KI-Score und belege Platz 1!</string>
+    <string name="team_anon">Anonym</string>
+
+    <!-- SRS -->
+    <string name="srs_title">Wiederholen (SRS)</string>
+    <string name="srs_back">Zurück</string>
+    <string name="srs_login_required">Spaced Repetition braucht ein Konto.</string>
+    <string name="srs_login_note">Wiederholungskarten werden pro Nutzer gespeichert, damit dein Lernfortschritt über Geräte hinweg erhalten bleibt.</string>
+    <string name="srs_login">Anmelden</string>
+    <string name="srs_all_done">🎉</string>
+    <string name="srs_all_done_title">Alles erledigt!</string>
+    <string name="srs_all_done_note">Keine Karten zur Wiederholung fällig. Schau morgen wieder vorbei oder lerne neue Lektionen.</string>
+    <string name="srs_card_progress">Karte %1$d von %2$d</string>
+    <string name="srs_reveal_answer">Antwort zeigen</string>
+    <string name="srs_answer">Antwort</string>
+    <string name="srs_rating_question">Wie gut wusstest du die Antwort?</string>
+    <string name="srs_finished_title">Session abgeschlossen!</string>
+    <string name="srs_finished_count">%1$d Karten wiederholt</string>
+    <string name="srs_xp_earned">+%1$d XP verdient</string>
+    <string name="srs_done">Fertig</string>
+
+    <!-- Auth -->
+    <string name="auth_title">Anmelden</string>
+    <string name="auth_back">Zurück</string>
+    <string name="auth_logged_in">✓ Angemeldet!</string>
+
+    <!-- Navigation content descriptions -->
+    <string name="nav_back">Zurück</string>
+    <string name="nav_team">Team</string>
+
+    <!-- Common -->
+    <string name="common_retry">Erneut versuchen</string>
+    <string name="common_no_data">Keine Daten gefunden</string>
+    <string name="common_loading">Laden…</string>
+    <string name="common_error">Einen Moment…</string>
+    <string name="common_premium_badge">Premium freischalten</string>
+    <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Spaced Repetition und das Zertifikat zu erhalten.</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_streak_fire">Tages-Serie</string>
+    <string name="a11y_lessons_book">Lektionen</string>
+    <string name="a11y_quiz_result">Quiz-Ergebnis teilen</string>
+    <string name="a11y_star">Stern / Premium</string>
+    <string name="a11y_lock">Gesperrt</string>
+    <string name="a11y_check_circle">Bestätigt</string>
+    <string name="a11y_share">Teilen</string>
+    <string name="a11y_login">Anmelden</string>
+    <string name="a11y_points">Punkte</string>
+</resources>
