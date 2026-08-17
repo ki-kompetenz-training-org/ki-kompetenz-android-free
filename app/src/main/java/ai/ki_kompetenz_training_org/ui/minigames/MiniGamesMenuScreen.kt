@@ -59,7 +59,6 @@ class MiniGamesMenuViewModel(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MiniGamesMenuScreen(
     onBack: () -> Unit,
@@ -79,23 +78,11 @@ fun MiniGamesMenuScreen(
         return
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.games_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.games_back))
-                    }
-                },
-            )
-        },
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
             item {
                 Text(
                     "Kurzweilige Lernspiele — jede Runde bringt XP und einen Lernmoment.",
@@ -153,7 +140,6 @@ fun MiniGamesMenuScreen(
                 }
             }
         }
-    }
 }
 
 @Composable

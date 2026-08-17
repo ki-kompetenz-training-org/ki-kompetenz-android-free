@@ -28,7 +28,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 
 @Composable
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 fun HomeScreen(
     onOpenQuiz: () -> Unit,
     onOpenLessons: () -> Unit,
@@ -48,26 +47,11 @@ fun HomeScreen(
     val state by vm.state.collectAsState()
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.home_title), fontWeight = FontWeight.Bold) },
-                actions = {
-                    if (state.loggedIn) {
-                        IconButton(onClick = onOpenTeam) {
-                            Icon(Icons.Default.Person, contentDescription = stringResource(R.string.team))
-                        }
-                    }
-                },
-            )
-        },
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // Hero card (matches web hero)
@@ -264,7 +248,6 @@ fun HomeScreen(
                 modifier = Modifier.padding(horizontal = 8.dp),
             )
         }
-    }
 }
 
 @Composable
