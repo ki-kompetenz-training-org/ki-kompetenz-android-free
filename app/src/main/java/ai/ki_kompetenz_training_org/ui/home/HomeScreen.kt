@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotModel
+import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
 import ai.ki_kompetenz_training_org.ui.kibot.GrowthStage
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
@@ -80,9 +81,9 @@ fun HomeScreen(
                     ),
                 contentAlignment = Alignment.Center,
             ) {
-                KiBotModel(
-                    stage = kibotState.growthStage,
-                    modifier = Modifier.size(160.dp),
+                KiBotScene(
+                    state = kibotState,
+                    modifier = Modifier.size(180.dp),
                 )
             }
         }
