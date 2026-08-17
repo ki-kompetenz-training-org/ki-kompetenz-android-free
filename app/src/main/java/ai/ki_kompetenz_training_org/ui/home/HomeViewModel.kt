@@ -23,6 +23,7 @@ data class HomeUiState(
     val xpNeeded: Int = 100,
     val streak: Int = 0,
     val checkedInToday: Boolean = false,
+    val lastCheckInDay: String? = null,
 )
 
 class HomeViewModel(
@@ -48,6 +49,7 @@ class HomeViewModel(
                     xpNeeded = ai.ki_kompetenz_training_org.data.repo.GamificationRules.xpNeededForNextLevel(xp),
                     streak = entity?.streak ?: 0,
                     checkedInToday = entity?.lastCheckInDay == java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE),
+                    lastCheckInDay = entity?.lastCheckInDay,
                 )
             }
         }
