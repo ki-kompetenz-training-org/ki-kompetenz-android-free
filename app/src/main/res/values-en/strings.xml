@@ -102,9 +102,9 @@
     <string name="premium_f5_desc">Content stays up to date</string>
     <string name="premium_f6">Cancel anytime</string>
     <string name="premium_f6_desc">Monthly, no commitment</string>
-    <string name="premium_cta">Subscribe to Premium now</string>
+    <string name="premium_cta">Discover Premium in Google Play</string>
     <string name="srs_no_cards">No cards available</string>
-    <string name="premium_trust">Secure payments via Stripe · 30-day money-back guarantee</string>
+    <string name="premium_trust">This open-source edition contains 8 free games. All 16 games + 14 lessons: Google Play version</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Your Profile</string>
@@ -194,4 +194,75 @@
     <string name="a11y_share">Share</string>
     <string name="a11y_login">Log in</string>
     <string name="a11y_points">Points</string>
+
+    <!-- KiBot -->
+    <string name="kibot_level">Your AI companion · Level %1$d</string>
+    <string name="kibot_sleepy_hint">KiBot is sleeping… Daily check-in wakes it up!</string>
+
+    <!-- Home quick actions -->
+    <string name="home_quick_quiz">AI Score</string>
+    <string name="home_quick_quiz_desc">Test your knowledge</string>
+    <string name="home_quick_games">Mini-Games</string>
+    <string name="home_quick_games_desc">8 free games</string>
+    <string name="home_quick_lessons">Lessons</string>
+    <string name="home_quick_lessons_desc">Learn EU AI Act</string>
+    <string name="home_quick_srs">Review</string>
+    <string name="home_quick_srs_desc">Spaced Repetition</string>
+    <string name="home_more_kids">For Kids</string>
+    <string name="home_more_kids_desc">Discover AI through play</string>
+    <string name="home_more_seniors">For Seniors</string>
+    <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+    <string name="home_premium_chip">⭐ Unlock Premium</string>
+    <string name="home_dsgvo_local">GDPR-compliant: XP, level and streak are stored locally — no server transmission.</string>
+
+    <!-- MiniGames extracted -->
+    <string name="games_menu_subtitle">Quick learning games — every round brings XP and a learning moment.</string>
+    <string name="games_premium_header">⭐ Premium Games</string>
+    <string name="games_premium_subtitle">Advanced deep-dives with higher XP rewards.</string>
+    <string name="difficulty_beginner">Beginner</string>
+    <string name="difficulty_intermediate">Intermediate</string>
+    <string name="difficulty_expert">Expert</string>
+
+    <!-- Quiz extracted -->
+    <string name="quiz_intro_subtitle">How AI-fit are you?</string>
+    <string name="quiz_intro_description">Test your knowledge of Artificial Intelligence, the EU AI Act, and AI in the workplace. At the end you will receive your personal AI Score to share!</string>
+    <string name="quiz_next_question">Next question</string>
+    <string name="quiz_my_result">My result</string>
+    <string name="quiz_stats_correct">Correct</string>
+    <string name="quiz_stats_points">Points</string>
+    <string name="quiz_stats_max_combo">Max Combo</string>
+    <string name="quiz_stats_lives_left">Lives left</string>
+    <string name="quiz_offline_retry">Retry</string>
+    <string name="quiz_offline_play_games">Play mini-games offline →</string>
+
+    <!-- Kids extracted -->
+    <string name="kids_title">ForKids</string>
+    <string name="kids_coppa_title">For Parents — Privacy Info</string>
+    <string name="kids_coppa_text">No data is sent. Everything stays local.</string>
+    <string name="kids_coppa_more">Learn more →</string>
+    <string name="kids_heading">🤖 AI Learning for Kids</string>
+    <string name="kids_heading_desc">Discover AI through play — COPPA-compliant, stored locally, no data sharing.</string>
+    <string name="kids_done_title">Well done!</string>
+    <string name="kids_done_text">You completed this lesson!</string>
+    <string name="kids_dismiss">Got it</string>
+    <string name="kids_quiz_label">❓ Quiz</string>
+    <string name="kids_coppa_privacy">🔒</string>
+
+    <!-- Profile expanded -->
+    <string name="profile_streak_label">Day streak</string>
+    <string name="profile_no_streak">No streak yet</string>
+
+    <!-- Settings / Language -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_en">English</string>
+
+    <!-- Error states -->
+    <string name="error_offline_title">No connection</string>
+    <string name="error_offline_message">AI Score needs an internet connection to load.</string>
+    <string name="error_offline_retry">Retry</string>
+    <string name="error_offline_fallback">Play mini-games offline →</string>
+    <string name="error_generic_title">Something went wrong</string>
+    <string name="error_generic_retry">Retry</string>
 </resources>

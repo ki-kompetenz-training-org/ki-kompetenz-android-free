@@ -150,9 +150,9 @@ private fun DifficultyBadge(difficulty: Difficulty) {
         Difficulty.EXPERT -> Color(0xFFEF4444)
     }
     val label = when (difficulty) {
-        Difficulty.BEGINNER -> "Anfänger"
-        Difficulty.INTERMEDIATE -> "Fortgeschritten"
-        Difficulty.EXPERT -> "Experte"
+        Difficulty.BEGINNER -> stringResource(R.string.difficulty_beginner)
+        Difficulty.INTERMEDIATE -> stringResource(R.string.difficulty_intermediate)
+        Difficulty.EXPERT -> stringResource(R.string.difficulty_expert)
     }
     Surface(
         shape = MaterialTheme.shapes.small,
