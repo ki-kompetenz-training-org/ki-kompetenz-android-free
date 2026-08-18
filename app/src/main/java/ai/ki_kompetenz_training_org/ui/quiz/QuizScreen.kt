@@ -110,7 +110,7 @@ private fun IntroContent(modifier: Modifier, questionCount: Int, onStart: () -> 
         }
         Spacer(Modifier.height(16.dp))
         Text(
-            "Teste dein Wissen zu Künstlicher Intelligenz, EU AI Act und KI im Arbeitsalltag. Am Ende erhältst du deinen persönlichen KI-Score zum Teilen!",
+            stringResource(R.string.quiz_intro_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -227,7 +227,7 @@ private fun PlayingContent(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             ) {
                 Text(
-                    if (state.currentIndex < state.questions.size - 1) "Nächste Frage" else "Mein Ergebnis",
+                    if (state.currentIndex < state.questions.size - 1) stringResource(R.string.quiz_next_question) else "Mein Ergebnis",
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -277,13 +277,13 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
 
         // Stats
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatBox("${state.answers.count { it }}/${state.questions.size}", "Richtig", Modifier.weight(1f))
-            StatBox("${state.score}", "Punkte", Modifier.weight(1f))
+            StatBox("${state.answers.count { it }}/${state.questions.size}", stringResource(R.string.quiz_stats_correct), Modifier.weight(1f))
+            StatBox("${state.score}", stringResource(R.string.quiz_stats_points), Modifier.weight(1f))
         }
         Spacer(Modifier.height(12.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatBox("${state.maxCombo}×", "Max Combo", Modifier.weight(1f))
-            StatBox("${state.lives}/3", "Leben übrig", Modifier.weight(1f))
+            StatBox("${state.maxCombo}×", stringResource(R.string.quiz_stats_max_combo), Modifier.weight(1f))
+            StatBox("${state.lives}/3", stringResource(R.string.quiz_stats_lives_left), Modifier.weight(1f))
         }
 
         Spacer(Modifier.height(16.dp))

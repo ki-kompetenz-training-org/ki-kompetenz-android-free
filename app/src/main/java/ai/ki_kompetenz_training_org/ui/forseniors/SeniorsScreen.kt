@@ -9,6 +9,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
+import ai.ki_kompetenz_training_org.R
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +26,7 @@ fun SeniorsMenuScreen(onBack: () -> Unit, onOpenLesson: (SeniorsLesson) -> Unit)
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Für Senioren", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.seniors_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -44,12 +46,12 @@ fun SeniorsMenuScreen(onBack: () -> Unit, onOpenLesson: (SeniorsLesson) -> Unit)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
             Text(
-                "KI verstehen — einfach & praktisch",
+                stringResource(R.string.seniors_intro),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                "Schritt für Schritt KI im Alltag verstehen: Passwörter, Phishing, KI-Telefone, Deepfakes und mehr.",
+                stringResource(R.string.seniors_intro_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -108,7 +110,7 @@ fun SeniorsMenuScreen(onBack: () -> Unit, onOpenLesson: (SeniorsLesson) -> Unit)
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        "Ihre 6 Alltags-Regeln",
+                        stringResource(R.string.seniors_rules_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleSmall,
                     )

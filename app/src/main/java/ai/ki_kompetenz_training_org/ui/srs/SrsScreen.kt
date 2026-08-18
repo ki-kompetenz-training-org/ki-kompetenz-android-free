@@ -119,7 +119,7 @@ private fun ReviewContent(
 ) {
     val card = state.currentCard
     if (card == null) {
-        Box(modifier, contentAlignment = Alignment.Center) { Text("Keine Karte verfügbar") }
+        Box(modifier, contentAlignment = Alignment.Center) { Text(stringResource(R.string.srs_no_cards)) }
         return
     }
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {

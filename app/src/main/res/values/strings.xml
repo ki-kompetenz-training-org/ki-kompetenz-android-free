@@ -198,6 +198,9 @@
     <!-- KiBot -->
     <string name="kibot_level">Dein KI-Begleiter · Level %1$d</string>
     <string name="kibot_sleepy_hint">KiBot schläft… Tägliches Check-in weckt es auf!</string>
+    <string name="kibot_hello_title">Hallo! Ich bin KiBot.</string>
+    <string name="kibot_hello_body">Ich lerne KI-Kompetenz — und du trainierst mich dabei! Je mehr du lernst, desto mehr wachse ich.</string>
+    <string name="kibot_hello_cta">Los geht\'s!</string>
 
     <!-- Home quick actions -->
     <string name="home_quick_quiz">KI-Score</string>
@@ -212,6 +215,12 @@
     <string name="home_more_kids_desc">KI spielerisch entdecken</string>
     <string name="home_more_seniors">Für Senioren</string>
     <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+
+    <!-- Seniors -->
+    <string name="seniors_title">Für Senioren</string>
+    <string name="seniors_intro">KI verstehen — einfach &amp; praktisch</string>
+    <string name="seniors_intro_desc">Schritt für Schritt KI im Alltag verstehen: Passwörter, Phishing, KI-Telefone, Deepfakes und mehr.</string>
+    <string name="seniors_rules_title">Ihre 6 Alltags-Regeln</string>
     <string name="home_premium_chip">⭐ Premium freischalten</string>
     <string name="home_dsgvo_local">DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.</string>
 
