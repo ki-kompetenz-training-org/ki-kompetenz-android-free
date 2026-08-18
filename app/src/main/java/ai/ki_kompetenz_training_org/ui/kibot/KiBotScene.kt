@@ -16,11 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.math.sin
@@ -39,6 +37,8 @@ fun KiBotScene(
     onTap: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+
     // ── Idle bobbing animation ──
     val infiniteTransition = rememberInfiniteTransition(label = "kibotBob")
     val bobOffset by infiniteTransition.animateFloat(
@@ -113,10 +113,8 @@ fun KiBotScene(
                 .fillMaxSize()
                 .padding(24.dp)
                 .offset {
-                    IntOffset(
-                        0,
-                        (bobDp + tapBounceAnim * -8f).roundToPx(),
-                    )
+                    val yOffset = (bobDp + tapBounceAnim * -8f)
+                    IntOffset(0, (yOffset * density.density).toInt())
                 }
                 .graphicsLayer {
                     // Slight scale pulse on tap
@@ -142,7 +140,4 @@ fun KiBotScene(
     }
 }
 
-private fun Float.roundToPx(): Int {
-    val density = 1f // Will be overridden by layout
-    return (this * density).toInt()
 }

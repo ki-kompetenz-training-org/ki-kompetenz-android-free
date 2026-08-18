@@ -55,6 +55,13 @@ fun QuizScreen(onBack: () -> Unit) {
                 contentAlignment = Alignment.Center,
             ) { CircularProgressIndicator() }
 
+            QuizPhase.ERROR -> ErrorContent(
+                modifier = Modifier.padding(padding),
+                message = state.error,
+                onRetry = { vm.load() },
+                onBack = onBack,
+            )
+
             QuizPhase.INTRO -> IntroContent(
                 modifier = Modifier.padding(padding),
                 questionCount = state.questions.size,
@@ -387,6 +394,43 @@ private fun LivesDisplay(lives: Int) {
         repeat(QuizConstants.MAX_LIVES) { index ->
             val heartColor = if (index < lives) ComposeColor(0xFFEF4444) else ComposeColor(0xFF7F1D1D)
             Text("❤️", color = heartColor, modifier = Modifier.padding(1.dp))
+        }
+    }
+}
+
+@Composable
+private fun ErrorContent(
+    modifier: Modifier = Modifier,
+    message: String?,
+    onRetry: () -> Unit,
+    onBack: () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text("⚠️", style = MaterialTheme.typography.displayLarge)
+        Spacer(Modifier.height(16.dp))
+        Text(
+            message ?: "Etwas ist schiefgelaufen",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        )
+        Spacer(Modifier.height(24.dp))
+        Button(
+            onClick = onRetry,
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+        ) {
+            Text("Erneut versuchen", fontWeight = FontWeight.Bold)
+        }
+        Spacer(Modifier.height(12.dp))
+        OutlinedButton(
+            onClick = onBack,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Zurück")
         }
     }
 }
