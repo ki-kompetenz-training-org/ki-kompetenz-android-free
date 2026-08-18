@@ -1,0 +1,5 @@
+- 8 kostenlose Mini-Spiele (Human or AI, Fact or Hallucination, High-Risk Blitz, Agent-Ampel, Shadow-AI-Check, Prompt-Profis, Bias-Spotter, DSGVO-Check)
+- KI-Score-Quiz (50 Fragen)
+- Gamification (XP, Level, Badges, Streaks)
+- Offline-Modus (Room)
+- Deutsch + Englisch
