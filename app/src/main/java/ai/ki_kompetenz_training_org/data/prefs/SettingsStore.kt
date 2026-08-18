@@ -3,22 +3,25 @@ package ai.ki_kompetenz_training_org.data.prefs
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.util.Locale
 
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "kikompetenz_settings")
 
 /**
- * Stores user preferences (language) in DataStore.
- * No encryption needed — language is not sensitive data.
+ * Stores user preferences (language, onboarding) in DataStore.
+ * No encryption needed — language and onboarding flags are not sensitive data.
  */
 class SettingsStore(private val context: Context) {
     companion object {
         private val LANGUAGE_KEY = stringPreferencesKey("language")
+        private val KIBOT_HELLO_SHOWN = booleanPreferencesKey("kibot_hello_shown")
         const val LANG_SYSTEM = "system"
         const val LANG_DE = "de"
         const val LANG_EN = "en"
@@ -27,6 +30,16 @@ class SettingsStore(private val context: Context) {
     /** Current language preference: "system", "de", or "en". */
     val language: Flow<String> = context.settingsDataStore.data.map { prefs ->
         prefs[LANGUAGE_KEY] ?: LANG_SYSTEM
+    }
+
+    /** Whether the KiBot hello dialog has been shown. */
+    val kibotHelloShown: Flow<Boolean> = context.settingsDataStore.data.map { prefs ->
+        prefs[KIBOT_HELLO_SHOWN] ?: false
+    }
+
+    /** Mark KiBot hello dialog as shown. */
+    suspend fun markKibotHelloShown() {
+        context.settingsDataStore.edit { it[KIBOT_HELLO_SHOWN] = true }
     }
 
     /** Set language preference. Writes to both DataStore (async flow) and SharedPreferences (sync for attachBaseContext). */

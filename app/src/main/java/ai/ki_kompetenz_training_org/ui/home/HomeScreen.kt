@@ -15,6 +15,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,10 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
+import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
@@ -48,6 +56,28 @@ fun HomeScreen(
         HomeViewModel(app.authRepository, app.premiumRepository, app.teamRepository, app.contentRepository, app.gamificationRepository)
     }
     val state by vm.state.collectAsState()
+
+    // ── KiBot hello dialog (first launch) ──
+    val settingsStore = KiKompetenzApp.from(LocalContext.current).settingsStore
+    val kibotHelloShown by settingsStore.kibotHelloShown.collectAsState(initial = true)
+    var showHelloDialog by remember { mutableStateOf(!kibotHelloShown) }
+    val scope = rememberCoroutineScope()
+    if (showHelloDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showHelloDialog = false
+                scope.launch { settingsStore.markKibotHelloShown() }
+            },
+            title = { Text(stringResource(R.string.kibot_hello_title), fontWeight = FontWeight.Bold) },
+            text = { Text(stringResource(R.string.kibot_hello_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showHelloDialog = false
+                    scope.launch { settingsStore.markKibotHelloShown() }
+                }) { Text(stringResource(R.string.kibot_hello_cta)) }
+            },
+        )
+    }
 
     Column(
         modifier = Modifier

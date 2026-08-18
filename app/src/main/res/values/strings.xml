@@ -198,6 +198,9 @@
     <!-- KiBot -->
     <string name="kibot_level">Dein KI-Begleiter · Level %1$d</string>
     <string name="kibot_sleepy_hint">KiBot schläft… Tägliches Check-in weckt es auf!</string>
+    <string name="kibot_hello_title">Hallo! Ich bin KiBot.</string>
+    <string name="kibot_hello_body">Ich lerne KI-Kompetenz — und du trainierst mich dabei! Je mehr du lernst, desto mehr wachse ich.</string>
+    <string name="kibot_hello_cta">Los geht\'s!</string>
 
     <!-- Home quick actions -->
     <string name="home_quick_quiz">KI-Score</string>
