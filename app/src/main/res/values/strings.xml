@@ -215,10 +215,7 @@
     <string name="home_premium_chip">⭐ Premium freischalten</string>
     <string name="home_dsgvo_local">DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.</string>
 
-    <!-- MiniGames extracted -->
-    <string name="games_menu_subtitle">Kurzweilige Lernspiele — jede Runde bringt XP und einen Lernmoment.</string>
-    <string name="games_premium_header">⭐ Premium-Spiele</string>
-    <string name="games_premium_subtitle">Fortgeschrittene Deep-Dives mit höheren XP-Belohnungen.</string>
+    <!-- Difficulty extracted -->
     <string name="difficulty_beginner">Anfänger</string>
     <string name="difficulty_intermediate">Fortgeschritten</string>
     <string name="difficulty_expert">Experte</string>
@@ -227,7 +224,6 @@
     <string name="quiz_intro_subtitle">Wie KI-fit bist du?</string>
     <string name="quiz_intro_description">Teste dein Wissen zu Künstlicher Intelligenz, EU AI Act und KI im Arbeitsalltag. Am Ende erhältst du deinen persönlichen KI-Score zum Teilen!</string>
     <string name="quiz_next_question">Nächste Frage</string>
-    <string name="quiz_my_result">Mein Ergebnis</string>
     <string name="quiz_stats_correct">Richtig</string>
     <string name="quiz_stats_points">Punkte</string>
     <string name="quiz_stats_max_combo">Max Combo</string>
@@ -250,7 +246,6 @@
 
     <!-- Profile expanded -->
     <string name="profile_streak_label">Tages-Serie</string>
-    <string name="profile_no_streak">Noch keine Serie</string>
 
     <!-- Settings / Language -->
     <string name="settings_language">Sprache</string>

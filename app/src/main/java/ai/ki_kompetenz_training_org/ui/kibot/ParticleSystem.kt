@@ -1,20 +1,21 @@
 package ai.ki_kompetenz_training_org.ui.kibot
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -31,13 +32,18 @@ import kotlin.math.sin
 fun ProgressRing(
     progress: Float, // 0..1
     modifier: Modifier = Modifier,
-    strokeWidth: dp = 5.dp,
+    strokeWidth: Dp = 5.dp,
     color: Color = MaterialTheme.colorScheme.primary,
 ) {
     val animatedProgress by animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),
         animationSpec = tween(durationMillis = 800, easing = EaseOutCubic),
         label = "xpProgress",
+    )
+
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+    val primaryGrad = Brush.sweepGradient(
+        colors = listOf(color, color.copy(alpha = 0.5f), color),
     )
 
     Canvas(modifier = modifier) {
@@ -47,7 +53,7 @@ fun ProgressRing(
 
         // Track
         drawArc(
-            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            color = surfaceVariant,
             startAngle = -90f,
             sweepAngle = 360f,
             useCenter = false,
@@ -59,9 +65,7 @@ fun ProgressRing(
         // Progress arc
         if (animatedProgress > 0.01f) {
             drawArc(
-                brush = Brush.sweepGradient(
-                    colors = listOf(color, color.copy(alpha = 0.5f), color),
-                ),
+                brush = primaryGrad,
                 startAngle = -90f,
                 sweepAngle = 360f * animatedProgress,
                 useCenter = false,

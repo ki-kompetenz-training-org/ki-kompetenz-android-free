@@ -93,7 +93,7 @@ fun daysSinceLastCheckIn(lastCheckInDay: String?): Int {
     return try {
         val last = LocalDate.parse(lastCheckInDay, DateTimeFormatter.ISO_LOCAL_DATE)
         val today = LocalDate.now()
-        java.time.Duration.between(last.atStartOfDay(), today.atStartOfDay()).toInt().coerceAtLeast(0)
+        java.time.temporal.ChronoUnit.DAYS.between(last, today).toInt().coerceAtLeast(0)
     } catch (_: Exception) {
         Int.MAX_VALUE
     }

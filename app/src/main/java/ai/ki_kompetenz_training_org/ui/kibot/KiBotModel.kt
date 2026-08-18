@@ -54,7 +54,7 @@ fun KiBotModel(
             color = primary,
             topLeft = Offset(cx - bodyW / 2, cy - bodyH * 0.15f),
             size = Size(bodyW, bodyH * 0.85f),
-            cornerRadius = 18.dp.toPx() * scale,
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx() * scale),
         )
 
         // ── Head ──
@@ -129,13 +129,13 @@ fun KiBotModel(
                     color = primary.copy(alpha = 0.7f),
                     topLeft = Offset(cx - bodyW / 2 - armW - 2.dp.toPx(), cy + 4.dp.toPx()),
                     size = Size(armW, armH),
-                    cornerRadius = 4.dp.toPx(),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()),
                 )
                 drawRoundRect(
                     color = primary.copy(alpha = 0.7f),
                     topLeft = Offset(cx + bodyW / 2 + 2.dp.toPx(), cy + 4.dp.toPx()),
                     size = Size(armW, armH),
-                    cornerRadius = 4.dp.toPx(),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx()),
                 )
             }
             GrowthStage.THINKER -> {
@@ -166,7 +166,7 @@ fun KiBotModel(
                         color = boosterColor,
                         topLeft = Offset(cx + side * (bodyW / 3) - boosterW / 2, boosterY),
                         size = Size(boosterW, boosterH),
-                        cornerRadius = 3.dp.toPx(),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(3.dp.toPx()),
                     )
                     // Booster flame glow
                     drawCircle(

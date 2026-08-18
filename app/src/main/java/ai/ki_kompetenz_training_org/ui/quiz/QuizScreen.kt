@@ -408,8 +408,8 @@ private fun ErrorContent(
     Column(
         modifier = modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Spacer(Modifier.weight(1f))
         Text("⚠️", style = MaterialTheme.typography.displayLarge)
         Spacer(Modifier.height(16.dp))
         Text(

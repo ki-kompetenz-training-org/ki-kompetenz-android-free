@@ -215,10 +215,7 @@
     <string name="home_premium_chip">⭐ Unlock Premium</string>
     <string name="home_dsgvo_local">GDPR-compliant: XP, level and streak are stored locally — no server transmission.</string>
 
-    <!-- MiniGames extracted -->
-    <string name="games_menu_subtitle">Quick learning games — every round brings XP and a learning moment.</string>
-    <string name="games_premium_header">⭐ Premium Games</string>
-    <string name="games_premium_subtitle">Advanced deep-dives with higher XP rewards.</string>
+    <!-- Difficulty extracted -->
     <string name="difficulty_beginner">Beginner</string>
     <string name="difficulty_intermediate">Intermediate</string>
     <string name="difficulty_expert">Expert</string>
@@ -227,7 +224,6 @@
     <string name="quiz_intro_subtitle">How AI-fit are you?</string>
     <string name="quiz_intro_description">Test your knowledge of Artificial Intelligence, the EU AI Act, and AI in the workplace. At the end you will receive your personal AI Score to share!</string>
     <string name="quiz_next_question">Next question</string>
-    <string name="quiz_my_result">My result</string>
     <string name="quiz_stats_correct">Correct</string>
     <string name="quiz_stats_points">Points</string>
     <string name="quiz_stats_max_combo">Max Combo</string>
@@ -250,7 +246,6 @@
 
     <!-- Profile expanded -->
     <string name="profile_streak_label">Day streak</string>
-    <string name="profile_no_streak">No streak yet</string>
 
     <!-- Settings / Language -->
     <string name="settings_language">Language</string>

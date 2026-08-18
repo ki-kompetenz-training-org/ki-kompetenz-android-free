@@ -1,7 +1,7 @@
 package ai.ki_kompetenz_training_org.ui.kibot
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class KiBotStateTest {
     @Test fun `growth stage is Neonate for levels 1-2`() {
