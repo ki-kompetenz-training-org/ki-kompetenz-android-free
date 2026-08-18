@@ -194,4 +194,70 @@
     <string name="a11y_login">Anmelden</string>
     <string name="a11y_points">Punkte</string>
     <string name="srs_no_cards">Keine Karte verfügbar</string>
+
+    <!-- KiBot -->
+    <string name="kibot_level">Dein KI-Begleiter · Level %1$d</string>
+    <string name="kibot_sleepy_hint">KiBot schläft… Tägliches Check-in weckt es auf!</string>
+
+    <!-- Home quick actions -->
+    <string name="home_quick_quiz">KI-Score</string>
+    <string name="home_quick_quiz_desc">Teste dein Wissen</string>
+    <string name="home_quick_games">Mini-Spiele</string>
+    <string name="home_quick_games_desc">8 kostenlose Spiele</string>
+    <string name="home_quick_lessons">Lektionen</string>
+    <string name="home_quick_lessons_desc">EU AI Act lernen</string>
+    <string name="home_quick_srs">Wiederholen</string>
+    <string name="home_quick_srs_desc">Spaced Repetition</string>
+    <string name="home_more_kids">Für Kinder</string>
+    <string name="home_more_kids_desc">KI spielerisch entdecken</string>
+    <string name="home_more_seniors">Für Senioren</string>
+    <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+    <string name="home_premium_chip">⭐ Premium freischalten</string>
+    <string name="home_dsgvo_local">DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.</string>
+
+    <!-- Difficulty extracted -->
+    <string name="difficulty_beginner">Anfänger</string>
+    <string name="difficulty_intermediate">Fortgeschritten</string>
+    <string name="difficulty_expert">Experte</string>
+
+    <!-- Quiz extracted -->
+    <string name="quiz_intro_subtitle">Wie KI-fit bist du?</string>
+    <string name="quiz_intro_description">Teste dein Wissen zu Künstlicher Intelligenz, EU AI Act und KI im Arbeitsalltag. Am Ende erhältst du deinen persönlichen KI-Score zum Teilen!</string>
+    <string name="quiz_next_question">Nächste Frage</string>
+    <string name="quiz_stats_correct">Richtig</string>
+    <string name="quiz_stats_points">Punkte</string>
+    <string name="quiz_stats_max_combo">Max Combo</string>
+    <string name="quiz_stats_lives_left">Leben übrig</string>
+    <string name="quiz_offline_retry">Erneut versuchen</string>
+    <string name="quiz_offline_play_games">Mini-Spiele offline spielen →</string>
+
+    <!-- Kids extracted -->
+    <string name="kids_title">ForKids</string>
+    <string name="kids_coppa_title">Für Eltern — Datenschutz-Info</string>
+    <string name="kids_coppa_text">Keine Daten werden gesendet. Alles bleibt lokal.</string>
+    <string name="kids_coppa_more">Mehr erfahren →</string>
+    <string name="kids_heading">🤖 KI-Lernen für Kinder</string>
+    <string name="kids_heading_desc">Spielerisch KI verstehen — COPPA-konform, lokal gespeichert, keine Datenweitergabe.</string>
+    <string name="kids_done_title">Geschafft!</string>
+    <string name="kids_done_text">Du hast diese Lektion abgeschlossen!</string>
+    <string name="kids_dismiss">Verstanden</string>
+    <string name="kids_quiz_label">❓ Quiz</string>
+    <string name="kids_coppa_privacy">🔒</string>
+
+    <!-- Profile expanded -->
+    <string name="profile_streak_label">Tages-Serie</string>
+
+    <!-- Settings / Language -->
+    <string name="settings_language">Sprache</string>
+    <string name="settings_language_system">Systemstandard</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_en">English</string>
+
+    <!-- Error states -->
+    <string name="error_offline_title">Keine Verbindung</string>
+    <string name="error_offline_message">KI-Score braucht eine Internetverbindung zum Laden.</string>
+    <string name="error_offline_retry">Erneut versuchen</string>
+    <string name="error_offline_fallback">Mini-Spiele offline spielen →</string>
+    <string name="error_generic_title">Etwas ist schiefgelaufen</string>
+    <string name="error_generic_retry">Erneut versuchen</string>
 </resources>

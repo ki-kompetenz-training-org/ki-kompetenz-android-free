@@ -32,7 +32,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Zurück",
+                            contentDescription = "Back",
                         )
                     }
                 },
@@ -172,7 +172,7 @@ fun KidsLessonScreen(lesson: KidsLesson, onBack: () -> Unit) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Zurück",
+                            contentDescription = "Back",
                         )
                     }
                 },

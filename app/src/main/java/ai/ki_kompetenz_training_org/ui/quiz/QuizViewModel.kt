@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-enum class QuizPhase { LOADING, INTRO, PLAYING, RESULT }
+enum class QuizPhase { LOADING, ERROR, INTRO, PLAYING, RESULT }
 
 data class QuizUiState(
     val phase: QuizPhase = QuizPhase.LOADING,
@@ -62,7 +62,7 @@ class QuizViewModel(
                 val questions = data.questions.shuffled().take(10)
                 _state.value = QuizUiState(phase = QuizPhase.INTRO, questions = questions, tiers = data.tiers, sharePrefix = data.share?.prefix ?: "")
             }.onFailure {
-                _state.value = QuizUiState(phase = QuizPhase.INTRO, error = "Quiz konnte nicht geladen werden")
+                _state.value = QuizUiState(phase = QuizPhase.ERROR, error = "Quiz konnte nicht geladen werden. Prüfe deine Internetverbindung.")
             }
         }
     }

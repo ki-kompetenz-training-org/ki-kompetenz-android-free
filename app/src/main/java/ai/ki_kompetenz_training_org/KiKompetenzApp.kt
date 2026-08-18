@@ -6,7 +6,9 @@ import android.os.StrictMode
 import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.NetworkModule
 import ai.ki_kompetenz_training_org.data.db.AppDatabase
+import ai.ki_kompetenz_training_org.data.connectivity.ConnectivityObserver
 import ai.ki_kompetenz_training_org.data.prefs.TokenStore
+import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
@@ -26,6 +28,10 @@ class KiKompetenzApp : Application() {
     lateinit var db: AppDatabase
         private set
     lateinit var tokenStore: TokenStore
+        private set
+    lateinit var settingsStore: SettingsStore
+        private set
+    lateinit var connectivityObserver: ConnectivityObserver
         private set
     lateinit var contentRepository: ContentRepository
         private set
@@ -49,6 +55,8 @@ class KiKompetenzApp : Application() {
 
         db = AppDatabase.get(this)
         tokenStore = TokenStore(this)
+        settingsStore = SettingsStore(this)
+        connectivityObserver = ConnectivityObserver(this)
         api = NetworkModule.createApiService(this)
         contentRepository = ContentRepository(api, db)
         authRepository = AuthRepository(tokenStore)
