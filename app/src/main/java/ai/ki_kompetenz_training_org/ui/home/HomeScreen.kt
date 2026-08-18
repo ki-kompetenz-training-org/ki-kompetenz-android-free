@@ -1,7 +1,5 @@
 package ai.ki_kompetenz_training_org.ui.home
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,10 +20,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
-import ai.ki_kompetenz_training_org.ui.kibot.KiBotModel
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
-import ai.ki_kompetenz_training_org.ui.kibot.GrowthStage
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
 
 @Composable
