@@ -11,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
+import ai.ki_kompetenz_training_org.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +29,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("ForKids", fontWeight = FontWeight.Bold) },
+                title = { Text(stringResource(R.string.kids_title), fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -63,12 +65,12 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
                     Text("\uD83D\uDD12", fontSize = 24.sp)
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Für Eltern — Datenschutz-Info",
+                        stringResource(R.string.kids_coppa_title),
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        "Keine Daten werden gesendet. Alles bleibt lokal.",
+                        stringResource(R.string.kids_coppa_text),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                     )
@@ -90,7 +92,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(
-                "Spielerisch KI verstehen — COPPA-konform, lokal gespeichert, keine Datenweitergabe.",
+                stringResource(R.string.kids_heading_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -154,7 +156,7 @@ fun CoppaNoticeDialog(onDismiss: () -> Unit) {
         title = { Text(CoppaNotice.HEADING) },
         text = { Text(CoppaNotice.BODY, lineHeight = 20.sp) },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Verstanden") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.kids_dismiss)) }
         },
     )
 }
@@ -212,12 +214,12 @@ fun KidsLessonScreen(lesson: KidsLesson, onBack: () -> Unit) {
                     ) {
                         Text("\uD83C\uDF89", fontSize = 32.sp)
                         Text(
-                            "Geschafft!",
+                            stringResource(R.string.kids_done_title),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium,
                         )
                         Text(
-                            "Du hast diese Lektion abgeschlossen!",
+                            stringResource(R.string.kids_done_text),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }

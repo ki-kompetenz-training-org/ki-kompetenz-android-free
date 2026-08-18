@@ -212,6 +212,12 @@
     <string name="home_more_kids_desc">KI spielerisch entdecken</string>
     <string name="home_more_seniors">Für Senioren</string>
     <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+
+    <!-- Seniors -->
+    <string name="seniors_title">Für Senioren</string>
+    <string name="seniors_intro">KI verstehen — einfach &amp; praktisch</string>
+    <string name="seniors_intro_desc">Schritt für Schritt KI im Alltag verstehen: Passwörter, Phishing, KI-Telefone, Deepfakes und mehr.</string>
+    <string name="seniors_rules_title">Ihre 6 Alltags-Regeln</string>
     <string name="home_premium_chip">⭐ Premium freischalten</string>
     <string name="home_dsgvo_local">DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.</string>
 

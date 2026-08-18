@@ -212,6 +212,12 @@
     <string name="home_more_kids_desc">Discover AI through play</string>
     <string name="home_more_seniors">For Seniors</string>
     <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+
+    <!-- Seniors -->
+    <string name="seniors_title">For Seniors</string>
+    <string name="seniors_intro">AI made easy — practical</string>
+    <string name="seniors_intro_desc">Step by step understanding AI in everyday life: passwords, phishing, AI phone calls, deepfakes and more.</string>
+    <string name="seniors_rules_title">Your 6 Everyday Rules</string>
     <string name="home_premium_chip">⭐ Unlock Premium</string>
     <string name="home_dsgvo_local">GDPR-compliant: XP, level and streak are stored locally — no server transmission.</string>
 
