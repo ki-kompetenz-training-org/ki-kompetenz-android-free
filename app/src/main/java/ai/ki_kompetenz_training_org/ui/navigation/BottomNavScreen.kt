@@ -3,7 +3,7 @@ package ai.ki_kompetenz_training_org.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material3.*
@@ -26,7 +26,7 @@ data class BottomTab(
 val BOTTOM_TABS = listOf(
     BottomTab(Routes.HOME, R.string.home_title, Icons.Default.Home),
     BottomTab(Routes.MINIGAMES, R.string.games_title, Icons.Default.SportsEsports),
-    BottomTab(Routes.LESSONS, R.string.lessons_title, Icons.Default.MenuBook),
+    BottomTab(Routes.LESSONS, R.string.lessons_title, Icons.AutoMirrored.Filled.MenuBook),
     BottomTab(Routes.GAMIFICATION, R.string.profile_title, Icons.Default.Person),
 )
 

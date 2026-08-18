@@ -29,9 +29,11 @@ class SettingsStore(private val context: Context) {
         prefs[LANGUAGE_KEY] ?: LANG_SYSTEM
     }
 
-    /** Set language preference. */
+    /** Set language preference. Writes to both DataStore (async flow) and SharedPreferences (sync for attachBaseContext). */
     suspend fun setLanguage(lang: String) {
         context.settingsDataStore.edit { it[LANGUAGE_KEY] = lang }
+        context.getSharedPreferences("kikompetenz_settings", Context.MODE_PRIVATE)
+            .edit().putString("language", lang).apply()
     }
 
     /** Resolve effective language code from preference. */
