@@ -104,7 +104,7 @@
     <string name="premium_f6_desc">Monthly, no commitment</string>
     <string name="premium_cta">Discover Premium in Google Play</string>
     <string name="srs_no_cards">No cards available</string>
-    <string name="premium_trust">This open-source edition contains 8 free games. All 16 games + 14 lessons: Google Play version</string>
+    <string name="premium_trust">This open-source edition contains 8 free games. Premium version (Google Play): all 14 lessons + spaced repetition + certificate</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Your Profile</string>

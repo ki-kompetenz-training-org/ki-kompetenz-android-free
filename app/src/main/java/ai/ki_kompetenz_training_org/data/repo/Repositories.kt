@@ -18,7 +18,7 @@ class AuthRepository(private val tokenStore: TokenStore) {
 }
 
 class PremiumRepository(private val api: ApiService) {
-    /** Free preview lessons: every odd lesson is free (50% free content). */
+    /** Free preview lessons: lessons 1-8 are free, lessons 9+ are Premium. */
     suspend fun isPremium(): Result<Boolean> =
         runCatching { api.getSubscriptionStatus().subscribed }
 

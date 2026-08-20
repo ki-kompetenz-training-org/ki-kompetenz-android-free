@@ -103,7 +103,7 @@
     <string name="premium_f6">Jederzeit kündbar</string>
     <string name="premium_f6_desc">Monatlich, ohne Bindung</string>
     <string name="premium_cta">Premium in der Google-Play-App entdecken</string>
-    <string name="premium_trust">Diese Open-Source-Edition enthält 8 kostenlose Spiele. Alle 16 Spiele + 14 Lektionen: Google-Play-Version</string>
+    <string name="premium_trust">Diese Open-Source-Edition enthält 8 kostenlose Spiele. Premium-Version (Google Play): alle 14 Lektionen + Spaced Repetition + Zertifikat</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Dein Profil</string>
