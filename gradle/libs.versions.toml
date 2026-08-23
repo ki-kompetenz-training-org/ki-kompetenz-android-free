@@ -23,7 +23,7 @@ kotlinxCoroutinesTest = "1.9.0"
 jacoco = "0.8.11"
 kotest = "5.8.0"
 moshi = "1.15.0"
-sceneview = "2.2.1"
+workRuntime = "2.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,7 +63,7 @@ jacoco = { group = "org.jacoco", name = "jacoco", version.ref = "jacoco" }
 kotest-runner = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
-sceneview = { group = "io.github.sceneview", name = "sceneview", version.ref = "sceneview" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }

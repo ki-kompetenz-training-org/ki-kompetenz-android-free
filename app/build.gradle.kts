@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -17,8 +18,11 @@ android {
         applicationId = "ai.ki_kompetenz_training_org.free"
         minSdk = 26
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.1.1"
+        // Read version from version.properties (single source of truth)
+        val versionProps = Properties()
+        versionProps.load(file("../version.properties").inputStream())
+        versionCode = (versionProps.getProperty("versionCode") ?: "10").toInt()
+        versionName = versionProps.getProperty("versionName") ?: "1.2.0"
 
         // API base URL: override with -PapiBaseUrl=https://... on the command line.
         val apiBaseUrl = (project.findProperty("apiBaseUrl") as String?) ?: "https://ki-kompetenz-training.org"
@@ -107,7 +111,7 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.security.crypto)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.sceneview)
+    implementation(libs.androidx.work.runtime.ktx)
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)
     testImplementation(libs.truth)

@@ -32,10 +32,17 @@ val BOTTOM_TABS = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavScreen() {
+fun BottomNavScreen(openSrs: Boolean = false) {
     val navController = androidx.navigation.compose.rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
+
+    // Navigate to SRS screen if opened from notification
+    androidx.compose.runtime.LaunchedEffect(openSrs) {
+        if (openSrs) {
+            navController.navigate("srs")
+        }
+    }
 
     // Show bottom bar only on tab destinations, hide on sub-screens (Quiz, Lesson detail, etc.)
     val isTabDestination = BOTTOM_TABS.any { tab ->

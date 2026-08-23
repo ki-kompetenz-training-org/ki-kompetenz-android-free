@@ -32,6 +32,7 @@ import ai.ki_kompetenz_training_org.data.lessons.Lesson13
 import ai.ki_kompetenz_training_org.data.lessons.Lesson14
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGameScreen
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGamesMenuScreen
+import ai.ki_kompetenz_training_org.ui.onboarding.OnboardingScreen
 import ai.ki_kompetenz_training_org.ui.premium.PremiumScreen
 import ai.ki_kompetenz_training_org.ui.quiz.QuizScreen
 import ai.ki_kompetenz_training_org.ui.srs.SrsScreen
@@ -41,6 +42,7 @@ import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 
 object Routes {
+    const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val QUIZ = "quiz"
     const val LESSONS = "lessons"

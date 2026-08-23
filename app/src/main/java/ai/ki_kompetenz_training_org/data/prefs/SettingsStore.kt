@@ -16,12 +16,13 @@ private val Context.settingsDataStore: DataStore<Preferences> by preferencesData
 
 /**
  * Stores user preferences (language, onboarding) in DataStore.
- * No encryption needed — language and onboarding flags are not sensitive data.
+ * No encryption needed - language and onboarding flags are not sensitive data.
  */
 class SettingsStore(private val context: Context) {
     companion object {
         private val LANGUAGE_KEY = stringPreferencesKey("language")
         private val KIBOT_HELLO_SHOWN = booleanPreferencesKey("kibot_hello_shown")
+        private val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         const val LANG_SYSTEM = "system"
         const val LANG_DE = "de"
         const val LANG_EN = "en"
@@ -37,9 +38,19 @@ class SettingsStore(private val context: Context) {
         prefs[KIBOT_HELLO_SHOWN] ?: false
     }
 
+    /** Whether onboarding has been completed. */
+    val onboardingCompleted: Flow<Boolean> = context.settingsDataStore.data.map { prefs ->
+        prefs[ONBOARDING_COMPLETED] ?: false
+    }
+
     /** Mark KiBot hello dialog as shown. */
     suspend fun markKibotHelloShown() {
         context.settingsDataStore.edit { it[KIBOT_HELLO_SHOWN] = true }
+    }
+
+    /** Mark onboarding as completed. */
+    suspend fun markOnboardingCompleted() {
+        context.settingsDataStore.edit { it[ONBOARDING_COMPLETED] = true }
     }
 
     /** Set language preference. Writes to both DataStore (async flow) and SharedPreferences (sync for attachBaseContext). */

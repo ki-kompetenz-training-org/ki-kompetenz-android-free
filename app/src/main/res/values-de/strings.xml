@@ -17,7 +17,7 @@
     <string name="home_premium_active">✓ Premium aktiv</string>
     <string name="home_premium_upsell">Basic — Jetzt Premium freischalten</string>
     <string name="home_feature_lessons">Lektionen</string>
-    <string name="home_feature_lessons_desc">14 Lektionen zum EU AI Act — Lektion 1-8 kostenlos</string>
+    <string name="home_feature_lessons_desc">14 Lektionen zur KI-Kompetenz — Lektion 1-8 kostenlos</string>
     <string name="home_feature_lessons_action">Lektionen öffnen</string>
     <string name="home_feature_quiz">KI-Score Quiz</string>
     <string name="home_feature_quiz_desc">10 Fragen · 5 Level · Ergebnis teilen</string>
@@ -29,10 +29,10 @@
     <string name="home_feature_profile_desc">XP · Level · Tages-Serie · 10 Badges</string>
     <string name="home_feature_profile_action">Ansehen</string>
     <string name="home_feature_srs">Wiederholen (SRS)</string>
-    <string name="home_feature_srs_desc">Spaced Repetition — Karten im optimalen Rhythmus</string>
+    <string name="home_feature_srs_desc">Intervall-Wiederholung — Karten im optimalen Rhythmus</string>
     <string name="home_feature_srs_action">Wiederholen</string>
     <string name="home_feature_premium">Premium</string>
-    <string name="home_feature_premium_desc">Alle Lektionen · Spaced Repetition · Zertifikat · Team-Ranking</string>
+    <string name="home_feature_premium_desc">Alle Lektionen · Intervall-Wiederholung · Zertifikat · Team-Ranking</string>
     <string name="home_feature_premium_action">Premium ansehen</string>
     <string name="home_feature_premium_action_active">Premium-Features nutzen</string>
     <string name="home_feature_team">Team &amp; Ranking</string>
@@ -91,9 +91,9 @@
     <string name="premium_plan_name">KI Quiz — Premium</string>
     <string name="premium_price">€6,99/Monat pro Sitzplatz · jeder Nutzer individuell</string>
     <string name="premium_f1">14 interaktive Lektionen</string>
-    <string name="premium_f1_desc">Kompletter EU AI Act Art. 4 Lehrplan</string>
+    <string name="premium_f1_desc">Kompletter KI-Kompetenz-Lehrplan</string>
     <string name="premium_f2">300+ Praxis-Fragen</string>
-    <string name="premium_f2_desc">Spaced Repetition für nachhaltiges Lernen</string>
+    <string name="premium_f2_desc">Intervall-Wiederholung für nachhaltiges Lernen</string>
     <string name="premium_f3">Audit-fähiges Zertifikat</string>
     <string name="premium_f3_desc">Persönlicher KI-Kompetenz-Nachweis</string>
     <string name="premium_f4">Team-Dashboard &amp; Ranking</string>
@@ -102,9 +102,9 @@
     <string name="premium_f5_desc">Inhalte bleiben aktuell</string>
     <string name="premium_f6">Jederzeit kündbar</string>
     <string name="premium_f6_desc">Monatlich, ohne Bindung</string>
-    <string name="premium_cta">Premium in der Google-Play-App entdecken</string>
+    <string name="premium_cta">Jetzt Premium abonnieren</string>
     <string name="srs_no_cards">Keine Karte verfügbar</string>
-    <string name="premium_trust">Diese Open-Source-Edition enthält 8 kostenlose Spiele. Premium-Version (Google Play): alle 14 Lektionen + Spaced Repetition + Zertifikat</string>
+    <string name="premium_trust">Zahlung sicher über Stripe · 30 Tage Geld-zurück-Garantie</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Dein Profil</string>
@@ -124,12 +124,12 @@
     <!-- Lessons -->
     <string name="lessons_title">Lektionen</string>
     <string name="lessons_back">Zurück</string>
-    <string name="lessons_subtitle">14 Lektionen zum EU AI Act Art. 4 — Lektion 1-8 sind kostenlos (Basic), Lektion 9-14 sind Premium.</string>
+    <string name="lessons_subtitle">14 Lektionen zur KI-Kompetenz Art. 4 — Lektion 1-8 sind kostenlos (Basic), Lektion 9-14 sind Premium.</string>
     <string name="lessons_premium">Premium</string>
     <string name="lessons_unlock_cta">Alle Lektionen freischalten — Premium</string>
     <string name="lesson_mark_complete">✓ Lektion abschließen (+%1$d XP)</string>
     <string name="lesson_premium_gate_title">Premium-Lektion</string>
-    <string name="lesson_premium_gate_text">Lektion %1$s ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Spaced Repetition und das Zertifikat zu erhalten.</string>
+    <string name="lesson_premium_gate_text">Lektion %1$s ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
     <string name="lesson_premium_cta">Jetzt Premium freischalten</string>
     <string name="lesson_premium_price">€6,99/Monat pro Sitzplatz · jederzeit kündbar</string>
 
@@ -152,7 +152,7 @@
     <!-- SRS -->
     <string name="srs_title">Wiederholen (SRS)</string>
     <string name="srs_back">Zurück</string>
-    <string name="srs_login_required">Spaced Repetition braucht ein Konto.</string>
+    <string name="srs_login_required">Intervall-Wiederholung braucht ein Konto.</string>
     <string name="srs_login_note">Wiederholungskarten werden pro Nutzer gespeichert, damit dein Lernfortschritt über Geräte hinweg erhalten bleibt.</string>
     <string name="srs_login">Anmelden</string>
     <string name="srs_all_done">🎉</string>
@@ -182,7 +182,7 @@
     <string name="common_loading">Laden…</string>
     <string name="common_error">Einen Moment…</string>
     <string name="common_premium_badge">Premium freischalten</string>
-    <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Spaced Repetition und das Zertifikat zu erhalten.</string>
+    <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
 
     <!-- Accessibility -->
     <string name="a11y_streak_fire">Tages-Serie</string>
@@ -194,4 +194,86 @@
     <string name="a11y_share">Teilen</string>
     <string name="a11y_login">Anmelden</string>
     <string name="a11y_points">Punkte</string>
+
+    <!-- Additional strings (upstream sync) -->
+    <string name="difficulty_beginner">Anfänger</string>
+    <string name="difficulty_expert">Experte</string>
+    <string name="difficulty_intermediate">Fortgeschritten</string>
+    <string name="error_generic_retry">Erneut versuchen</string>
+    <string name="error_generic_title">Etwas ist schiefgelaufen</string>
+    <string name="error_offline_fallback">Mini-Spiele offline spielen →</string>
+    <string name="error_offline_message">KI-Score braucht eine Internetverbindung zum Laden.</string>
+    <string name="error_offline_retry">Erneut versuchen</string>
+    <string name="error_offline_title">Keine Verbindung</string>
+    <string name="home_dsgvo_local">DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.</string>
+    <string name="home_more_kids">Für Kinder</string>
+    <string name="home_more_kids_desc">KI spielerisch entdecken</string>
+    <string name="home_more_seniors">Für Senioren</string>
+    <string name="home_more_seniors_desc">Phishing, Deepfakes</string>
+    <string name="home_premium_chip">⭐ Premium freischalten</string>
+    <string name="home_quick_games">Mini-Spiele</string>
+    <string name="home_quick_games_desc">8 kostenlose Spiele</string>
+    <string name="home_quick_lessons">Lektionen</string>
+    <string name="home_quick_lessons_desc">KI-Kompetenz lernen</string>
+    <string name="home_quick_quiz">KI-Score</string>
+    <string name="home_quick_quiz_desc">Teste dein Wissen</string>
+    <string name="home_quick_srs">Wiederholen</string>
+    <string name="home_quick_srs_desc">Intervall-Wiederholung</string>
+    <string name="kibot_hello_body">Ich lerne KI-Kompetenz — und du trainierst mich dabei! Je mehr du lernst, desto mehr wachse ich.</string>
+    <string name="kibot_hello_cta">Los geht\'s!</string>
+    <string name="kibot_hello_title">Hallo! Ich bin KiBot.</string>
+    <string name="kibot_level">Dein KI-Begleiter · Level %1$d</string>
+    <string name="kibot_sleepy_hint">KiBot schläft… Tägliches Check-in weckt es auf!</string>
+    <string name="kids_coppa_more">Mehr erfahren →</string>
+    <string name="kids_coppa_privacy">🔒</string>
+    <string name="kids_coppa_text">Keine Daten werden gesendet. Alles bleibt lokal.</string>
+    <string name="kids_coppa_title">Für Eltern — Datenschutz-Info</string>
+    <string name="kids_dismiss">Verstanden</string>
+    <string name="kids_done_text">Du hast diese Lektion abgeschlossen!</string>
+    <string name="kids_done_title">Geschafft!</string>
+    <string name="kids_heading">🤖 KI-Lernen für Kinder</string>
+    <string name="kids_heading_desc">Spielerisch KI verstehen — COPPA-konform, lokal gespeichert, keine Datenweitergabe.</string>
+    <string name="kids_quiz_label">❓ Quiz</string>
+    <string name="kids_title">ForKids</string>
+    <string name="profile_streak_label">Tages-Serie</string>
+    <string name="quiz_intro_description">Teste dein Wissen zu Künstlicher Intelligenz, KI-Regulierung und KI im Arbeitsalltag. Am Ende erhältst du deinen persönlichen KI-Score zum Teilen!</string>
+    <string name="quiz_intro_subtitle">Wie KI-fit bist du?</string>
+    <string name="quiz_next_question">Nächste Frage</string>
+    <string name="quiz_offline_play_games">Mini-Spiele offline spielen →</string>
+    <string name="quiz_offline_retry">Erneut versuchen</string>
+    <string name="quiz_stats_correct">Richtig</string>
+    <string name="quiz_stats_lives_left">Leben übrig</string>
+    <string name="quiz_stats_max_combo">Max Combo</string>
+    <string name="quiz_stats_points">Punkte</string>
+    <string name="seniors_intro">KI verstehen — einfach &amp; praktisch</string>
+    <string name="seniors_intro_desc">Schritt für Schritt KI im Alltag verstehen: Passwörter, Phishing, KI-Telefone, Deepfakes und mehr.</string>
+    <string name="seniors_rules_title">Ihre 6 Alltags-Regeln</string>
+    <string name="seniors_title">Für Senioren</string>
+    <string name="settings_language">Sprache</string>
+    <string name="settings_language_de">Deutsch</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_language_system">Systemstandard</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_kibot_body">KiBot entwickelt sich mit deinem Fortschritt: je mehr du lernst, desto mehr wachst es. Sammle XP, halte deine Tages-Serie und steige im Level auf.</string>
+    <string name="onboarding_kibot_subtitle">Dein KI-Begleiter wächst mit dir</string>
+    <string name="onboarding_kibot_title">Lerne mit KiBot</string>
+    <string name="onboarding_next">Weiter</string>
+    <string name="onboarding_skip">Überspringen</string>
+    <string name="onboarding_start_body">1. Mache den KI-Score-Test\n2. Arbeite die Lektionen durch\n3. Wiederhole mit Intervall-Wiederholung\n\nLos geht\'s!</string>
+    <string name="onboarding_start_cta">Jetzt starten</string>
+    <string name="onboarding_start_subtitle">3 Schritte zum Erfolg</string>
+    <string name="onboarding_start_title">Bereit zum Start?</string>
+    <string name="onboarding_welcome_body">Lerne spielerisch alles über KI-Regulierung: 14 interaktive Lektionen, Mini-Spiele, KI-Score-Quiz und Intervall-Wiederholung. Verstehen statt auswendig lernen.</string>
+    <string name="onboarding_welcome_subtitle">Dein Trainer für KI-Kompetenz</string>
+    <string name="onboarding_welcome_title">Willkommen bei KI-Kompetenz</string>
+    <string name="notif_channel_srs">Wiederholungs-Erinnerungen</string>
+    <string name="notif_channel_srs_desc">Erinnert dich an faellige Lernkarten</string>
+    <string name="notif_channel_general">Allgemein</string>
+    <string name="notif_channel_general_desc">Allgemeine App-Benachrichtigungen</string>
+    <string name="notif_srs_title">Karten zur Wiederholung bereit</string>
+    <string name="notif_srs_body">Du hast %1$d Karten zur Intervall-Wiederholung bereit. Jetzt ueben!</string>
+    <string name="notif_permission_title">Benachrichtigungen aktivieren</string>
+    <string name="notif_permission_body">Lass dich an faellige Wiederholungskarten erinnern, damit nichts vergessen wird.</string>
+    <string name="notif_permission_grant">Benachrichtigungen erlauben</string>
 </resources>

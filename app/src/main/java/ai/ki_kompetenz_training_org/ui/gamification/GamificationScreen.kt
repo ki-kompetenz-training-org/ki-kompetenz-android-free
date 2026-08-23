@@ -25,7 +25,8 @@ import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GamificationScreen(onBack: () -> Unit) {
-    val app = KiKompetenzApp.from(LocalContext.current)
+    val context = LocalContext.current
+    val app = KiKompetenzApp.from(context)
     val vm: GamificationViewModel = viewModel {
         GamificationViewModel(app.gamificationRepository)
     }

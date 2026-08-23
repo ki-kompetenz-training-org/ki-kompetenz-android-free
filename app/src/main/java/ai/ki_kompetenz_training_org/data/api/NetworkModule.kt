@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.data.api
 import android.content.Context
 import android.util.Log
 import ai.ki_kompetenz_training_org.data.prefs.TokenStore
+import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.Cookie
@@ -41,6 +42,7 @@ object NetworkModule {
 
     fun createApiService(context: Context): ApiService {
         val tokenStore = TokenStore(context)
+        val authRepository = AuthRepository(tokenStore)
 
         val client = OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
@@ -69,6 +71,7 @@ object NetworkModule {
                 }
             })
             .addInterceptor(createCookieInterceptor(tokenStore))
+            .addInterceptor(createAuthInterceptor(authRepository))
             .addInterceptor(createRetryInterceptor())
             .apply {
                 if (BuildConfig.DEBUG) {
@@ -102,6 +105,22 @@ object NetworkModule {
             }
             builder.header("User-Agent", "KiKompetenz-Android/${BuildConfig.VERSION_NAME}")
             chain.proceed(builder.build())
+        }
+
+    /**
+     * 401 token-expiry interceptor: detects 401 Unauthorized responses,
+     * clears the auth token, and signals re-login required.
+     * This prevents silent failures when the session expires.
+     */
+    private fun createAuthInterceptor(authRepository: AuthRepository): Interceptor =
+        Interceptor { chain ->
+            val response = chain.proceed(chain.request())
+            if (response.code == 401) {
+                Log.w(TAG, "401 Unauthorized — session expired, clearing token")
+                authRepository.clearToken()
+                authRepository.signalReAuth()
+            }
+            response
         }
 
     /** Retries transient failures (5xx, timeouts, connection reset). */

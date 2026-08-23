@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.data.repo.SrsQuality
+import ai.ki_kompetenz_training_org.notification.NotificationPermissionBanner
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +74,7 @@ fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
+                NotificationPermissionBanner()
                 Text("🎉", style = MaterialTheme.typography.displayMedium)
                 Spacer(Modifier.height(8.dp))
                 Text(stringResource(R.string.srs_all_done_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -221,6 +223,7 @@ private fun FinishedContent(modifier: Modifier, state: SrsUiState, onBack: () ->
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        NotificationPermissionBanner()
         Text("🎓", style = MaterialTheme.typography.displayLarge)
         Spacer(Modifier.height(8.dp))
         Text(stringResource(R.string.srs_finished_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)

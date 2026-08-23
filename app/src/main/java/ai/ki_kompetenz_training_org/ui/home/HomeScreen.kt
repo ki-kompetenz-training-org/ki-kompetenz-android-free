@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
@@ -56,8 +55,11 @@ fun HomeScreen(
         HomeViewModel(app.authRepository, app.premiumRepository, app.teamRepository, app.contentRepository, app.gamificationRepository)
     }
     val state by vm.state.collectAsState()
+    
+    // ── Connectivity state ──
+    val isOnline by app.connectivityObserver.isOnline.collectAsState(initial = true)
 
-    // ── KiBot hello dialog (first launch) ──
+    // KiBot hello dialog (first launch) ──
     val settingsStore = KiKompetenzApp.from(LocalContext.current).settingsStore
     val kibotHelloShown by settingsStore.kibotHelloShown.collectAsState(initial = true)
     var showHelloDialog by remember { mutableStateOf(!kibotHelloShown) }
@@ -86,6 +88,25 @@ fun HomeScreen(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+
+        // Offline banner
+        if (!isOnline) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                ),
+            ) {
+                Text(
+                    text = stringResource(R.string.error_offline_title),
+                    modifier = Modifier.padding(14.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+        }
         // ── KiBot ──
         val kibotState = KiBotState.from(
             level = state.level,
@@ -194,7 +215,7 @@ fun HomeScreen(
                 QuickActionCard(
                     emoji = "🔄",
                     title = "Wiederholen",
-                    subtitle = "Spaced Repetition",
+                    subtitle = stringResource(R.string.home_quick_srs_desc),
                     onClick = onOpenSrs,
                 )
             }

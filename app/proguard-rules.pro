@@ -40,6 +40,11 @@
 -dontwarn com.google.crypto.tink.**
 -keep class com.google.crypto.tink.** { *; }
 
+# ── WorkManager ─────────────────────────────────────────────────────
+-keep class androidx.work.** { *; }
+-keep class androidx.work.impl.** { *; }
+-dontwarn androidx.work.**
+
 # ── Misc ──────────────────────────────────────────────────────────────
 -dontwarn org.jetbrains.annotations.**
 -dontwarn javax.annotation.**

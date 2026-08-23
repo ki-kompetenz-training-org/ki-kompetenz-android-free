@@ -11,10 +11,13 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.ui.navigation.BottomNavScreen
+import ai.ki_kompetenz_training_org.ui.onboarding.OnboardingScreen
 import ai.ki_kompetenz_training_org.ui.theme.KiKompetenzTheme
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.Locale
 
@@ -45,8 +48,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KiKompetenzTheme {
-                // Watch for DataStore language changes → recreate if locale actually changed
                 val app = applicationContext as KiKompetenzApp
+
+                // Watch for DataStore language changes → recreate if locale actually changed
                 val dataStoreLang by app.settingsStore.language.collectAsState(
                     initial = appliedLocaleTag ?: SettingsStore.LANG_SYSTEM
                 )
@@ -59,7 +63,21 @@ class MainActivity : ComponentActivity() {
                         recreate()
                     }
                 }
-                BottomNavScreen()
+
+                // Show onboarding on first launch
+                val onboardingCompleted by app.settingsStore.onboardingCompleted.collectAsState(initial = false)
+                val onboardingScope = rememberCoroutineScope()
+                if (!onboardingCompleted) {
+                    OnboardingScreen(
+                        onCompleted = {
+                            onboardingScope.launch {
+                                app.settingsStore.markOnboardingCompleted()
+                            }
+                        },
+                    )
+                } else {
+                    BottomNavScreen(openSrs = intent.getBooleanExtra("openSrs", false))
+                }
             }
         }
     }

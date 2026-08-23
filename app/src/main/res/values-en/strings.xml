@@ -17,7 +17,7 @@
     <string name="home_premium_active">✓ Premium active</string>
     <string name="home_premium_upsell">Basic — Unlock Premium now</string>
     <string name="home_feature_lessons">Lessons</string>
-    <string name="home_feature_lessons_desc">14 lessons on the EU AI Act — lessons 1-8 free</string>
+    <string name="home_feature_lessons_desc">14 lessons on AI competence — lessons 1-8 free</string>
     <string name="home_feature_lessons_action">Open lessons</string>
     <string name="home_feature_quiz">AI Score Quiz</string>
     <string name="home_feature_quiz_desc">10 questions · 5 levels · share your result</string>
@@ -91,7 +91,7 @@
     <string name="premium_plan_name">AI Quiz — Premium</string>
     <string name="premium_price">€6.99/month per seat · billed per user</string>
     <string name="premium_f1">14 interactive lessons</string>
-    <string name="premium_f1_desc">Complete EU AI Act Art. 4 curriculum</string>
+    <string name="premium_f1_desc">Complete AI competence curriculum</string>
     <string name="premium_f2">300+ practice questions</string>
     <string name="premium_f2_desc">Spaced repetition for lasting learning</string>
     <string name="premium_f3">Audit-ready certificate</string>
@@ -104,7 +104,7 @@
     <string name="premium_f6_desc">Monthly, no commitment</string>
     <string name="premium_cta">Discover Premium in Google Play</string>
     <string name="srs_no_cards">No cards available</string>
-    <string name="premium_trust">This open-source edition contains 8 free games. Premium version (Google Play): all 14 lessons + spaced repetition + certificate</string>
+    <string name="premium_trust">KI-Kompetenz-Training (Google Play). Unlock Premium via the web store (Stripe) — all 14 lessons + spaced repetition + certificate.</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Your Profile</string>
@@ -124,7 +124,7 @@
     <!-- Lessons -->
     <string name="lessons_title">Lessons</string>
     <string name="lessons_back">Back</string>
-    <string name="lessons_subtitle">14 lessons on EU AI Act Art. 4 — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
+    <string name="lessons_subtitle">14 lessons on AI competence — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
     <string name="lessons_premium">Premium</string>
     <string name="lessons_unlock_cta">Unlock all lessons — Premium</string>
     <string name="lesson_mark_complete">✓ Complete lesson (+%1$d XP)</string>
@@ -208,7 +208,7 @@
     <string name="home_quick_games">Mini-Games</string>
     <string name="home_quick_games_desc">8 free games</string>
     <string name="home_quick_lessons">Lessons</string>
-    <string name="home_quick_lessons_desc">Learn EU AI Act</string>
+    <string name="home_quick_lessons_desc">Learn AI competence</string>
     <string name="home_quick_srs">Review</string>
     <string name="home_quick_srs_desc">Spaced Repetition</string>
     <string name="home_more_kids">For Kids</string>
@@ -231,7 +231,7 @@
 
     <!-- Quiz extracted -->
     <string name="quiz_intro_subtitle">How AI-fit are you?</string>
-    <string name="quiz_intro_description">Test your knowledge of Artificial Intelligence, the EU AI Act, and AI in the workplace. At the end you will receive your personal AI Score to share!</string>
+    <string name="quiz_intro_description">Test your knowledge of Artificial Intelligence, AI regulation, and AI in the workplace. At the end you will receive your personal AI Score to share!</string>
     <string name="quiz_next_question">Next question</string>
     <string name="quiz_stats_correct">Correct</string>
     <string name="quiz_stats_points">Points</string>
@@ -269,4 +269,27 @@
     <string name="error_offline_fallback">Play mini-games offline →</string>
     <string name="error_generic_title">Something went wrong</string>
     <string name="error_generic_retry">Retry</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_kibot_body">KiBot evolves with your progress: the more you learn, the more it grows. Earn XP, maintain your daily streak, and level up.</string>
+    <string name="onboarding_kibot_subtitle">Your AI companion grows with you</string>
+    <string name="onboarding_kibot_title">Learn with KiBot</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_start_body">1. Take the AI Score quiz\n2. Work through the lessons\n3. Review with spaced repetition\n\nLet\'s go!</string>
+    <string name="onboarding_start_cta">Get started</string>
+    <string name="onboarding_start_subtitle">3 steps to success</string>
+    <string name="onboarding_start_title">Ready to start?</string>
+    <string name="onboarding_welcome_body">Learn everything about AI regulation in a fun way: 14 interactive lessons, mini-games, AI Score quiz, and spaced repetition. Understand, don\'t memorize.</string>
+    <string name="onboarding_welcome_subtitle">Your AI competence trainer</string>
+    <string name="onboarding_welcome_title">Welcome to AI Competence</string>
+    <string name="notif_channel_srs">Review reminders</string>
+    <string name="notif_channel_srs_desc">Reminds you of due review cards</string>
+    <string name="notif_channel_general">General</string>
+    <string name="notif_channel_general_desc">General app notifications</string>
+    <string name="notif_srs_title">Review cards ready</string>
+    <string name="notif_srs_body">You have %1$d cards ready for spaced repetition. Review now!</string>
+    <string name="notif_permission_title">Enable notifications</string>
+    <string name="notif_permission_body">Get reminded about due review cards so nothing is forgotten.</string>
+    <string name="notif_permission_grant">Allow notifications</string>
 </resources>

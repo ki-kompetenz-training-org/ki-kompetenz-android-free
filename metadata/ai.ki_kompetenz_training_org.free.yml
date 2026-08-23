@@ -11,24 +11,35 @@ IssueTracker: https://github.com/tobias-weiss-ai-xr/ki-kompetenz-android-free/is
 Changelog: https://github.com/tobias-weiss-ai-xr/ki-kompetenz-android-free/releases
 
 Name: KI Quiz
-Summary: EU AI Act Art. 4 AI literacy training (8 free mini-games)
+Summary: KI-Kompetenz Training (14 Lektionen, 8 Mini-Spiele, KI-Score)
 Description: |-
     KI Quiz — Free Edition (Open Source / F-Droid)
 
-    8 kostenlose Mini-Spiele, KI-Score-Quiz (50 Fragen) und Gamification
-    (XP, Level, Badges, Streaks). Alle Inhalte offline (Room, DSGVO-konform,
-    kein Tracking).
+    14 interaktive Lektionen zur KI-Kompetenz, 8 Mini-Spiele, KI-Score-Quiz
+    und Gamification (XP, Level, Badges, Streaks). Intervall-Wiederholung
+    (Spaced Repetition) mit Erinnerungen.
 
-    Kostenlose Lektionen 1–8 werden vom öffentlichen Server
-    ki-kompetenz-training.org geladen (Login optional).
+    Funktionen:
+    - 14 interaktive Lektionen (Text, Quiz, Klassifikation, Luecken, Risikothermometer)
+    - 8 Mini-Spiele (KI oder Mensch, Prompt-Raten, Bias-Detektiv, u.a.)
+    - KI-Score-Quiz mit 50 Fragen
+    - Intervall-Wiederholung mit Tageserinnerungen
+    - Gamification: XP, Level, Badges, Tages-Serie
+    - Onboarding-Flow fuer Erstnutzer
+    - KiBot 3D-Begleiter (waechst mit dem Level)
+    - 3-sprachig (Deutsch, Englisch, System)
+    - DSGVO-konform: Kein Tracking, keine Werbung, lokale Datenspeicherung
+    - Portraet-Modus, Offline-Modus-Anzeige
+    - Crash-Schutz mit lokalem Fehlerprotokoll
 
-    Premium-Inhalte in der Google-Play-App.
+    Kostenlose Lektionen 1-8 werden vom Server ki-kompetenz-training.org
+    geladen (Login optional). Lektionen 9-14 sind in der Google-Play-Version.
 
 RequiresRoot: 'no'
 
 Builds:
-  - versionName: "1.1.1"
-    versionCode: 9
+  - versionName: "1.2.0"
+    versionCode: 10
     commit: main
     subdir: app
     gradle: yes
@@ -36,5 +47,5 @@ Builds:
 
 AutoUpdateMode: Version
 UpdateCheckMode: HTTP
-CurrentVersion: "1.1.1"
-CurrentVersionCode: 9
+CurrentVersion: "1.2.0"
+CurrentVersionCode: 10
