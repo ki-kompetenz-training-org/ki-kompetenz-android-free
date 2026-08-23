@@ -12,12 +12,12 @@ plugins {
 
 android {
     namespace = "ai.ki_kompetenz_training_org"  // Now matches Google Play requirement
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ai.ki_kompetenz_training_org.free"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         // Read version from version.properties (single source of truth)
         val versionProps = Properties()
         versionProps.load(file("../version.properties").inputStream())

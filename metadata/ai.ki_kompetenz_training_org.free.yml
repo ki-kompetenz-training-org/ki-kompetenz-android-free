@@ -39,8 +39,8 @@ RequiresRoot: 'no'
 
 Builds:
   - versionName: "1.2.0"
-    versionCode: 10
-    commit: main
+    versionCode: 11
+    commit: v1.2.0
     subdir: app
     gradle: yes
     output: build/outputs/apk/release/app-release-unsigned.apk
@@ -48,4 +48,4 @@ Builds:
 AutoUpdateMode: Version
 UpdateCheckMode: HTTP
 CurrentVersion: "1.2.0"
-CurrentVersionCode: 10
+CurrentVersionCode: 11
