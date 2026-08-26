@@ -83,6 +83,7 @@ fun KiKompetenzNavHost(
                 onOpenSrs = { navController.navigate(Routes.SRS) },
                 onOpenForKids = { navController.navigate(Routes.FOR_KIDS) },
                 onOpenForSeniors = { navController.navigate(Routes.FOR_SENIORS) },
+                onOpenMiniGame = { gameId -> navController.navigate(Routes.minigame(gameId)) },
             )
         }
         composable(Routes.QUIZ) {

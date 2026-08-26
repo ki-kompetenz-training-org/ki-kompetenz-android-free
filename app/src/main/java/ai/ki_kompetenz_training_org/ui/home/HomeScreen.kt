@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +31,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
+import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeCard
+import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeViewModel
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
@@ -49,6 +56,7 @@ fun HomeScreen(
     onOpenSrs: () -> Unit,
     onOpenForKids: () -> Unit,
     onOpenForSeniors: () -> Unit,
+    onOpenMiniGame: (String) -> Unit = {},
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: HomeViewModel = viewModel {
@@ -177,6 +185,42 @@ fun HomeScreen(
                 }
             }
         }
+
+        Spacer(Modifier.height(16.dp))
+
+        // ── Daily Challenge card ──
+        val dailyVm: DailyChallengeViewModel = viewModel {
+            DailyChallengeViewModel(
+                DailyChallengeRepository(
+                    app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+                )
+            )
+        }
+        val dailyState by dailyVm.state.collectAsState()
+
+        // Refresh daily challenge state when returning to home screen
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    dailyVm.refresh()
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        }
+
+        DailyChallengeCard(
+            challenge = dailyState.challenge,
+            isCompleted = dailyState.isCompleted,
+            streak = dailyState.streak,
+            xpPreview = dailyState.xpPreview,
+            onStart = {
+                dailyState.challenge?.let { game ->
+                    onOpenMiniGame(game.id)
+                }
+            },
+        )
 
         Spacer(Modifier.height(16.dp))
 

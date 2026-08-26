@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
@@ -39,8 +40,13 @@ import ai.ki_kompetenz_training_org.data.minigames.currentLang
 @Composable
 fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
     val app = KiKompetenzApp.from(LocalContext.current)
+    val dailyRepo = remember {
+        DailyChallengeRepository(
+            app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+        )
+    }
     val vm: MiniGameViewModel = viewModel(key = game.id) {
-        MiniGameViewModel(game, app.gamificationRepository)
+        MiniGameViewModel(game, app.gamificationRepository, dailyRepo)
     }
     val state by vm.state.collectAsState()
 

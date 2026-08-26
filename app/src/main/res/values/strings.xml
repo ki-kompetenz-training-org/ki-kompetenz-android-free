@@ -292,4 +292,12 @@
     <string name="notif_permission_title">Benachrichtigungen aktivieren</string>
     <string name="notif_permission_body">Lass dich an faellige Wiederholungskarten erinnern, damit nichts vergessen wird.</string>
     <string name="notif_permission_grant">Benachrichtigungen erlauben</string>
+    <string name="daily_challenge_title">Taegliche Herausforderung</string>
+    <string name="daily_challenge_subtitle">Spiele das Mini-Spiel des Tages</string>
+    <string name="daily_challenge_start">Starten</string>
+    <string name="daily_challenge_completed">Heute erledigt!</string>
+    <string name="daily_challenge_come_back">Morgen wieder da. Streak: %1$d</string>
+    <string name="daily_challenge_streak">Streak: %1$d</string>
+    <string name="daily_challenge_xp_preview">+%1$d XP</string>
+    <string name="daily_challenge_xp_earned">+%1$d XP verdient!</string>
 </resources>
