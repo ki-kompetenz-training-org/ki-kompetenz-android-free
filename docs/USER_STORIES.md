@@ -644,3 +644,263 @@
 - /api/ki-score/lead (POST: speichert Lead)
 - /api/content/ki-score (GET: Fragen fuer KI-Score)
 - DSGVO: Lead-Daten minimiert, nur bei Einwilligung
+
+---
+
+## EPIC: Onboarding & First Experience
+
+### US-51: Personalisierte Onboarding-Einstellungen
+**Als** neuer Nutzer
+**moechte ich** beim Onboarding meine Lernziele auswaehlen,
+**damit** die App Inhalte passend zu meinen Interessen vorschlaegt.
+
+**Akzeptanzkriterien:**
+- Onboarding erweitert: Schritt 4 mit Lernziel-Auswahl (Beruf, Studium, Privat, Kinder)
+- Auswahl wird in SharedPreferences gespeichert
+- HomeScreen zeigt personalisierte Empfehlungen basierend auf Auswahl
+- Nutzer kann Auswahl spaeter in Einstellungen aendern
+
+### US-52: AHA-Moment in ersten 60 Sekunden
+**Als** neuer Nutzer
+**moechte ich** innerhalb der ersten 60 Sekunden ein Erfolgserlebnis haben,
+**damit** ich motiviert bleibe, die App weiter zu nutzen.
+
+**Akzeptanzkriterien:**
+- Erste Interaktion (z.B. Mini-Game oder Quiz) direkt nach Onboarding
+- Sofortiges XP-Feedback nach erster Aktion
+- Visuelles Success-Feedback (Animation, Sound-Option)
+- Tagesziel-Fortschritt sichtbar nach erster Aktion
+
+### US-53: Interaktives Tutorial
+**Als** neuer Nutzer
+**moechte ich** ein kurzes interaktives Tutorial der Hauptfunktionen,
+**damit** ich die App schnell verstehen kann.
+
+**Akzeptanzkriterien:**
+- Tutorial-Overlay beim ersten Oeffnen der HomeScreen
+- Highlights fuer: Lektionen, Mini-Games, KI-Score, Intervall-Wiederholung
+- Skip-Button jederzeit verfuegbar
+- Tutorial wird nicht erneut angezeigt nach Abschluss
+
+---
+
+## EPIC: Offline-First & Performance
+
+### US-54: Offline-Lektionen
+**Als** Nutzer mit schlechter Internetverbindung
+**moechte ich** Lektionen offline lesen,
+**damit** ich auch ohne Internet lernen kann.
+
+**Akzeptanzkriterien:**
+- Alle 14 interaktiven Lektionen sind lokal gespeichert (kein API-Aufruf noetig)
+- InteractiveLessonScreen funktioniert ohne Netzwerk
+- ForKids- und ForSeniors-Lektionen funktionieren vollstaendig offline
+- Offline-Indikator wird angezeigt wenn keine Verbindung
+
+### US-55: Lernfortschritt synchronisieren
+**Als** Nutzer mit Geraetewechsel
+**moechte ich** meinen Lernfortschritt synchronisieren,
+**damit** ich auf einem neuen Geraet dort weitermachen kann, wo ich aufgehört habe.
+
+**Akzeptanzkriterien:**
+- Fortschritt (XP, Level, Streak, abgeschlossene Lektionen) wird serverseitig gespeichert
+- Beim Login auf neuem Geraet wird Fortschritt geladen
+- Konfliktloesung: hoechster Stand gewinnt bei Konflikt
+- Sync erfolgt automatisch im Hintergrund
+
+### US-56: Caching fuer Quiz-Fragen
+**Als** Nutzer
+**moechte ich** dass Quiz-Fragen gecacht werden,
+**damit** das Quiz schnell laedt auch bei langsamer Verbindung.
+
+**Akzeptanzkriterien:**
+- Quiz-Fragen werden in Room-Datenbank gecacht
+- Cache-Gueltigkeit: 24 Stunden
+- Bei Cache-Hit: sofortige Anzeige
+- Bei Cache-Miss: API-Aufruf mit Lade-Indikator
+
+---
+
+## EPIC: Gamification Deepening
+
+### US-57: Wochen-Challenge
+**Als** motivierter Nutzer
+**moechte ich** eine woechentliche Herausforderung haben,
+**damit** ich regelmaessig ueber mehrere Tage hinweg lerne.
+
+**Akzeptanzkriterien:**
+- Woechentliche Challenge: 7 Tages-Challenges an 7 aufeinanderfolgenden Tagen
+- Fortschrittsbalken zeigt 0/7 bis 7/7
+- Abschluss-Bonus: 100 XP bei allen 7 Tagen
+- Wochen-Challenge wird jeden Montag zurueckgesetzt
+- Separate Streak-Anzeige fuer Wochen-Challenge
+
+### US-58: Erfolge (Achievements)
+**Als** Nutzer
+**moechte ich** spezielle Erfolge freischalten,
+**damit** ich额外 motiviert bin, ungewoehnliche Ziele zu erreichen.
+
+**Akzeptanzkriterien:**
+- 10+ Achievements definiert (z.B. "Erste Woche", "100 Quiz-Fragen", "Alle Lektionen", "30-Tage-Streak")
+- Achievement-Notification bei Freischaltung
+- Achievements-Screen mit Liste aller Erfolge (freigeschaltet/gesperrt)
+- EP-Bonus bei Achievement-Freischaltung
+
+### US-59: Lerngruppen
+**Als** Nutzer
+**moechte ich** mit Freunden eine Lerngruppe bilden,
+**damit** wir gemeinsam motiviert bleiben.
+
+**Akzeptanzkriterien:**
+- Gruppe erstellen mit Code-Einladung
+- Gruppen-Leaderboard (anonym)
+- Gemeinsamer Wochen-Challenge-Fortschritt
+- Gruppen-Chat nur fuer Mitglieder (ohne PII)
+- DSGVO: Keine persoenlichen Daten, nur App-interne IDs
+
+---
+
+## EPIC: Accessibility & Inclusion
+
+### US-60: Screen-Reader-Unterstuetzung
+**Als** sehbeeintraechtigter Nutzer
+**moechte ich** die App mit Screen-Reader nutzen koennen,
+**damit** ich alle Funktionen barrierefrei erreichen kann.
+
+**Akzeptanzkriterien:**
+- Alle interaktiven Elemente haben contentDescription
+- Mini-Game-Optionen werden fuer TalkBack vorgelesen
+- Lektionsinhalt ist semantisch strukturiert (heading, paragraph)
+- Fokus-Reihenfolge ist logisch (oben nach unten)
+- Test mit TalkBack: alle Screens navigierbar
+
+### US-61: Kontrast-Modi und Schriftgroesse
+**Als** Nutzer mit Seheinschraenkung
+**moechte ich** Kontrast und Schriftgroesse anpassen,
+**damit** ich die Inhalte gut lesen kann.
+
+**Akzeptanzkriterien:**
+- Dark Mode / Light Mode / High-Contrast-Modus
+- Schriftgroesse: Systemeinstellung wird respektiert (Small, Default, Large, Huge)
+- Mindestens WCAG 2.1 AA Kontrast (4.5:1) in allen Modi
+- Einstellung wird in SharedPreferences gespeichert
+
+### US-62: Reduzierte Animationen
+**Als** Nutzer mit Motion-Sensitivity
+**moechte ich** Animationen deaktivieren koennen,
+**damit** ich die App ohne Unwohlsein nutzen kann.
+
+**Akzeptanzkriterien:**
+- Einstellung "Animationen reduzieren" in Settings
+- Wenn aktiviert: keine Partikel, keine Uebergangs-Animationen
+- Systemeinstellung "Reduce Motion" wird respektiert
+- Sofortige Anwendung ohne App-Neustart
+
+---
+
+## EPIC: Data Export & Portability
+
+### US-63: DSGVO-Datenexport
+**Als** Nutzer
+**moechte ich** alle meine Daten als JSON exportieren,
+**damit** ich der DSGVO-Auskunftspflicht nachkommen kann.
+
+**Akzeptanzkriterien:**
+- Einstellungen > "Meine Daten exportieren"
+- Exportiert: XP, Level, Streak, abgeschlossene Lektionen, Quiz-Ergebnisse, Einstellungen
+- Format: JSON-Datei mit Zeitstempel
+- Keine PII ausser Nutzernamen (falls eingeloggt)
+- Export funktioniert offline (alle Daten lokal)
+
+### US-64: Fortschritts-Backup
+**Als** Nutzer
+**moechte ich** meinen Fortschritt als Datei sichern,
+**damit** ich ihn bei Neuinstallation wiederherstellen kann.
+
+**Akzeptanzkriterien:**
+- Backup: Speichert SharedPreferences als verschluesselte Datei
+- Restore: Importiert Backup-Datei und stellt Fortschritt wieder her
+- Backup enthaelt: XP, Level, Streak, Daily-Challenge-Streak, abgeschlossene Lektionen
+- Bestaetigungs-Dialog vor Restore (ueberschreibt aktuelle Daten)
+
+### US-65: Konto-Loeschung (DSGVO Art. 17)
+**Als** Nutzer
+**moechte ich** mein Konto und alle Daten loeschen,
+**damit** ich mein Recht auf Vergessenwerden ausueben kann.
+
+**Akzeptanzkriterien:**
+- Account-Loeschung verfuegbar in Einstellungen
+- Bestaetigungs-Dialog mit Typ-Bestätigung ("LOESCHEN" eingeben)
+- Loeschung entfernt: Konto, Fortschritt, Cache, Token lokal
+- Bei eingeloggtem Nutzer: API-Aufruf an /api/auth/delete-account
+- Erfolgs-Bestaetigung nach Loeschung
+- App kehrt zum Onboarding zurueck
+
+---
+
+## EPIC: Content Quality & Validation
+
+### US-66: Content-Review-Pipeline
+**Als** Entwickler
+**moechte ich** dass alle Lektionsinhalte automatisch validiert werden,
+**damit** keine fehlerhaften oder unvollstaendigen Inhalte ausgeliefert werden.
+
+**Akzeptanzkriterien:**
+- Unit-Tests pruefen alle 14 Lektionen auf: nicht-leere Titel, Beschreibungen, Bloecke
+- Unit-Tests pruefen alle Quiz-Optionen: genau 1 korrekte Antwort
+- Unit-Tests pruefen alle Kids/Seniors-Lektionen: Quiz-Struktur, Optionen-Anzahl
+- CI-Pipeline blockiert bei fehlerhaften Inhalten
+- Tests laufen bei jedem PR
+
+### US-67: Nutzer-Feedback-Kanal
+**Als** Nutzer
+**moechte ich** Feedback zu Lektionen geben koennen,
+**damit** die Inhalte verbessert werden koennen.
+
+**Akzeptanzkriterien:**
+- Feedback-Button am Ende jeder Lektion (Daumen hoch/runter)
+- Optionaler Freitext-Kommentar (max 500 Zeichen)
+- Feedback wird lokal gespeichert und bei naechster Sync gesendet
+- DSGVO: Keine PII, nur App-Version und Lektions-ID
+- Aggregiertes Feedback in Admin-Dashboard sichtbar
+
+### US-68: Content-Versioning
+**Als** Content-Manager
+**moechte ich** Lektionen versionieren,
+**damit** ich Aenderungen nachverfolgen kann.
+
+**Akzeptanzkriterien:**
+- Jede Lektion hat eine Versionsnummer
+- Bei Inhaltsaenderung wird Version inkrementiert
+- Nutzer sieht "Aktualisiert am"-Datum bei geaenderten Lektionen
+- Bei Major-Update: Lektion wird als "Neu" markiert
+
+---
+
+## EPIC: Multi-Platform Consistency
+
+### US-69: Feature-Paritaet Android und Web
+**Als** Nutzer der Android-App und Website
+**moechte ich** die gleichen Funktionen auf beiden Plattformen finden,
+**damit** ich nahtlos zwischen Geraet und Browser wechseln kann.
+
+**Akzeptanzkriterien:**
+- Mini-Games: 8 Spiele auf beiden Plattformen identisch
+- Daily Challenge: Gleiche Auswahl, gleiche XP-Regeln
+- Lektionen: 14 interaktive Lektionen auf beiden Plattformen
+- Gamification: XP, Level, Streak, Badges konsistent
+- SRS: Intervall-Wiederholung auf beiden Plattformen
+- ForKids und ForSeniors auf beiden Plattformen
+
+### US-70: Einheitliches Design-System
+**Als** Nutzer
+**moechte ich** ein konsistentes visuelles Erlebnis,
+**damit** die App professionell und vertrauenswuerdig wirkt.
+
+**Akzeptanzkriterien:**
+- Farbpalette: Material 3 auf Android, Tailwind aequivalent auf Web
+- Typography: Gleiche Hierarchie (Headline, Body, Caption)
+- Spacing: Konsistente Abstaende (4dp/8dp/16dp/24dp)
+- Eckradius: Konsistent (8dp/12dp/16dp)
+- Dark Mode auf beiden Plattformen
+- Icon-Set: Gleiche Ikonographie (Material Icons / Lucide)
