@@ -7,7 +7,7 @@
     <string name="home_hero_question">How AI-fit are you?</string>
     <string name="home_hero_answer">Find out the playful way.</string>
     <string name="home_quiz_cta">Take the AI Score</string>
-    <string name="home_quiz_subtitle">10 questions · 5 levels · share your result</string>
+    <string name="home_quiz_subtitle">Questions · Levels · share your result</string>
     <string name="home_level">⭐ Level %1$s</string>
     <string name="home_xp">%1$s XP</string>
     <string name="home_streak">🔥 %1$s day streak</string>
@@ -17,10 +17,10 @@
     <string name="home_premium_active">✓ Premium active</string>
     <string name="home_premium_upsell">Basic — Unlock Premium now</string>
     <string name="home_feature_lessons">Lessons</string>
-    <string name="home_feature_lessons_desc">14 lessons on AI competence — lessons 1-8 free</string>
+    <string name="home_feature_lessons_desc">Lessons on AI competence — lessons 1-8 free</string>
     <string name="home_feature_lessons_action">Open lessons</string>
     <string name="home_feature_quiz">AI Score Quiz</string>
-    <string name="home_feature_quiz_desc">10 questions · 5 levels · share your result</string>
+    <string name="home_feature_quiz_desc">Questions · Levels · share your result</string>
     <string name="home_feature_quiz_action">Start quiz</string>
     <string name="home_feature_games">AI Mini-Games</string>
     <string name="home_feature_games_desc">Human or AI? · Fact or Hallucination? · High-Risk Blitz</string>
@@ -92,7 +92,7 @@
     <string name="premium_price">€6.99/month per seat · billed per user</string>
     <string name="premium_f1">14 interactive lessons</string>
     <string name="premium_f1_desc">Complete AI competence curriculum</string>
-    <string name="premium_f2">300+ practice questions</string>
+    <string name="premium_f2">Practice questions</string>
     <string name="premium_f2_desc">Spaced repetition for lasting learning</string>
     <string name="premium_f3">Audit-ready certificate</string>
     <string name="premium_f3_desc">Personal AI competence proof</string>
@@ -104,7 +104,7 @@
     <string name="premium_f6_desc">Monthly, no commitment</string>
     <string name="premium_cta">Discover Premium in Google Play</string>
     <string name="srs_no_cards">No cards available</string>
-    <string name="premium_trust">KI-Kompetenz-Training (Google Play). Unlock Premium via the web store (Stripe) — all 14 lessons + spaced repetition + certificate.</string>
+    <string name="premium_trust">KI-Kompetenz-Training (Google Play). Unlock Premium via the web store (Stripe) — all lessons + spaced repetition + certificate.</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Your Profile</string>
@@ -124,12 +124,12 @@
     <!-- Lessons -->
     <string name="lessons_title">Lessons</string>
     <string name="lessons_back">Back</string>
-    <string name="lessons_subtitle">14 lessons on AI competence — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
+    <string name="lessons_subtitle">Lessons on AI competence — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
     <string name="lessons_premium">Premium</string>
     <string name="lessons_unlock_cta">Unlock all lessons — Premium</string>
     <string name="lesson_mark_complete">✓ Complete lesson (+%1$d XP)</string>
     <string name="lesson_premium_gate_title">Premium lesson</string>
-    <string name="lesson_premium_gate_text">Lesson %1$s is part of the Premium training. Unlock Premium to get all 14 lessons, spaced repetition and the certificate.</string>
+    <string name="lesson_premium_gate_text">Lesson %1$s is part of the Premium training. Unlock Premium to get all lessons, spaced repetition and the certificate.</string>
     <string name="lesson_premium_cta">Unlock Premium now</string>
     <string name="lesson_premium_price">€6.99/month per seat · cancel anytime</string>
 
@@ -182,7 +182,7 @@
     <string name="common_loading">Loading…</string>
     <string name="common_error">Please wait…</string>
     <string name="common_premium_badge">Unlock Premium</string>
-    <string name="common_premium_gate_desc">is part of the Premium training. Unlock Premium to access all 14 lessons, Spaced Repetition, and the certificate.</string>
+    <string name="common_premium_gate_desc">is part of the Premium training. Unlock Premium to access all lessons, Spaced Repetition, and the certificate.</string>
 
     <!-- Accessibility -->
     <string name="a11y_streak_fire">Day streak</string>

@@ -7,7 +7,7 @@
     <string name="home_hero_question">Wie KI-fit bist du?</string>
     <string name="home_hero_answer">Finde es spielerisch heraus.</string>
     <string name="home_quiz_cta">KI-Score spielen</string>
-    <string name="home_quiz_subtitle">10 Fragen · 5 Level · Ergebnis teilen</string>
+    <string name="home_quiz_subtitle">Fragen · Level · Ergebnis teilen</string>
     <string name="quiz_subtitle">Wie KI-fit bist du?</string>
     <string name="home_level">⭐ Level %1$s</string>
     <string name="home_xp">%1$s XP</string>
@@ -21,7 +21,7 @@
     <string name="home_feature_lessons_desc">14 Lektionen zur KI-Kompetenz — Lektion 1-8 kostenlos</string>
     <string name="home_feature_lessons_action">Lektionen öffnen</string>
     <string name="home_feature_quiz">KI-Score Quiz</string>
-    <string name="home_feature_quiz_desc">10 Fragen · 5 Level · Ergebnis teilen</string>
+    <string name="home_feature_quiz_desc">Fragen · Level · Ergebnis teilen</string>
     <string name="home_feature_quiz_action">Quiz starten</string>
     <string name="home_feature_games">KI-Mini-Spiele</string>
     <string name="home_feature_games_desc">KI oder Mensch? · Fakt oder Halluzination? · Hochrisiko-Blitz</string>
@@ -90,9 +90,9 @@
     <string name="premium_back">Zurück</string>
     <string name="premium_plan_name">KI Quiz — Premium</string>
     <string name="premium_price">€6,99/Monat pro Sitzplatz · jeder Nutzer individuell</string>
-    <string name="premium_f1">14 interaktive Lektionen</string>
+    <string name="premium_f1">Interaktive Lektionen</string>
     <string name="premium_f1_desc">Kompletter KI-Kompetenz-Lehrplan</string>
-    <string name="premium_f2">300+ Praxis-Fragen</string>
+    <string name="premium_f2">Praxis-Fragen</string>
     <string name="premium_f2_desc">Intervall-Wiederholung für nachhaltiges Lernen</string>
     <string name="premium_f3">Audit-fähiges Zertifikat</string>
     <string name="premium_f3_desc">Persönlicher KI-Kompetenz-Nachweis</string>
@@ -280,7 +280,7 @@
     <string name="onboarding_start_cta">Jetzt starten</string>
     <string name="onboarding_start_subtitle">3 Schritte zum Erfolg</string>
     <string name="onboarding_start_title">Bereit zum Start?</string>
-    <string name="onboarding_welcome_body">Lerne spielerisch alles ueber KI-Regulierung: 14 interaktive Lektionen, Mini-Spiele, KI-Score-Quiz und Intervall-Wiederholung. Verstehen statt auswendig lernen.</string>
+    <string name="onboarding_welcome_body">Lerne spielerisch alles ueber KI-Regulierung: Interaktive Lektionen, Mini-Spiele, KI-Score-Quiz und Intervall-Wiederholung. Verstehen statt auswendig lernen.</string>
     <string name="onboarding_welcome_subtitle">Dein Trainer fuer KI-Kompetenz</string>
     <string name="onboarding_welcome_title">Willkommen bei KI-Kompetenz</string>
     <string name="notif_channel_srs">Wiederholungs-Erinnerungen</string>
