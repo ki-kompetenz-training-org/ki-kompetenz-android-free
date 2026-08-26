@@ -904,3 +904,138 @@
 - Eckradius: Konsistent (8dp/12dp/16dp)
 - Dark Mode auf beiden Plattformen
 - Icon-Set: Gleiche Ikonographie (Material Icons / Lucide)
+
+## EPIC: Content Authoring & Editing
+
+### US-71: Inline-Content-Editor
+Als Content-Manager moechte ich Lektionen und Quiz-Fragen direkt im Admin-Bereich der Website bearbeiten koennen, ohne Code-Aenderungen zu erforderen, damit ich Inhalte schnell aktualisieren kann.
+- Admin-Dashboard mit Markdown-Editor fuer Lektionen
+- Quiz-Fragen Editor mit Vorschau
+- Versionierung und Rollback
+
+### US-72: Mehrsprachige Content-Verwaltung
+Als Content-Manager moechte ich Inhalte in mehreren Sprachen (DE, EN, FR, ZH) verwalten koennen, damit Nutzer weltweit lernen koennen.
+- Uebersetzungsschnittstelle fuer alle Inhalte
+- Automatische Erkennung fehlender Uebersetzungen
+- Sprachspezifische Vorschau
+
+### US-73: Content-Validierung
+Als Content-Manager moechte ich eine Validierung fuer Quiz-Fragen haben, die prueft, ob jede Frage genau eine korrekte Antwort hat, erklaerungen vorhanden sind und Optionen nicht leer sind, damit fehlerhafte Inhalte nicht publiziert werden.
+- Automatische Validierung beim Speichern
+- Warnung bei fehlenden Erklaerungen
+- Blockierung bei mehreren korrekten Antworten
+
+### US-74: Content-Import und -Export
+Als Content-Manager moechte ich Inhalte als JSON/CSV importieren und exportieren koennen, damit ich Inhalte zwischen Systemen migrieren kann.
+- Export aller Lektionen als JSON
+- Import von Quiz-Fragen aus CSV
+- Validierung beim Import
+
+## EPIC: Analytics & Insights
+
+### US-75: Lernfortschritts-Analytics
+Als Nutzer moechte ich detaillierte Statistiken ueber meinen Lernfortschritt sehen (Fragen beantwortet, Genauigkeit, Zeit pro Frage, Schwaechebereiche), damit ich weiss, wo ich mich verbessern muss.
+- Dashboard mit Fortschrittsdiagrammen
+- Kategorien-basierte Genauigkeitsanalyse
+- Trend-Analyse ueber 7/30/90 Tage
+
+### US-76: Vergleich mit Durchschnitt
+Als Nutzer moechte ich meinen Fortschritt mit dem Durchschnitt anderer Nutzer vergleichen koennen, damit ich meine Leistung realistisch einschaetzen kann.
+- Anonymisierter Vergleichs-Durchschnitt
+- Prozent-Ranking
+- Schwaeche-Bereich im Vergleich
+
+### US-77: Lernzeit-Tracking
+Als Nutzer moechte ich sehen, wie viel Zeit ich insgesamt gelernt habe, damit ich meine Lerngewohnheiten optimieren kann.
+- Automatische Zeiterfassung pro Session
+- Wochen- und Monatsuebersicht
+- Durchschnittliche Session-Laenge
+
+## EPIC: Search & Discovery
+
+### US-78: Volltext-Suche
+Als Nutzer moechte ich alle Lektionen, Quiz-Fragen und Mini-Spiele durchsuchen koennen, damit ich gezielt Themen finden kann.
+- Suchfeld mit Autovervollstaendigung
+- Highlighting von Treffern
+- Filter nach Inhaltstyp (Lektion, Quiz, Spiel)
+
+### US-79: Empfohlene Lektionen
+Als Nutzer moechte ich personalisierte Lektionsempfehlungen erhalten, basierend auf meinen Schwaechebereichen, damit ich effizient lerne.
+- Algorithmus basierend auf falsch beantworteten Fragen
+- Empfehlung auf dem Dashboard
+- Empfehlung nach每Quiz-Session
+
+### US-80: Kategorien-Filter
+Als Nutzer moechte ich Lektionen und Spiele nach Kategorien filtern koennen (z.B. Grundlagen, Ethik, DSGVO, Prompt-Engineering), damit ich gezielt Themen vertiefen kann.
+- Filter-Chips auf Lektions- und Spiele-Seite
+- Mehrfachauswahl moeglich
+- Kombination mit Suchfunktion
+
+## EPIC: Social Learning
+
+### US-81: Lerngruppen
+Als Nutzer moechte ich Lerngruppen erstellen und beitreten koennen, damit ich mit anderen gemeinsam KI-Kompetenz aufbauen kann.
+- Gruppe erstellen mit Name und Beschreibung
+- Einladungs-Link
+- Gemeinsames Leaderboard innerhalb der Gruppe
+
+### US-82: Geteilte Fortschritte
+Als Nutzer moechte ich meinen Lernfortschritt mit Freunden teilen koennen, damit wir uns gegenseitig motivieren.
+- Share-Button mit generiertem Bild (Zertifikat-Style)
+- Social-Media-Teilen (WhatsApp, Telegram, E-Mail)
+- Optional: Oeffentliches Profil mit Fortschritt
+
+### US-83: Monats-Herausforderung
+Als Nutzer moechte ich monatliche Herausforderungen haben (z.B. "Beantworte 50 Fragen in 30 Tagen"), damit ich langfristig motiviert bleibe.
+- Automatische Challenge-Generierung
+- Fortschrittsanzeige
+- Belohnung bei Abschluss (Badge + XP)
+
+## EPIC: Certification & Assessment
+
+### US-84: Zertifikat-Generierung
+Als Nutzer moechte ich nach Abschluss eines Kurses ein PDF-Zertifikat mit meinem Namen, Score und Datum erhalten, das ich als Nachweis verwenden kann.
+- PDF-Generierung mit Name, Score, Tier, Datum
+- Verifizierungs-URL und QR-Code
+- Download und Teilen-Funktion
+
+### US-85: KI-Score-Assessment
+Als Nutzer moechte ich einen umfassenden KI-Score-Test absolvieren koennen, der mein Wissen in allen Bereichen prueft und einen Score von 0-1000 liefert.
+- 30+ Fragen ueber alle KI-Domaene
+- Score-Berechnung mit Gewichtung
+- Tier-Einstufung (KI-Novize bis KI-Visionaer)
+- Teilen des Scores mit Freunden
+
+### US-86: Pruefungs-Modus
+Als Nutzer moechte ich einen zeitgesteuerten Pruefungs-Modus haben, in dem ich 20 Fragen in 15 Minuten beantworten muss, um meine KI-Kompetenz unter Zeitdruck zu testen.
+- Timer mit Countdown
+- Automatische Auswertung
+- Ergebnisse mit Erklaerungen nach Abschluss
+
+### US-87: Wiederholungs-Modus
+Als Nutzer moechte ich falsch beantwortete Fragen gezielt wiederholen koennen, damit ich aus meinen Fehlern lerne.
+- Sammlung falscher Fragen
+- Intervall-Wiederholung fuer falsche Fragen
+- Statistik ueber Verbesserung
+
+## EPIC: API & Integration
+
+### US-88: OEffentliche API
+Als Entwickler moechte ich eine oeffentliche REST-API nutzen koennen, um KI-Kompetenz-Daten in andere Anwendungen zu integrieren.
+- API-Dokumentation (OpenAPI/Swagger)
+- API-Key-Authentifizierung
+- Rate-Limiting (60 Req/Min)
+- Endpoints: Lektionen, Quiz, Mini-Spiele, Score
+
+### US-89: Webhook-Integration
+Als Entwickler moechte ich Webhooks fuer Ereignisse (z.B. Nutzer-Registrierung, Zertifikat-Abschluss) konfigurieren koennen, damit ich externe Systeme synchronisieren kann.
+- Webhook-Konfiguration im Dashboard
+- HMAC-Signatur fuer Verifizierung
+- Retry bei Fehlern
+
+### US-90: SDK fuer Mobile
+Als Entwickler moechte ich ein TypeScript-SDK fuer die Integration der KI-Kompetenz-API in mobile Anwendungen (React Native, Expo) haben.
+- NPM-Paket mit TypeScript-Typen
+- Automatische Token-Erneuerung
+- Offline-Caching
+
