@@ -149,6 +149,49 @@ fun HomeScreen(
                         Text(if (state.checkedInToday) stringResource(R.string.home_checked_in) else stringResource(R.string.home_checkin))
                     }
                 }
+                if (state.missions.isNotEmpty()) {
+                    Spacer(Modifier.height(6.dp))
+                    val done = state.missions.count { it.completed }
+                    Text(
+                        if (done == state.missions.size)
+                            stringResource(R.string.home_missions_chip_done)
+                        else
+                            stringResource(R.string.home_missions_chip, done, state.missions.size),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // ── Lektionen: zentrale Lern-Einstieg — immer im Vordergrund ──
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+            onClick = onOpenLessons,
+        ) {
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("📖", style = MaterialTheme.typography.titleLarge)
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.home_lessons_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            stringResource(R.string.home_lessons_progress, state.lessonProgress, state.totalLessons),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Text(stringResource(R.string.home_lessons_cta), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                }
+                Spacer(Modifier.height(10.dp))
+                LinearProgressIndicator(
+                    progress = { (state.lessonProgress.toFloat() / state.totalLessons.coerceAtLeast(1)).coerceIn(0f, 1f) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
 
@@ -192,41 +235,6 @@ fun HomeScreen(
                 }
             },
         )
-
-        if (state.missions.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                onClick = onOpenGamification,
-            ) {
-                Column(Modifier.padding(14.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.mission_section_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
-                        Spacer(Modifier.weight(1f))
-                        val done = state.missions.count { it.completed }
-                        Text(
-                            if (done == state.missions.size) stringResource(R.string.mission_complete_tag) else "$done/${state.missions.size}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = if (done == state.missions.size) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    Spacer(Modifier.height(8.dp))
-                    val firstOpen = state.missions.firstOrNull { !it.completed }
-                    if (firstOpen != null) {
-                        Text(
-                            ai.ki_kompetenz_training_org.ui.gamification.missionTitle(firstOpen.id),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        LinearProgressIndicator(
-                            progress = { (firstOpen.progress.toFloat() / firstOpen.target).coerceIn(0f, 1f) },
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                    }
-                }
-            }
-        }
 
         Spacer(Modifier.height(16.dp))
 

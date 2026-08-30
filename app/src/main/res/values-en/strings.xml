@@ -359,4 +359,9 @@
     <string name="mission_title_srs_cards">Answer 20 review cards</string>
     <string name="mission_title_lessons">Complete 2 lessons</string>
     <string name="mission_title_daily">Complete 3 daily challenges</string>
+    <string name="home_lessons_title">Lessons</string>
+    <string name="home_lessons_progress">%1$d of %2$d lessons completed</string>
+    <string name="home_lessons_cta">Continue learning</string>
+    <string name="home_missions_chip">Missions: %1$d/%2$d</string>
+    <string name="home_missions_chip_done">All missions done ✓</string>
 </resources>

@@ -25,6 +25,8 @@ data class HomeUiState(
     val checkedInToday: Boolean = false,
     val lastCheckInDay: String? = null,
     val missions: List<ai.ki_kompetenz_training_org.ui.gamification.MissionUi> = emptyList(),
+    val lessonProgress: Int = 0,
+    val totalLessons: Int = 12,
 )
 
 class HomeViewModel(
@@ -52,6 +54,13 @@ class HomeViewModel(
                     checkedInToday = entity?.lastCheckInDay == java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE),
                     lastCheckInDay = entity?.lastCheckInDay,
                     missions = readMissions(),
+                )
+            }
+        }
+        viewModelScope.launch {
+            gamificationRepository.observeLessonProgress().collect { completed ->
+                _state.value = _state.value.copy(
+                    lessonProgress = completed.size,
                 )
             }
         }
