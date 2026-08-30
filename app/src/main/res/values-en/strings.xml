@@ -300,4 +300,18 @@
     <string name="daily_challenge_streak">Streak: %1$d</string>
     <string name="daily_challenge_xp_preview">+%1$d XP</string>
     <string name="daily_challenge_xp_earned">+%1$d XP earned!</string>
+    <string name="games_start">Start</string>
+    <string name="games_score">Score</string>
+    <string name="games_time">Time</string>
+    <string name="games_streak">Streak</string>
+    <string name="games_retry">Retry</string>
+    <string name="games_arena_howto_orb">Scan orbs, read the AI statement and decide: fact or risk?</string>
+    <string name="games_arena_howto_maze">Steer to the green goal. An AI statement awaits there: fact or risk?</string>
+    <string name="games_arena_howto_snipe">Collect blue facts, blast red fakes with fire. Do not hit facts!</string>
+    <string name="games_arena_won">Achieved!</string>
+    <string name="games_arena_lost">Close! Try again</string>
+    <string name="games_arena_classified">Classified: %1$d of %2$d correct</string>
+    <string name="games_arena_review">Recommended for review</string>
+    <string name="games_arena_xp">Score: %1$d / Target %2$d  |  XP +%3$d</string>
+    <string name="games_arena_badge">Real-time arena</string>
 </resources>

@@ -212,7 +212,9 @@ private fun GameCard(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    if (game.premium) {
+                    if (game.isArena3D) {
+                        stringResource(R.string.games_arena_badge)
+                    } else if (game.premium) {
                         if (locked) stringResource(R.string.games_premium_locked, game.rounds.size)
                         else stringResource(R.string.games_premium_round_count, game.rounds.size)
                     } else {

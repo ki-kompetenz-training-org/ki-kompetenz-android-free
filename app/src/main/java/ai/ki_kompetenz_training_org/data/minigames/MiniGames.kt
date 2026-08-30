@@ -1,5 +1,6 @@
 package ai.ki_kompetenz_training_org.data.minigames
 
+import ai.ki_kompetenz_training_org.data.minigames3d.GameMode
 import java.util.Locale
 
 /**
@@ -27,6 +28,8 @@ data class MiniGameRound(
     fun explanation(lang: String): String = if (lang == "de") explanationDe else explanationEn
 }
 
+enum class MiniGameKind { QUIZ, ARENA_3D }
+
 data class MiniGame(
     val id: String, 
     val emoji: String,
@@ -35,9 +38,14 @@ data class MiniGame(
     val rounds: List<MiniGameRound>, 
     val premium: Boolean = false,
     val difficulty: Difficulty = Difficulty.BEGINNER,
+    val kind: MiniGameKind = MiniGameKind.QUIZ,
+    val threeMode: GameMode? = null,
 ) {
     fun title(lang: String): String = if (lang == "de") titleDe else titleEn
     fun description(lang: String): String = if (lang == "de") descriptionDe else descriptionEn
+
+    /** True if this is a real-time arena (3D-style) minigame. */
+    val isArena3D: Boolean get() = kind == MiniGameKind.ARENA_3D && threeMode != null
 }
 
 enum class Difficulty(val displayNameDe: String, val displayNameEn: String, val xpMultiplier: Float) {
@@ -861,6 +869,35 @@ object MiniGames {
         premium = false,
     )
 
+    // ── FREE 3D ARENA GAMES (individualized AI-literacy, real-time) ──────
+    private val orb_hunt = MiniGame(
+        id = "orb_hunt", emoji = "🕵️",
+        titleDe = "KI-Detektiv: Orb-Hunt", titleEn = "AI Detective: Orb Hunt",
+        descriptionDe = "3D-Arena: Sammle die blauen Wahrheits-Orbs und meide die roten KI-Halluzinationen.",
+        descriptionEn = "3D arena: collect the blue truth orbs and avoid the red AI hallucinations.",
+        rounds = emptyList(),
+        kind = MiniGameKind.ARENA_3D,
+        threeMode = GameMode.ORB_HUNT,
+    )
+    private val maze_run = MiniGame(
+        id = "maze_run", emoji = "🌀",
+        titleDe = "KI-Labyrinth", titleEn = "AI Labyrinth",
+        descriptionDe = "3D-Arena: Steuere den Lernenden durch das Labyrinth zum grünen Wahrheits-Ziel und meide die roten Halluzinationen.",
+        descriptionEn = "3D arena: steer the learner through the maze to the green truth goal, dodging the red hallucinations.",
+        rounds = emptyList(),
+        kind = MiniGameKind.ARENA_3D,
+        threeMode = GameMode.MAZE_RUN,
+    )
+    private val truth_snipe = MiniGame(
+        id = "truth_snipe", emoji = "🎯",
+        titleDe = "Fakten-Feuer", titleEn = "Fact Fire",
+        descriptionDe = "3D-Arena: Sammle fliegende blaue Fakten, zerstöre rote Falschmeldungen mit Feuer und meide Treffer.",
+        descriptionEn = "3D arena: collect the drifting blue facts, blast red fakes with fire, and avoid getting hit.",
+        rounds = emptyList(),
+        kind = MiniGameKind.ARENA_3D,
+        threeMode = GameMode.TRUTH_SNIPE,
+    )
+
     val ALL: List<MiniGame> = listOf(
         // 8 Free Games — alle 16 Spiele inkl. Premium: Google-Play-Version (ai.ki_kompetenz_training_org)
         // FREE GAMES (8)
@@ -872,10 +909,15 @@ object MiniGames {
         prompt_profis,
         bias_spotter,
         dsgvo_check,
+        // ARENA 3D (free)
+        orb_hunt,
+        maze_run,
+        truth_snipe,
     )
     
     val FREE: List<MiniGame> = ALL.filter { !it.premium }
     val PREMIUM: List<MiniGame> = ALL.filter { it.premium }
+    val ARENA3D: List<MiniGame> = ALL.filter { it.isArena3D }
     
     fun byId(id: String): MiniGame? = ALL.firstOrNull { it.id == id }
     

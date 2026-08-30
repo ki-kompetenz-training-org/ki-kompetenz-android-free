@@ -300,4 +300,18 @@
     <string name="daily_challenge_streak">Streak: %1$d</string>
     <string name="daily_challenge_xp_preview">+%1$d XP</string>
     <string name="daily_challenge_xp_earned">+%1$d XP verdient!</string>
+    <string name="games_start">Starten</string>
+    <string name="games_score">Punkte</string>
+    <string name="games_time">Zeit</string>
+    <string name="games_streak">Serie</string>
+    <string name="games_retry">Nochmal</string>
+    <string name="games_arena_howto_orb">Scanne Orbs, lies die KI-Aussage und entscheide: Fakt oder Risiko?</string>
+    <string name="games_arena_howto_maze">Steuere zum grünen Ziel. Dort wartet eine KI-Aussage: Fakt oder Risiko?</string>
+    <string name="games_arena_howto_snipe">Sammle blaue Fakten, zerstöre rote Falschmeldungen mit Feuer. Triff keine Fakten!</string>
+    <string name="games_arena_won">Geschafft!</string>
+    <string name="games_arena_lost">Fast! Nochmal versuchen</string>
+    <string name="games_arena_classified">Eingestuft: %1$d von %2$d richtig</string>
+    <string name="games_arena_review">Zum Wiederholen empfohlen</string>
+    <string name="games_arena_xp">Punkte: %1$d / Ziel %2$d  |  XP +%3$d</string>
+    <string name="games_arena_badge">Echtzeit-Arena</string>
 </resources>

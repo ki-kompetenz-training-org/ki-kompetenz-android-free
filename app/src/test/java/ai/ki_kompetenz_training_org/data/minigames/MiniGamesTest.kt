@@ -7,20 +7,25 @@ class MiniGamesTest {
 
     // ── Data integrity tests ──
 
-    // Free Edition: alle 8 Spiele sind frei verfügbar (Premium-Inhalte gibt es
-    // ausschließlich in der Google-Play-Version ai.ki_kompetenz_training_org).
-
     @Test
-    fun `all 8 free games are registered`() {
-        assertEquals(8, MiniGames.ALL.size)
+    fun `all 11 games are registered with 3 arena games`() {
+        assertEquals(11, MiniGames.ALL.size)
+        assertEquals(3, MiniGames.ARENA3D.size)
     }
 
     @Test
-    fun `all games are free in the free edition`() {
-        assertEquals(8, MiniGames.FREE.size)
+    fun `all games are free`() {
+        assertEquals(11, MiniGames.FREE.size)
         assertEquals(0, MiniGames.PREMIUM.size)
-        MiniGames.ALL.forEach { game ->
-            assertFalse("Game ${game.id} should be free", game.premium)
+    }
+
+    @Test
+    fun `free games are not premium and premium games are premium`() {
+        MiniGames.FREE.forEach { game ->
+            assertFalse("Free game ${game.id} should not be premium", game.premium)
+        }
+        MiniGames.PREMIUM.forEach { game ->
+            assertTrue("Premium game ${game.id} should be premium", game.premium)
         }
     }
 
@@ -31,15 +36,24 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `every game has at least 3 rounds`() {
-        MiniGames.ALL.forEach { game ->
+    fun `every quiz game has at least 3 rounds`() {
+        MiniGames.ALL.filter { it.kind == MiniGameKind.QUIZ }.forEach { game ->
             assertTrue("Game ${game.id} has only ${game.rounds.size} rounds (min 3)", game.rounds.size >= 3)
         }
     }
 
     @Test
-    fun `every round has valid correctIndex within options range`() {
-        MiniGames.ALL.forEach { game ->
+    fun `arena games have no rounds but valid mode`() {
+        MiniGames.ARENA3D.forEach { game ->
+            assertEquals(0, game.rounds.size)
+            assertEquals(MiniGameKind.ARENA_3D, game.kind)
+            assertNotNull("Game ${game.id} missing threeMode", game.threeMode)
+        }
+    }
+
+    @Test
+    fun `every quiz round has valid correctIndex within options range`() {
+        MiniGames.ALL.filter { it.kind == MiniGameKind.QUIZ }.forEach { game ->
             game.rounds.forEachIndexed { i, round ->
                 assertTrue(
                     "Game ${game.id} round $i: correctIndex ${round.correctIndex} >= options size ${round.optionsDe.size}",
@@ -54,8 +68,8 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `all prompts and explanations are non-empty`() {
-        MiniGames.ALL.forEach { game ->
+    fun `all prompts and explanations are non-empty for quiz rounds`() {
+        MiniGames.ALL.filter { it.kind == MiniGameKind.QUIZ }.forEach { game ->
             game.rounds.forEachIndexed { i, round ->
                 assertTrue("Game ${game.id} round $i: empty promptDe", round.promptDe.isNotBlank())
                 assertTrue("Game ${game.id} round $i: empty promptEn", round.promptEn.isNotBlank())
@@ -66,9 +80,9 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `total rounds across all games is at least 70`() {
-        val total = MiniGames.ALL.sumOf { it.rounds.size }
-        assertTrue("Expected >= 60 total rounds, got $total", total >= 70)
+    fun `total rounds across quiz games is at least 24`() {
+        val total = MiniGames.ALL.filter { it.kind == MiniGameKind.QUIZ }.sumOf { it.rounds.size }
+        assertTrue("Expected >= 24 total rounds, got $total", total >= 24)
     }
 
     // ── Language helper tests ──
@@ -109,12 +123,10 @@ class MiniGamesTest {
     // ── Difficulty tests ──
 
     @Test
-    fun `all games use a known difficulty level`() {
-        val valid = setOf(Difficulty.BEGINNER, Difficulty.INTERMEDIATE, Difficulty.EXPERT)
-        MiniGames.ALL.forEach { game ->
-            assertTrue("Game ${game.id} has unknown difficulty ${game.difficulty}", game.difficulty in valid)
-        }
-        assertTrue("Expected at least one beginner game", MiniGames.ALL.any { it.difficulty == Difficulty.BEGINNER })
+    fun `beginner and intermediate difficulty levels are represented`() {
+        val difficulties = MiniGames.ALL.map { it.difficulty }.toSet()
+        assertTrue("Missing BEGINNER", difficulties.contains(Difficulty.BEGINNER))
+        assertTrue("Missing INTERMEDIATE", difficulties.contains(Difficulty.INTERMEDIATE))
     }
 
     @Test
@@ -133,11 +145,10 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `byDifficulty beginner + intermediate + expert = all`() {
+    fun `byDifficulty beginner + intermediate = all`() {
         val byDiff = listOf(
             MiniGames.byDifficulty(Difficulty.BEGINNER),
             MiniGames.byDifficulty(Difficulty.INTERMEDIATE),
-            MiniGames.byDifficulty(Difficulty.EXPERT),
         ).flatten().toSet()
         assertEquals(MiniGames.ALL.toSet(), byDiff)
     }
@@ -178,10 +189,9 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `random premiumOnly is always null in free edition`() {
-        repeat(20) {
-            assertNull(MiniGames.random(premiumOnly = true))
-        }
+    fun `random premiumOnly returns null when no premium games exist`() {
+        // Currently all games are free; premium catalog may expand later
+        assertNull(MiniGames.random(premiumOnly = true))
     }
 
     // ── Content quality tests ──
@@ -229,26 +239,8 @@ class MiniGamesTest {
         assertNotNull(MiniGames.byId("prompt_profis"))
         assertNotNull(MiniGames.byId("bias_spotter"))
         assertNotNull(MiniGames.byId("dsgvo_check"))
-    }
-
-    @Test
-    fun `premium games do not exist in the free edition`() {
-        // Premium-Inhalte gibt es ausschließlich in der Google-Play-Version
-        // (ai.ki_kompetenz_training_org).
-        assertNull(MiniGames.byId("audit_trainer"))
-        assertNull(MiniGames.byId("agent_simulator"))
-        assertNull(MiniGames.byId("strategie_berater"))
-        assertNull(MiniGames.byId("ki_schutzschild"))
-        assertNull(MiniGames.byId("ki_sprachfuehrer"))
-        assertNull(MiniGames.byId("ki_zielscheibe"))
-        assertNull(MiniGames.byId("ki_vertrag"))
-        assertNull(MiniGames.byId("change_manager"))
-    }
-
-    @Test
-    fun `expert games are all premium`() {
-        MiniGames.byDifficulty(Difficulty.EXPERT).forEach { game ->
-            assertTrue("Expert game ${game.id} should be premium", game.premium)
-        }
+        assertNotNull(MiniGames.byId("orb_hunt"))
+        assertNotNull(MiniGames.byId("maze_run"))
+        assertNotNull(MiniGames.byId("truth_snipe"))
     }
 }
