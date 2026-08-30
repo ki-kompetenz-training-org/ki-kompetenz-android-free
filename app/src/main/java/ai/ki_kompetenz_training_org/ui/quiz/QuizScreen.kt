@@ -97,7 +97,7 @@ private fun IntroContent(modifier: Modifier, questionCount: Int, onStart: () -> 
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("🤖", style = MaterialTheme.typography.displaySmall)
-                    Text("KI-Score", color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.quiz_title), color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
                     Text("Wie KI-fit bist du?", color = Color(0xFFDBEAFE), style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -205,10 +205,11 @@ private fun PlayingContent(
 
                 if (revealed) {
                     Spacer(Modifier.height(12.dp))
+                    val feedbackPrefix = if (state.selectedOption == question.correct) stringResource(R.string.quiz_correct) else stringResource(R.string.quiz_good_to_know)
                     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant), modifier = Modifier.fillMaxWidth()) {
                         Text(
                             buildString {
-                                append(if (state.selectedOption == question.correct) "✅ Richtig! " else "💡 Gut zu wissen: ")
+                                append(feedbackPrefix)
                                 append(question.explanation)
                             },
                             style = MaterialTheme.typography.bodySmall,
@@ -227,7 +228,7 @@ private fun PlayingContent(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
             ) {
                 Text(
-                    if (state.currentIndex < state.questions.size - 1) stringResource(R.string.quiz_next_question) else "Mein Ergebnis",
+                    if (state.currentIndex < state.questions.size - 1) stringResource(R.string.quiz_next_question) else stringResource(R.string.quiz_my_result),
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -301,7 +302,7 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
                     type = "text/plain"
                     putExtra(Intent.EXTRA_TEXT, text)
                 }
-                context.startActivity(Intent.createChooser(sendIntent, "Ergebnis teilen"))
+                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.quiz_share)))
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0A66C2)),
@@ -413,7 +414,7 @@ private fun ErrorContent(
         Text("⚠️", style = MaterialTheme.typography.displayLarge)
         Spacer(Modifier.height(16.dp))
         Text(
-            message ?: "Etwas ist schiefgelaufen",
+            message ?: stringResource(R.string.error_generic_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -423,14 +424,14 @@ private fun ErrorContent(
             onClick = onRetry,
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Text("Erneut versuchen", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.common_retry), fontWeight = FontWeight.Bold)
         }
         Spacer(Modifier.height(12.dp))
         OutlinedButton(
             onClick = onBack,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text("Zurück")
+            Text(stringResource(R.string.quiz_back))
         }
     }
 }

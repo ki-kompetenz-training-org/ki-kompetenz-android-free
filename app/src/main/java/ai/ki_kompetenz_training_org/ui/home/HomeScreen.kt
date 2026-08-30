@@ -124,9 +124,9 @@ fun HomeScreen(
         ) {
             Column(Modifier.padding(14.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("⭐ ${state.level}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.home_level, state.level.toString()), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.weight(1f))
-                    Text("${state.xp} XP", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(R.string.home_xp, state.xp.toString()), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                 }
                 Spacer(Modifier.height(4.dp))
                 LinearProgressIndicator(
@@ -138,14 +138,14 @@ fun HomeScreen(
                 )
                 Spacer(Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("🔥 ${state.streak} Tage", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.home_streak, state.streak.toString()), style = MaterialTheme.typography.bodySmall)
                     Spacer(Modifier.weight(1f))
                     Button(
                         onClick = vm::dailyCheckIn,
                         enabled = !state.checkedInToday,
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
                     ) {
-                        Text(if (state.checkedInToday) "✓ Gecheckt" else "Check-in")
+                        Text(if (state.checkedInToday) stringResource(R.string.home_checked_in) else stringResource(R.string.home_checkin))
                     }
                 }
             }
@@ -199,31 +199,31 @@ fun HomeScreen(
             item {
                 QuickActionCard(
                     emoji = "🤖",
-                    title = "KI-Score",
-                    subtitle = "Teste dein Wissen",
+                    title = stringResource(R.string.home_quick_quiz),
+                    subtitle = stringResource(R.string.home_quick_quiz_desc),
                     onClick = onOpenQuiz,
                 )
             }
             item {
                 QuickActionCard(
                     emoji = "🎮",
-                    title = "Mini-Spiele",
-                    subtitle = "8 kostenlose Spiele",
+                    title = stringResource(R.string.home_quick_games),
+                    subtitle = stringResource(R.string.home_quick_games_desc),
                     onClick = onOpenMiniGames,
                 )
             }
             item {
                 QuickActionCard(
                     emoji = "📖",
-                    title = "Lektionen",
-                    subtitle = "EU AI Act lernen",
+                    title = stringResource(R.string.home_quick_lessons),
+                    subtitle = stringResource(R.string.home_quick_lessons_desc),
                     onClick = onOpenLessons,
                 )
             }
             item {
                 QuickActionCard(
                     emoji = "🔄",
-                    title = "Wiederholen",
+                    title = stringResource(R.string.home_quick_srs),
                     subtitle = stringResource(R.string.home_quick_srs_desc),
                     onClick = onOpenSrs,
                 )
@@ -286,8 +286,8 @@ fun HomeScreen(
                     Text("👶", style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("Für Kinder", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                        Text("KI spielerisch", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.home_more_kids), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.home_more_kids_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -303,8 +303,8 @@ fun HomeScreen(
                     Text("👴", style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.width(8.dp))
                     Column {
-                        Text("Für Senioren", fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                        Text("Phishing, Deepfakes", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.home_more_seniors), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.home_more_seniors_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -314,19 +314,21 @@ fun HomeScreen(
 
         // ── Premium chip (only if not premium) ──
         if (state.loggedIn && !state.premium) {
+            val premiumCta = stringResource(R.string.home_premium_chip)
             AssistChip(
                 onClick = onOpenPremium,
-                label = { Text("⭐ Premium freischalten") },
+                label = { Text(premiumCta) },
                 leadingIcon = {
-                    Icon(Icons.Default.Star, contentDescription = "Premium", Modifier.size(16.dp))
+                    Icon(Icons.Default.Star, contentDescription = premiumCta, Modifier.size(16.dp))
                 },
-                modifier = Modifier.semantics { contentDescription = "Premium freischalten" },
+                modifier = Modifier.semantics { contentDescription = premiumCta },
             )
         } else if (!state.loggedIn) {
+            val loginCta = stringResource(R.string.home_login_cta)
             AssistChip(
                 onClick = onLogin,
-                label = { Text("Anmelden") },
-                leadingIcon = { Icon(Icons.Default.Person, contentDescription = "Anmelden", Modifier.size(16.dp)) },
+                label = { Text(loginCta) },
+                leadingIcon = { Icon(Icons.Default.Person, contentDescription = loginCta, Modifier.size(16.dp)) },
             )
         }
 
@@ -334,7 +336,7 @@ fun HomeScreen(
 
         // ── DSGVO footer ──
         Text(
-            "DSGVO-konform: XP, Level und Serie werden lokal gespeichert — keine Server-Übertragung.",
+            stringResource(R.string.home_dsgvo_local),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 4.dp),

@@ -85,7 +85,7 @@ fun MiniGamesMenuScreen(
     ) {
             item {
                 Text(
-                    "Kurzweilige Lernspiele — jede Runde bringt XP und einen Lernmoment.",
+                    stringResource(R.string.games_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

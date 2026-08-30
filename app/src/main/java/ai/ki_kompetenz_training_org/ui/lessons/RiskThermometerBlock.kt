@@ -255,7 +255,7 @@ fun RiskThermometerBlock(
                     Spacer(Modifier.height(8.dp))
                     Text(
                         if (locale == "en") "Tap a level\nto see details"
-                        else "Tippe eine Stufe\nfür Details",
+                        else stringResource(R.string.risk_tap_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,

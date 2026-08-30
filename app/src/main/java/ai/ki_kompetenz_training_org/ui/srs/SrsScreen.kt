@@ -150,7 +150,7 @@ private fun ReviewContent(
         ) {
             Column(Modifier.padding(24.dp)) {
                 Text(
-                    "Lektion ${card.lessonId.takeLast(2)}",
+                    stringResource(R.string.srs_lesson_label, card.lessonId.takeLast(2)),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary,
                 )

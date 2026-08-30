@@ -298,4 +298,22 @@
     <string name="games_arena_review">Zum Wiederholen empfohlen</string>
     <string name="games_arena_xp">Punkte: %1$d / Ziel %2$d  |  XP +%3$d</string>
     <string name="games_arena_badge">Echtzeit-Arena</string>
+    <string name="lesson_quiz_intro">Beantworte %1$d Fragen, um dein Wissen zu testen</string>
+    <string name="lesson_quiz_tip">💡 Tipp: Beantworte die Quiz-Fragen, um diese Lektion abzuschließen!</string>
+    <string name="lesson_question_n">Frage %1$d: %2$s</string>
+    <string name="lesson_test_to_complete">✅ Test bestehen, um abzuschließen</string>
+    <string name="lesson_test_passed">✅ Test bestanden! Du kannst die Lektion jetzt abschließen.</string>
+    <string name="lesson_wrong_prefix">❌ Falsch. </string>
+    <string name="lesson_correct_answer_is">Die richtige Antwort ist: %1$s</string>
+    <string name="lesson_score_points">%1$s / %2$s Punkte (%3$s%%)</string>
+    <string name="premium_price_note">€6,99/Monat pro Sitzplatz · jederzeit kündbar</string>
+    <string name="srs_lesson_label">Lektion %1$s</string>
+    <string name="profile_day_streak">Tages-Serie</string>
+    <string name="lesson_reveal_answer">Antwort anzeigen</string>
+    <string name="lesson_toggle_section">Abschnitt umschalten</string>
+    <string name="seniors_tip_chatbots">💬 Chatbots: Keine persönlichen Daten</string>
+    <string name="seniors_tip_passwords">🔒 Starke Passwörter + 2FA</string>
+    <string name="seniors_tip_deepfakes">🖼️ Deepfakes bei vertrauenswürdigen Quellen prüfen</string>
+    <string name="seniors_tip_shopping">🛒 Online kaufen nur mit Käuferschutz</string>
+    <string name="risk_tap_hint">Tippe eine Stufe\nfür Details</string>
 </resources>

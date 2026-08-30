@@ -116,12 +116,12 @@ fun SeniorsMenuScreen(onBack: () -> Unit, onOpenLesson: (SeniorsLesson) -> Unit)
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "\uD83D\uDD12 Starke Passwörter + 2FA\n" +
+                        stringResource(R.string.seniors_tip_passwords) +
                             "\uD83C\uDFA3 Phishing: Nicht klicken, nicht antworten\n" +
-                            "\uD83D\uDED2 Online kaufen nur mit Käuferschutz\n" +
+                            stringResource(R.string.seniors_tip_shopping) +
                             "\uD83D\uDCDE Am Telefon nie Daten nennen\n" +
-                            "\uD83D\uDDBC\uFE0F Deepfakes bei vertrauenswürdigen Quellen prüfen\n" +
-                            "\uD83D\uDCAC Chatbots: Keine persönlichen Daten",
+                            stringResource(R.string.seniors_tip_deepfakes) +
+                            stringResource(R.string.seniors_tip_chatbots),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Start,
                     )

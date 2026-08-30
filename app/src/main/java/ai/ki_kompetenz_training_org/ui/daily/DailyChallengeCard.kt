@@ -1,5 +1,6 @@
 package ai.ki_kompetenz_training_org.ui.daily
 
+import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -110,7 +112,7 @@ fun DailyChallengeCard(
                         onClick = onStart,
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                     ) {
-                        Text("Start")
+                        Text(stringResource(R.string.daily_challenge_start))
                     }
                 }
             }

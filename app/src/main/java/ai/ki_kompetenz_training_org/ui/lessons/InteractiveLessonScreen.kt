@@ -209,7 +209,7 @@ private fun SectionBlock(
                 )
                 Icon(
                     if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                    contentDescription = "Toggle section",
+                    contentDescription = stringResource(R.string.lesson_toggle_section),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (isCompleted) {
@@ -362,7 +362,7 @@ private fun KnowledgeCheckBlock(block: ContentBlock.KnowledgeCheck, locale: Stri
                 Spacer(Modifier.height(8.dp))
                 TextButton(onClick = { revealed = true }) {
                     Text(
-                        if (locale == "en") "Tap to reveal answer" else "Antwort anzeigen",
+                        stringResource(R.string.lesson_reveal_answer),
                         fontWeight = FontWeight.Bold,
                     )
                 }

@@ -296,7 +296,7 @@ fun LessonDetailScreen(
                 CircularProgressIndicator()
             }
             state.error != null -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text(state.error ?: "Fehler")
+                Text(state.error ?: stringResource(R.string.error_generic_title))
             }
             state.lesson != null -> {
                 if (vm.isPremium()) {
@@ -388,14 +388,14 @@ private fun LessonBody(
                     fontWeight = FontWeight.Bold
                 )
             } else {
-                Text("✅ Test bestehen, um abzuschließen", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.lesson_test_to_complete), fontWeight = FontWeight.Bold)
             }
         }
         
         if (!isTestPassed && quizQuestions.isNotEmpty()) {
             Spacer(Modifier.height(8.dp))
             Text(
-                "💡 Tipp: Beantworte die Quiz-Fragen, um diese Lektion abzuschließen!",
+                stringResource(R.string.lesson_quiz_tip),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -433,7 +433,7 @@ private fun QuizSection(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "Beantworte ${questions.size} Fragen, um dein Wissen zu testen",
+                    stringResource(R.string.lesson_quiz_intro, questions.size),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -455,7 +455,7 @@ private fun QuizSection(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "$currentScore / $totalPoints Punkte (${scorePercentage}%)",
+                        stringResource(R.string.lesson_score_points, currentScore.toString(), totalPoints.toString(), scorePercentage.toString()),
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.End,
                         modifier = Modifier.fillMaxWidth()
@@ -464,7 +464,7 @@ private fun QuizSection(
                     if (isTestPassed) {
                         Spacer(Modifier.height(8.dp))
                         Text(
-                            "✅ Test bestands! Du kannst die Lektion jetzt abschließen.",
+                            stringResource(R.string.lesson_test_passed),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -508,7 +508,7 @@ private fun QuizQuestionCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                "Frage $questionNumber: ${question.question}",
+                stringResource(R.string.lesson_question_n, questionNumber, question.question),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -558,14 +558,14 @@ private fun QuizQuestionCard(
                     // Show feedback for correct/wrong answers
                     if (showFeedback && isCorrect) {
                         Text(
-                            "✅ Richtig! ${question.explanation ?: ""}",
+                            stringResource(R.string.quiz_correct) + (question.explanation ?: ""),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.padding(start = 8.dp, top = 2.dp)
                         )
                     } else if (showFeedback && isWrong) {
                         Text(
-                            "❌ Falsch. ${question.explanation ?: "Die richtige Antwort ist: ${question.options[question.correctAnswerIndex]}"}",
+                            stringResource(R.string.lesson_wrong_prefix) + (question.explanation ?: stringResource(R.string.lesson_correct_answer_is, question.options[question.correctAnswerIndex])),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(start = 8.dp, top = 2.dp)
@@ -637,13 +637,13 @@ private fun PremiumGate(modifier: Modifier, lessonNumber: Int?, onOpenPremium: (
             modifier = Modifier.fillMaxWidth().height(52.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD97706)),
         ) {
-            Icon(Icons.Default.Star, contentDescription = "Premium freischalten")
+            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.lesson_premium_cta))
             Spacer(Modifier.width(8.dp))
-            Text("Jetzt Premium freischalten", fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.lesson_premium_cta), fontWeight = FontWeight.Bold)
         }
         Spacer(Modifier.height(8.dp))
         Text(
-            "€6,99/Monat pro Sitzplatz · jederzeit kündbar",
+            stringResource(R.string.premium_price_note),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

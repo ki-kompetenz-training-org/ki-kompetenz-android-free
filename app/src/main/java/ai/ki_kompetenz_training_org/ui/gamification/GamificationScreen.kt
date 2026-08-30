@@ -73,7 +73,7 @@ fun GamificationScreen(onBack: () -> Unit) {
                         Text("🔥", style = MaterialTheme.typography.headlineMedium)
                         Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
-                            Text("Tages-Serie", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.profile_day_streak), fontWeight = FontWeight.Bold)
                             Text(
                                 if (state.streak > 0) stringResource(R.string.profile_streak_days, state.streak) else stringResource(R.string.profile_no_streak),
                                 style = MaterialTheme.typography.bodySmall,

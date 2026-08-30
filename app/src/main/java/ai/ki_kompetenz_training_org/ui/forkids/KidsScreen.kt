@@ -86,7 +86,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
             Spacer(Modifier.height(16.dp))
 
             Text(
-                "\uD83E\uDD16 KI-Lernen für Kinder",
+                stringResource(R.string.kids_heading),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth(),
