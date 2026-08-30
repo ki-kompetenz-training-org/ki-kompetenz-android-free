@@ -67,8 +67,8 @@ class PremiumGatingTest {
     fun `first three lessons are free preview`() {
         val gate = ai.ki_kompetenz_training_org.data.repo.PremiumRepository(
             api = object : ai.ki_kompetenz_training_org.data.api.ApiService {
-                override suspend fun getLessons() = ai.ki_kompetenz_training_org.data.api.LessonsResponseDto()
-                override suspend fun getLesson(slug: String) = ai.ki_kompetenz_training_org.data.api.LessonDetailDto(slug = slug)
+                override suspend fun getLessons(lang: String?) = ai.ki_kompetenz_training_org.data.api.LessonsResponseDto()
+                override suspend fun getLesson(slug: String, lang: String?) = ai.ki_kompetenz_training_org.data.api.LessonDetailDto(slug = slug)
                 override suspend fun getKiScoreData() = ai.ki_kompetenz_training_org.data.api.KiScoreDataDto()
                 override suspend fun getMe() = ai.ki_kompetenz_training_org.data.api.MeResponseDto()
                 override suspend fun getMyTeam() = ai.ki_kompetenz_training_org.data.api.MyTeamResponseDto()

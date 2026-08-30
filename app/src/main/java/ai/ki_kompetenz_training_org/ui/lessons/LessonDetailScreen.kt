@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
 import ai.ki_kompetenz_training_org.data.api.QuizQuestionDto
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
@@ -191,7 +192,7 @@ class LessonDetailViewModel(
 
     init {
         viewModelScope.launch(coroutineDispatcher) {
-            contentRepository.fetchLesson(slug).onSuccess { lesson ->
+            contentRepository.fetchLesson(slug, currentLang()).onSuccess { lesson ->
                 val quizQuestions = lessonQuizzes[slug] ?: emptyList()
                 _state.value = LessonDetailUiState(
                     lesson = lesson,

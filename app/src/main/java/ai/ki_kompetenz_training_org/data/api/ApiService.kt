@@ -4,6 +4,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * REST client for the ki-kompetenz-training.org Next.js API.
@@ -14,10 +15,13 @@ interface ApiService {
 
     // ── Public content API (for the app) ─────────────────────────────────────
     @GET("api/content/lessons")
-    suspend fun getLessons(): LessonsResponseDto
+    suspend fun getLessons(@Query("lang") lang: String? = null): LessonsResponseDto
 
     @GET("api/content/lessons/{slug}")
-    suspend fun getLesson(@Path("slug") slug: String): LessonDetailDto
+    suspend fun getLesson(
+        @Path("slug") slug: String,
+        @Query("lang") lang: String? = null,
+    ): LessonDetailDto
 
     @GET("api/content/ki-score")
     suspend fun getKiScoreData(): KiScoreDataDto

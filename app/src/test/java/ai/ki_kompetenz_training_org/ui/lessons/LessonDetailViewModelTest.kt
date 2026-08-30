@@ -51,7 +51,7 @@ class LessonDetailViewModelTest {
     @Test
     fun `loads lesson successfully from API`() = runTest {
         val lesson = LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1, body = "# Was ist KI?")
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(lesson)
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(lesson)
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
         createViewModel("lesson-1")
@@ -61,12 +61,12 @@ class LessonDetailViewModelTest {
         assertEquals("Lesson 1", state.lesson?.title)
         assertFalse(state.loading)
         assertNull(state.error)
-        coVerify { contentRepository.fetchLesson("lesson-1") }
+        coVerify { contentRepository.fetchLesson("lesson-1", any()) }
     }
 
     @Test
     fun `handles lesson loading error`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.failure(Exception("Network error"))
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.failure(Exception("Network error"))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
         createViewModel("lesson-1")
@@ -78,7 +78,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `lesson ki-einfuehrung has 3 quiz questions`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -88,7 +88,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `startQuiz sets showQuiz to true`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -102,7 +102,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `submitAnswer updates score and checks pass threshold`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -116,7 +116,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `submitAllCorrectAnswers passes test`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -132,7 +132,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `submitWrongAnswer does not add points`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -146,7 +146,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `partialCorrectAnswers can still pass`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -161,7 +161,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `markCompleted does nothing when test not passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -174,7 +174,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `markCompleted calls repository when test passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -190,7 +190,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `canCompleteLesson returns false when test not passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -200,7 +200,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `canCompleteLesson returns true when test passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 
@@ -215,7 +215,7 @@ class LessonDetailViewModelTest {
 
     @Test
     fun `lesson with no quiz questions has empty list`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-no-quiz") } returns Result.success(
+        coEvery { contentRepository.fetchLesson("lesson-no-quiz", any()) } returns Result.success(
             LessonDetailDto(slug = "lesson-no-quiz", title = "No Quiz", lesson = 10))
         coEvery { contentRepository.getCachedLesson(any()) } returns null
 

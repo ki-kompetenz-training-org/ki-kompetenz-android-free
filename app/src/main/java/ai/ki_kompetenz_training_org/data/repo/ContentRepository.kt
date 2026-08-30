@@ -22,8 +22,8 @@ class ContentRepository(
 ) {
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun fetchLessons(): Result<List<LessonSummaryDto>> =
-        runCatching { api.getLessons().lessons }
+    suspend fun fetchLessons(lang: String? = null): Result<List<LessonSummaryDto>> =
+        runCatching { api.getLessons(lang).lessons }
             .onSuccess { lessons ->
                 // Cache metadata for offline browsing
                 lessons.forEach { l ->
@@ -46,8 +46,8 @@ class ContentRepository(
 
     fun observeLessons(): Flow<List<LessonEntity>> = db.contentDao().observeLessons()
 
-    suspend fun fetchLesson(slug: String): Result<LessonDetailDto> =
-        runCatching { api.getLesson(slug) }
+    suspend fun fetchLesson(slug: String, lang: String? = null): Result<LessonDetailDto> =
+        runCatching { api.getLesson(slug, lang) }
             .onSuccess { l ->
                 db.contentDao().upsertLesson(
                     LessonEntity(

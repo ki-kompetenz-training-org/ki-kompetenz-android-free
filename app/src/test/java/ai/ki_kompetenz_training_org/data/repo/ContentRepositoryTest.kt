@@ -45,7 +45,7 @@ class ContentRepositoryTest {
             lesson = 1,
             body = "# Was ist KI?",
         )
-        coEvery { apiService.getLesson("ki-einfuehrung") } returns lessonDto
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } returns lessonDto
         coEvery { contentDao.upsertLesson(any()) } returns Unit
 
         val result = repository.fetchLesson("ki-einfuehrung")
@@ -56,7 +56,7 @@ class ContentRepositoryTest {
 
     @Test
     fun `fetchLesson returns failure on network error`() = runBlocking {
-        coEvery { apiService.getLesson("ki-einfuehrung") } throws Exception("Network error")
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } throws Exception("Network error")
 
         val result = repository.fetchLesson("ki-einfuehrung")
 
@@ -70,7 +70,7 @@ class ContentRepositoryTest {
             LessonSummaryDto(slug = "lesson-1", title = "Lektion 1", lesson = 1),
             LessonSummaryDto(slug = "lesson-2", title = "Lektion 2", lesson = 2),
         )
-        coEvery { apiService.getLessons() } returns LessonsResponseDto(lessons)
+        coEvery { apiService.getLessons(any()) } returns LessonsResponseDto(lessons)
         coEvery { contentDao.upsertLesson(any()) } returns Unit
 
         val result = repository.fetchLessons()
@@ -105,7 +105,7 @@ class ContentRepositoryTest {
             lesson = 1,
             body = "# Was ist KI?",
         )
-        coEvery { apiService.getLesson("ki-einfuehrung") } returns lessonDto
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } returns lessonDto
         coEvery { contentDao.upsertLesson(any()) } returns Unit
 
         repository.fetchLesson("ki-einfuehrung")
@@ -115,7 +115,7 @@ class ContentRepositoryTest {
 
     @Test
     fun `fetchLesson does not update cache on failure`() = runBlocking {
-        coEvery { apiService.getLesson("non-existent") } throws Exception("Not found")
+        coEvery { apiService.getLesson("non-existent", any()) } throws Exception("Not found")
 
         val result = repository.fetchLesson("non-existent")
 

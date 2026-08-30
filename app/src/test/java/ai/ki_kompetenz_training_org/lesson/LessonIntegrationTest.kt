@@ -61,7 +61,7 @@ class LessonIntegrationTest {
     @Test
     fun `lesson loads from API`() = runTest {
         val lessonDto = LessonDetailDto(slug = "ki-einfuehrung", title = "KI Einführung", lesson = 1, body = "# Was ist KI?")
-        coEvery { apiService.getLesson("ki-einfuehrung") } returns lessonDto
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } returns lessonDto
         coEvery { contentDao.upsertLesson(any()) } returns Unit
         coEvery { contentDao.getLesson("ki-einfuehrung") } returns null
 
@@ -75,7 +75,7 @@ class LessonIntegrationTest {
 
     @Test
     fun `premium lesson is correctly identified`() = runTest {
-        coEvery { apiService.getLesson("ki-vertiefung") } returns
+        coEvery { apiService.getLesson("ki-vertiefung", any()) } returns
             LessonDetailDto(slug = "ki-vertiefung", title = "KI Vertiefung", lesson = 9, body = "Advanced")
         coEvery { contentDao.upsertLesson(any()) } returns Unit
         coEvery { contentDao.getLesson("ki-vertiefung") } returns null
@@ -86,7 +86,7 @@ class LessonIntegrationTest {
 
     @Test
     fun `error during lesson loading is handled gracefully`() = runTest {
-        coEvery { apiService.getLesson("ki-einfuehrung") } throws Exception("Network timeout")
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } throws Exception("Network timeout")
         coEvery { contentDao.getLesson("ki-einfuehrung") } returns null
 
         createViewModel("ki-einfuehrung")
@@ -98,7 +98,7 @@ class LessonIntegrationTest {
 
     @Test
     fun `null lesson number is handled`() = runTest {
-        coEvery { apiService.getLesson("ki-einfuehrung") } returns
+        coEvery { apiService.getLesson("ki-einfuehrung", any()) } returns
             LessonDetailDto(slug = "ki-einfuehrung", title = "KI Einführung", lesson = null, body = "Test")
         coEvery { contentDao.upsertLesson(any()) } returns Unit
         coEvery { contentDao.getLesson("ki-einfuehrung") } returns null

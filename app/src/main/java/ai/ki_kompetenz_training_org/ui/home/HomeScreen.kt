@@ -115,41 +115,6 @@ fun HomeScreen(
             }
             Spacer(Modifier.height(12.dp))
         }
-        // ── KiBot ──
-        val kibotState = KiBotState.from(
-            level = state.level,
-            xp = state.xp,
-            xpIntoLevel = state.xpIntoLevel,
-            xpNeeded = state.xpNeeded,
-            streak = state.streak,
-            daysSinceCheckIn = daysSinceLastCheckIn(state.lastCheckInDay),
-            checkedInToday = state.checkedInToday,
-        )
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .semantics { contentDescription = "Dein KI-Begleiter, Level ${state.level}" },
-            shape = RoundedCornerShape(20.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(Color(0xFF3B82F6), Color(0xFF6366F1), Color(0xFF8B5CF6))
-                        )
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                KiBotScene(
-                    state = kibotState,
-                    modifier = Modifier.size(180.dp),
-                )
-            }
-        }
-
-        Spacer(Modifier.height(12.dp))
 
         // ── Gamification summary bar ──
         Card(
@@ -261,6 +226,43 @@ fun HomeScreen(
                     title = "Wiederholen",
                     subtitle = stringResource(R.string.home_quick_srs_desc),
                     onClick = onOpenSrs,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
+        // ── KiBot ──
+        val kibotState = KiBotState.from(
+            level = state.level,
+            xp = state.xp,
+            xpIntoLevel = state.xpIntoLevel,
+            xpNeeded = state.xpNeeded,
+            streak = state.streak,
+            daysSinceCheckIn = daysSinceLastCheckIn(state.lastCheckInDay),
+            checkedInToday = state.checkedInToday,
+        )
+        val kibotDescription = stringResource(R.string.kibot_level, state.level)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .semantics { contentDescription = kibotDescription },
+            shape = RoundedCornerShape(20.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFF3B82F6), Color(0xFF6366F1), Color(0xFF8B5CF6))
+                        )
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                KiBotScene(
+                    state = kibotState,
+                    modifier = Modifier.size(180.dp),
                 )
             }
         }

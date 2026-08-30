@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
+import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import kotlinx.coroutines.launch
 
 data class LessonsUiState(
@@ -28,7 +29,7 @@ class LessonsViewModel(
 
     init {
         viewModelScope.launch {
-            contentRepository.fetchLessons()
+            contentRepository.fetchLessons(currentLang())
             contentRepository.observeLessons()
                 .flowOn(Dispatchers.IO)  // Move database access to IO thread
                 .collectLatest { lessons ->
@@ -39,7 +40,7 @@ class LessonsViewModel(
 
     fun refresh() {
         viewModelScope.launch {
-            contentRepository.fetchLessons()
+            contentRepository.fetchLessons(currentLang())
         }
     }
 }
