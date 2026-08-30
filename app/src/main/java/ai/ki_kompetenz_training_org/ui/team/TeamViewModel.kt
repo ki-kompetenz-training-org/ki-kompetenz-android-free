@@ -6,6 +6,7 @@ import ai.ki_kompetenz_training_org.data.api.LeaderboardEntryDto
 import ai.ki_kompetenz_training_org.data.api.MyTeamResponseDto
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.TeamRepository
+import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +19,7 @@ data class TeamUiState(
     val avgScore: Int = 0,
     val members: Int = 0,
     val ownRank: Int? = null,
-    val error: String? = null,
+    val error: UiError? = null,
 )
 
 class TeamViewModel(
@@ -38,7 +39,7 @@ class TeamViewModel(
 
     fun load() {
         if (!authRepository.isLoggedIn()) {
-            _state.value = _state.value.copy(loggedIn = false)
+            _state.value = _state.value.copy(loggedIn = false, error = null)
             return
         }
         viewModelScope.launch {
@@ -61,13 +62,13 @@ class TeamViewModel(
                             ownRank = stats.ownRank,
                         )
                     }.onFailure {
-                        _state.value = _state.value.copy(loading = false, error = "Team konnte nicht geladen werden")
+                        _state.value = _state.value.copy(loading = false, error = UiError.TEAM_LOAD)
                     }
                 } else {
                     _state.value = TeamUiState(loggedIn = true, loading = false, team = null)
                 }
             }.onFailure {
-                _state.value = _state.value.copy(loading = false, error = "Team konnte nicht geladen werden")
+                _state.value = _state.value.copy(loading = false, error = UiError.TEAM_LOAD)
             }
         }
     }

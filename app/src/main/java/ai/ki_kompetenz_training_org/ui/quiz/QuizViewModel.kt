@@ -10,6 +10,7 @@ import ai.ki_kompetenz_training_org.data.db.QuizResultEntity
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.QuizScoring
+import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,7 +28,7 @@ data class QuizUiState(
     val currentIndex: Int = 0,
     val answers: List<Boolean> = emptyList(),
     val selectedOption: Int? = null,
-    val error: String? = null,
+    val error: UiError? = null,
     // Gamification
     val lives: Int = QuizConstants.MAX_LIVES,
     val combo: Int = 0,
@@ -62,7 +63,7 @@ class QuizViewModel(
                 val questions = data.questions.shuffled().take(10)
                 _state.value = QuizUiState(phase = QuizPhase.INTRO, questions = questions, tiers = data.tiers, sharePrefix = data.share?.prefix ?: "")
             }.onFailure {
-                _state.value = QuizUiState(phase = QuizPhase.ERROR, error = "Quiz konnte nicht geladen werden. Prüfe deine Internetverbindung.")
+                _state.value = QuizUiState(phase = QuizPhase.ERROR, error = UiError.QUIZ_LOAD)
             }
         }
     }

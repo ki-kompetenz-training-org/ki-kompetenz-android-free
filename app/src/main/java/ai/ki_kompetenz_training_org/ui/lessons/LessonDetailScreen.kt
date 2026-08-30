@@ -26,12 +26,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
-import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
 import ai.ki_kompetenz_training_org.data.api.QuizQuestionDto
+import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
+import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +42,7 @@ data class LessonDetailUiState(
     val lesson: LessonDetailDto? = null,
     val cachedBody: String? = null,
     val loading: Boolean = true,
-    val error: String? = null,
+    val error: UiError? = null,
     val isTestPassed: Boolean = false,  // Must pass test to complete
     val currentScore: Int = 0,
     val quizQuestions: List<QuizQuestionDto> = emptyList(),
@@ -199,10 +200,10 @@ class LessonDetailViewModel(
                     loading = false,
                     quizQuestions = quizQuestions
                 )
-            }.onFailure { e ->
+            }.onFailure {
                 _state.value = _state.value.copy(
                     loading = false,
-                    error = "Lektion konnte nicht geladen werden: ${e.message}"
+                    error = UiError.LESSON_LOAD,
                 )
             }
         }
@@ -296,7 +297,7 @@ fun LessonDetailScreen(
                 CircularProgressIndicator()
             }
             state.error != null -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                Text(state.error ?: stringResource(R.string.error_generic_title))
+                Text(ai.ki_kompetenz_training_org.ui.common.uiErrorMessage(state.error!!))
             }
             state.lesson != null -> {
                 if (vm.isPremium()) {

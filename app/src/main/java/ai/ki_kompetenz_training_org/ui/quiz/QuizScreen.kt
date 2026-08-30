@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.ui.common.uiErrorMessage
 import ai.ki_kompetenz_training_org.ui.quiz.QuizConstants
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color as ComposeColor
@@ -57,7 +58,7 @@ fun QuizScreen(onBack: () -> Unit) {
 
             QuizPhase.ERROR -> ErrorContent(
                 modifier = Modifier.padding(padding),
-                message = state.error,
+                message = state.error?.let { uiErrorMessage(it) },
                 onRetry = { vm.load() },
                 onBack = onBack,
             )
@@ -92,13 +93,13 @@ private fun IntroContent(modifier: Modifier, questionCount: Int, onStart: () -> 
     ) {
         Card(shape = RoundedCornerShape(20.dp), modifier = Modifier.fillMaxWidth()) {
             Box(
-                Modifier.fillMaxWidth().background(Brush.linearGradient(listOf(Color(0xFF2563EB), Color(0xFF4F46E5), Color(0xFF7C3AED)))).padding(24.dp),
+                Modifier.fillMaxWidth().background(Brush.linearGradient(listOf(Color(0xFF3B82F6), Color(0xFF6366F1), Color(0xFF8B5CF6)))).padding(vertical = 28.dp, horizontal = 24.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("🤖", style = MaterialTheme.typography.displaySmall)
                     Text(stringResource(R.string.quiz_title), color = Color.White, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                    Text("Wie KI-fit bist du?", color = Color(0xFFDBEAFE), style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.quiz_subtitle), color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f), style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         StatChip("$questionCount", stringResource(R.string.quiz_stats_questions))
@@ -128,8 +129,8 @@ private fun IntroContent(modifier: Modifier, questionCount: Int, onStart: () -> 
 @Composable
 private fun StatChip(value: String, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(value, color = Color.White, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
-        Text(label, color = Color(0xFFBFDBFE), style = MaterialTheme.typography.labelSmall)
+        Text(value, color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+        Text(label, color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f), style = MaterialTheme.typography.labelSmall)
     }
 }
 

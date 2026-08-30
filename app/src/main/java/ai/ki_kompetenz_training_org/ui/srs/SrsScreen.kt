@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.data.repo.SrsQuality
+import ai.ki_kompetenz_training_org.ui.common.uiErrorMessage
 import ai.ki_kompetenz_training_org.notification.NotificationPermissionBanner
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -91,7 +92,8 @@ fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text(state.error ?: stringResource(R.string.common_error), color = MaterialTheme.colorScheme.error)
+                val loadError = state.error?.let { uiErrorMessage(it) }
+                Text(loadError ?: stringResource(R.string.common_error), color = MaterialTheme.colorScheme.error)
                 Spacer(Modifier.height(12.dp))
                 Button(onClick = vm::load) { Text(stringResource(R.string.common_retry)) }
             }
@@ -211,7 +213,7 @@ private fun ReviewContent(
 
         state.error?.let {
             Spacer(Modifier.height(8.dp))
-            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            Text(uiErrorMessage(it), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
         }
     }
 }

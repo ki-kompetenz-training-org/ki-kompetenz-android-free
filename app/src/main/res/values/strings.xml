@@ -292,6 +292,13 @@
     <string name="notif_permission_title">Benachrichtigungen aktivieren</string>
     <string name="notif_permission_body">Lass dich an faellige Wiederholungskarten erinnern, damit nichts vergessen wird.</string>
     <string name="notif_permission_grant">Benachrichtigungen erlauben</string>
+    <string name="disclaimer_title">Ueber diese App</string>
+    <string name="disclaimer_body">Diese App ist kein offizielles Instrument der Europaeischen Union oder einer anderen Behoerde. Sie ist ein privates Bildungsangebot und gibt die Inhalte der EU AI Act Verordnung (EU) 2024/1689 in vereinfachter, paedagogischer Form wieder.</string>
+    <string name="disclaimer_source">Offizielle Quelle (EU AI Act):</string>
+    <string name="disclaimer_source_url">https://eur-lex.europa.eu/eli/reg/2024/1689/oj</string>
+    <string name="disclaimer_no_warranty">Alle Angaben ohne Gewaehr. Fuer rechtsverbindliche Auskuenfte wenden Sie sich an eine Fachanwaeltin oder einen Fachanwalt.</string>
+    <string name="disclaimer_open_source">Quelle oeffnen</string>
+    <string name="menu_about">Ueber die App</string>
     <string name="daily_challenge_title">Taegliche Herausforderung</string>
     <string name="daily_challenge_subtitle">Spiele das Mini-Spiel des Tages</string>
     <string name="daily_challenge_start">Starten</string>
@@ -332,4 +339,9 @@
     <string name="seniors_tip_deepfakes">🖼️ Deepfakes bei vertrauenswürdigen Quellen prüfen</string>
     <string name="seniors_tip_shopping">🛒 Online kaufen nur mit Käuferschutz</string>
     <string name="risk_tap_hint">Tippe eine Stufe\nfür Details</string>
+    <string name="error_quiz_load">Quiz konnte nicht geladen werden. Prüfe deine Internetverbindung.</string>
+    <string name="error_srs_load">Fällige Karten konnten nicht geladen werden</string>
+    <string name="error_srs_save">Bewertung konnte nicht gespeichert werden</string>
+    <string name="error_team_load">Team konnte nicht geladen werden</string>
+    <string name="error_lesson_load">Lektion konnte nicht geladen werden</string>
 </resources>

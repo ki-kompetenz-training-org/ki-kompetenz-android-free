@@ -292,6 +292,13 @@
     <string name="notif_permission_title">Enable notifications</string>
     <string name="notif_permission_body">Get reminded about due review cards so nothing is forgotten.</string>
     <string name="notif_permission_grant">Allow notifications</string>
+    <string name="disclaimer_title">About this app</string>
+    <string name="disclaimer_body">This app is not an official instrument of the European Union or any other government authority. It is a private educational offering that presents the content of the EU AI Act Regulation (EU) 2024/1689 in a simplified, educational format.</string>
+    <string name="disclaimer_source">Official source (EU AI Act):</string>
+    <string name="disclaimer_source_url">https://eur-lex.europa.eu/eli/reg/2024/1689/oj</string>
+    <string name="disclaimer_no_warranty">All information is provided without guarantee. For legally binding advice, consult a qualified legal professional.</string>
+    <string name="disclaimer_open_source">Open source</string>
+    <string name="menu_about">About the app</string>
     <string name="daily_challenge_title">Daily Challenge</string>
     <string name="daily_challenge_subtitle">Play today\'s mini-game challenge</string>
     <string name="daily_challenge_start">Start</string>
@@ -332,4 +339,9 @@
     <string name="seniors_tip_deepfakes">🖼️ Check deepfakes against trusted sources</string>
     <string name="seniors_tip_shopping">🛒 Buy online only with buyer protection</string>
     <string name="risk_tap_hint">Tap a level\nfor details</string>
+    <string name="error_quiz_load">Could not load the quiz. Check your internet connection.</string>
+    <string name="error_srs_load">Could not load due cards</string>
+    <string name="error_srs_save">Could not save your rating</string>
+    <string name="error_team_load">Could not load the team</string>
+    <string name="error_lesson_load">Could not load the lesson</string>
 </resources>

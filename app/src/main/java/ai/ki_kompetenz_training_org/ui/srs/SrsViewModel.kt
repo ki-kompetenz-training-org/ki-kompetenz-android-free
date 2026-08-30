@@ -7,6 +7,7 @@ import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsSession
+import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ data class SrsUiState(
     val showAnswer: Boolean = false,
     val reviewsDone: Int = 0,
     val earnedXp: Int = 0,
-    val error: String? = null,
+    val error: UiError? = null,
 ) {
     val currentCard: SrsCardDto? get() = cards.getOrNull(currentIndex)
 }
@@ -52,7 +53,7 @@ class SrsViewModel(
                     SrsUiState(phase = SrsPhase.REVIEW, cards = cards)
                 }
             }.onFailure {
-                _state.value = SrsUiState(phase = SrsPhase.ERROR, error = "Fällige Karten konnten nicht geladen werden")
+                _state.value = SrsUiState(phase = SrsPhase.ERROR, error = UiError.SRS_LOAD)
             }
         }
     }
@@ -90,7 +91,7 @@ class SrsViewModel(
                     )
                 }
             }.onFailure {
-                _state.value = s.copy(error = "Bewertung konnte nicht gespeichert werden")
+                _state.value = s.copy(error = UiError.SRS_SAVE)
             }
         }
     }

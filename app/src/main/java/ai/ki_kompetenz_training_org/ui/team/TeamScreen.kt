@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.BuildConfig
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.ui.common.uiErrorMessage
 
 @Composable
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
@@ -79,6 +80,22 @@ fun TeamScreen(onBack: () -> Unit, onLogin: () -> Unit) {
                 CircularProgressIndicator()
             }
 
+            state.error != null -> Column(
+                Modifier.fillMaxSize().padding(padding).padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    uiErrorMessage(state.error!!),
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
+                Spacer(Modifier.height(20.dp))
+                Button(onClick = vm::load, modifier = Modifier.fillMaxWidth().height(50.dp)) {
+                    Text(stringResource(R.string.common_retry), fontWeight = FontWeight.Bold)
+                }
+            }
+
             state.team?.team == null -> Column(
                 Modifier.fillMaxSize().padding(padding).padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -123,7 +140,7 @@ fun TeamScreen(onBack: () -> Unit, onLogin: () -> Unit) {
                             AssistChip(
                                 onClick = {},
                                 label = { Text(stringResource(R.string.team_your_rank, state.ownRank ?: 0)) },
-                                leadingIcon = { Icon(Icons.Default.Star, contentDescription = "Punkte", Modifier.size(16.dp)) },
+                                leadingIcon = { Icon(Icons.Default.Star, contentDescription = stringResource(R.string.team_your_rank), Modifier.size(16.dp)) },
                             )
                         }
                     }
