@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- App-Icon-Hintergrund: Indigo→Violett Gradient (Brand-Farben) -->
+<!-- App-Icon-Hintergrund: CI-Brand Navy (ki_kompetenz track) -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <gradient
-        android:angle="135"
-        android:startColor="#2563EB"
-        android:centerColor="#4F46E5"
-        android:endColor="#7C3AED"
+        android:angle="315"
+        android:startColor="#0A102A"
+        android:centerColor="#080D23"
+        android:endColor="#06081C"
         android:type="linear" />
 </shape>
