@@ -349,7 +349,7 @@
     <string name="freeze_buy">Freeze kaufen (%1$d XP)</string>
     <string name="freeze_buy_cap">Maximal 2 Freezes</string>
     <string name="freeze_buy_no_xp">Zu wenig XP</string>
-    <string name="freeze_explain">Ein Freeze schuetzt deine Serie, wenn du einen Tag aussetzt. Du bekommst jede Woche einen gratis.</string>
+    <string name="freeze_explain">Ein Freeze schützt deine Serie, wenn du einen Tag aussetzt. Du bekommst jede Woche einen neuen gratis.</string>
     <string name="mission_section_title">Wochen-Missionen</string>
     <string name="mission_complete_tag">Abgeschlossen</string>
     <string name="mission_bonus">Alle 3 erledigt: +%1$d Bonus-XP</string>
