@@ -24,6 +24,7 @@ data class HomeUiState(
     val streak: Int = 0,
     val checkedInToday: Boolean = false,
     val lastCheckInDay: String? = null,
+    val missions: List<ai.ki_kompetenz_training_org.ui.gamification.MissionUi> = emptyList(),
 )
 
 class HomeViewModel(
@@ -50,8 +51,22 @@ class HomeViewModel(
                     streak = entity?.streak ?: 0,
                     checkedInToday = entity?.lastCheckInDay == java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE),
                     lastCheckInDay = entity?.lastCheckInDay,
+                    missions = readMissions(),
                 )
             }
+        }
+    }
+
+    private fun readMissions(): List<ai.ki_kompetenz_training_org.ui.gamification.MissionUi> {
+        val repo = gamificationRepository.missions ?: return emptyList()
+        val m = repo.current()
+        return repo.selectedFor(m.week).map { t ->
+            ai.ki_kompetenz_training_org.ui.gamification.MissionUi(
+                id = t.id,
+                target = t.target,
+                progress = m.progress[t.id] ?: 0,
+                completed = t.id in m.completed,
+            )
         }
     }
 

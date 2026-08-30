@@ -28,7 +28,7 @@ data class MiniGameRound(
     fun explanation(lang: String): String = if (lang == "de") explanationDe else explanationEn
 }
 
-enum class MiniGameKind { QUIZ, ARENA_3D }
+enum class MiniGameKind { QUIZ, ARENA_3D, FAKE_OR_REAL }
 
 data class MiniGame(
     val id: String, 
@@ -46,6 +46,9 @@ data class MiniGame(
 
     /** True if this is a real-time arena (3D-style) minigame. */
     val isArena3D: Boolean get() = kind == MiniGameKind.ARENA_3D && threeMode != null
+
+    /** True for the Fake-or-Echt text game (10 random rounds per session). */
+    val isFakeOrReal: Boolean get() = kind == MiniGameKind.FAKE_OR_REAL
 }
 
 enum class Difficulty(val displayNameDe: String, val displayNameEn: String, val xpMultiplier: Float) {
@@ -898,6 +901,17 @@ object MiniGames {
         threeMode = GameMode.TRUTH_SNIPE,
     )
 
+    /** Fake or Echt: is this text written by a human or by AI? 10 random rounds per session. */
+    private val fake_or_real = MiniGame(
+        id = "fake_or_real", emoji = "🤖",
+        titleDe = "Fake oder Echt?", titleEn = "Fake or Real?",
+        descriptionDe = "Ist der Text von einem Menschen oder von einer KI geschrieben? Zehn Texte, ein Gefühl, jede Runde eine klare Antwort.",
+        descriptionEn = "Was this text written by a human or by AI? Ten texts, each round a clear verdict.",
+        rounds = ai.ki_kompetenz_training_org.data.minigames.TextGameBank.ALL.map { it.toMiniGameRound() },
+        kind = MiniGameKind.FAKE_OR_REAL,
+        difficulty = Difficulty.INTERMEDIATE,
+    )
+
     val ALL: List<MiniGame> = listOf(
         // 8 Free Games — alle 16 Spiele inkl. Premium: Google-Play-Version (ai.ki_kompetenz_training_org)
         // FREE GAMES (8)
@@ -909,6 +923,8 @@ object MiniGames {
         prompt_profis,
         bias_spotter,
         dsgvo_check,
+        // FAKE OR REAL (free)
+        fake_or_real,
         // ARENA 3D (free)
         orb_hunt,
         maze_run,

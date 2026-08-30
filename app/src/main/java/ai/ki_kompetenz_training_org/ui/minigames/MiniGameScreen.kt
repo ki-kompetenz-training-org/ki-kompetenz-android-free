@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
+import ai.ki_kompetenz_training_org.data.minigames.MiniGameRound
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
 /**
@@ -66,6 +67,7 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
             GamePhase.PLAYING -> PlayingContent(
                 modifier = Modifier.padding(padding),
                 game = game,
+                rounds = vm.sessionRounds,
                 state = state,
                 onSelect = vm::selectOption,
                 onNext = vm::next,
@@ -73,6 +75,7 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
             GamePhase.RESULT -> ResultContent(
                 modifier = Modifier.padding(padding),
                 game = game,
+                rounds = vm.sessionRounds,
                 state = state,
                 onRestart = vm::restart,
             )
@@ -84,11 +87,12 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
 private fun PlayingContent(
     modifier: Modifier,
     game: MiniGame,
+    rounds: List<MiniGameRound>,
     state: MiniGameUiState,
     onSelect: (Int) -> Unit,
     onNext: () -> Unit,
 ) {
-    val round = game.rounds.getOrNull(state.currentIndex)
+    val round = rounds.getOrNull(state.currentIndex)
     if (round == null) {
         Box(modifier, contentAlignment = Alignment.Center) {
             Text(stringResource(R.string.game_no_rounds))
@@ -96,7 +100,7 @@ private fun PlayingContent(
         return
     }
     val revealed = state.selectedOption != null
-    val progress = (state.currentIndex + 1).toFloat() / game.rounds.size
+    val progress = (state.currentIndex + 1).toFloat() / rounds.size
     val lang = currentLang()
 
     Column(
@@ -112,12 +116,12 @@ private fun PlayingContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                stringResource(R.string.game_round, state.currentIndex + 1, game.rounds.size),
+                stringResource(R.string.game_round, state.currentIndex + 1, rounds.size),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                stringResource(R.string.game_correct_count, state.answers.count { it }, game.rounds.size),
+                stringResource(R.string.game_correct_count, state.answers.count { it }, rounds.size),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -145,8 +149,8 @@ private fun PlayingContent(
                 Text(
                     round.prompt(lang),
                     fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleMedium,
-                    lineHeight = MaterialTheme.typography.titleMedium.lineHeight,
+                    style = if (game.isFakeOrReal) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleMedium,
+                    lineHeight = if (game.isFakeOrReal) MaterialTheme.typography.headlineSmall.lineHeight else MaterialTheme.typography.titleMedium.lineHeight,
                 )
 
                 Spacer(Modifier.height(16.dp))
@@ -176,9 +180,9 @@ private fun PlayingContent(
                     Spacer(Modifier.height(12.dp))
                     Text(
                         round.explanation(lang),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = if (game.isFakeOrReal) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        lineHeight = MaterialTheme.typography.bodyMedium.lineHeight,
+                        lineHeight = if (game.isFakeOrReal) MaterialTheme.typography.bodyLarge.lineHeight else MaterialTheme.typography.bodyMedium.lineHeight,
                     )
                 }
             }
@@ -195,7 +199,7 @@ private fun PlayingContent(
                 shape = RoundedCornerShape(14.dp),
             ) {
                 Text(
-                    if (state.currentIndex < game.rounds.size - 1)
+                    if (state.currentIndex < rounds.size - 1)
                         stringResource(R.string.game_next_round)
                     else
                         stringResource(R.string.game_view_result),
@@ -303,11 +307,12 @@ private fun OptionCard(
 private fun ResultContent(
     modifier: Modifier,
     game: MiniGame,
+    rounds: List<MiniGameRound>,
     state: MiniGameUiState,
     onRestart: () -> Unit,
 ) {
     val correct = state.answers.count { it }
-    val total = game.rounds.size
+    val total = rounds.size
     val ratio = correct.toFloat() / total.coerceAtLeast(1)
 
     Column(

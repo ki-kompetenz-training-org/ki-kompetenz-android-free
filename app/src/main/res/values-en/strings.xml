@@ -344,4 +344,19 @@
     <string name="error_srs_save">Could not save your rating</string>
     <string name="error_team_load">Could not load the team</string>
     <string name="error_lesson_load">Could not load the lesson</string>
+    <string name="profile_freezes">Streak protection</string>
+    <string name="profile_freezes_count">%1$d freeze(s)</string>
+    <string name="freeze_buy">Buy freeze (%1$d XP)</string>
+    <string name="freeze_buy_cap">Max 2 freezes</string>
+    <string name="freeze_buy_no_xp">Not enough XP</string>
+    <string name="freeze_explain">A freeze protects your streak if you skip a day. You get one free every week.</string>
+    <string name="mission_section_title">Weekly missions</string>
+    <string name="mission_complete_tag">Completed</string>
+    <string name="mission_bonus">All 3 done: +%1$d bonus XP</string>
+    <string name="mission_title_quiz_play">Finish 3 quizzes</string>
+    <string name="mission_title_quiz_good">2 quizzes at 80 percent or more</string>
+    <string name="mission_title_minigame_play">Play 4 mini-games</string>
+    <string name="mission_title_srs_cards">Answer 20 review cards</string>
+    <string name="mission_title_lessons">Complete 2 lessons</string>
+    <string name="mission_title_daily">Complete 3 daily challenges</string>
 </resources>

@@ -6,8 +6,8 @@ import org.junit.Test
 class BadgesTest {
 
     @Test
-    fun `all badges returns 10 badges`() {
-        assertEquals(10, Badges.all().size)
+    fun `all badges returns 11 badges`() {
+        assertEquals(11, Badges.all().size)
     }
 
     @Test
@@ -125,4 +125,12 @@ class BadgesTest {
         assertNotNull(visionary)
         assertTrue(visionary!!.description.contains("81"))
     }
+    @Test
+    fun `fake or real badge is present in all languages`() {
+        assertEquals("Detektiv", Badges.all("de").first { it.id == "fake_or_real" }.title)
+        assertEquals("Detective", Badges.all("en").first { it.id == "fake_or_real" }.title)
+        assertEquals("Détective", Badges.all("fr").first { it.id == "fake_or_real" }.title)
+        assertTrue(Badges.all("de").first { it.id == "fake_or_real" }.description.isNotBlank())
+    }
+
 }

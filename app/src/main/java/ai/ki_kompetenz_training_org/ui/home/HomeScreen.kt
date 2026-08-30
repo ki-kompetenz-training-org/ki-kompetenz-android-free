@@ -56,6 +56,7 @@ fun HomeScreen(
     onOpenSrs: () -> Unit,
     onOpenForKids: () -> Unit,
     onOpenForSeniors: () -> Unit,
+    onOpenAbout: () -> Unit = {},
     onOpenMiniGame: (String) -> Unit = {},
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
@@ -158,7 +159,12 @@ fun HomeScreen(
             DailyChallengeViewModel(
                 DailyChallengeRepository(
                     app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
-                )
+                ),
+                onDailyCompleted = {
+                    app.gamificationRepository.missions?.record(
+                        ai.ki_kompetenz_training_org.data.missions.MissionMetric.DAILY_COMPLETED
+                    )
+                },
             )
         }
         val dailyState by dailyVm.state.collectAsState()
@@ -186,6 +192,41 @@ fun HomeScreen(
                 }
             },
         )
+
+        if (state.missions.isNotEmpty()) {
+            Spacer(Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(14.dp),
+                onClick = onOpenGamification,
+            ) {
+                Column(Modifier.padding(14.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.mission_section_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleSmall)
+                        Spacer(Modifier.weight(1f))
+                        val done = state.missions.count { it.completed }
+                        Text(
+                            if (done == state.missions.size) stringResource(R.string.mission_complete_tag) else "$done/${state.missions.size}",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = if (done == state.missions.size) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    val firstOpen = state.missions.firstOrNull { !it.completed }
+                    if (firstOpen != null) {
+                        Text(
+                            ai.ki_kompetenz_training_org.ui.gamification.missionTitle(firstOpen.id),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        LinearProgressIndicator(
+                            progress = { (firstOpen.progress.toFloat() / firstOpen.target).coerceIn(0f, 1f) },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                }
+            }
+        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -343,6 +384,19 @@ fun HomeScreen(
         )
 
         Spacer(Modifier.height(8.dp))
+
+        // ── About / Disclaimer link ──
+        val aboutDesc = stringResource(R.string.menu_about)
+        TextButton(
+            onClick = onOpenAbout,
+            modifier = Modifier.semantics { contentDescription = aboutDesc },
+        ) {
+            Text(
+                stringResource(R.string.menu_about),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

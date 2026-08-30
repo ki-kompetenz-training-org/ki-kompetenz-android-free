@@ -100,7 +100,7 @@ class GamificationRulesTest {
         // Alle 4 Sprachen haben vollständige Übersetzungen (kein Text fehlt)
         for (locale in listOf("de", "en", "fr", "zh")) {
             val badges = Badges.all(locale)
-            assertEquals("Badge-Anzahl für $locale", 10, badges.size)
+            assertEquals("Badge-Anzahl für $locale", 11, badges.size)
             badges.forEach { b ->
                 assertFalse("${b.id} ($locale): title leer", b.title.isBlank())
                 assertFalse("${b.id} ($locale): description leer", b.description.isBlank())
@@ -116,5 +116,55 @@ class GamificationRulesTest {
             assertFalse("${b.id} title", b.title.isBlank())
             assertFalse("${b.id} desc", b.description.isBlank())
         }
+    }
+
+    // ── Streak freeze ───────────────────────────────────────────────────────
+    @Test
+    fun `iso week key is stable and locale independent`() {
+        assertEquals("2026-W35", GamificationRules.isoWeekKey(LocalDate.of(2026, 8, 30)))
+        assertEquals("2026-W35", GamificationRules.isoWeekKey(LocalDate.of(2026, 8, 24)))
+        // Year boundary: 2027-01-01 (Friday) still belongs to ISO week 53 of 2026.
+        assertEquals("2026-W53", GamificationRules.isoWeekKey(LocalDate.of(2027, 1, 1)))
+        // 2027-01-04 (Monday) starts ISO week 1 of 2027.
+        assertEquals("2027-W01", GamificationRules.isoWeekKey(LocalDate.of(2027, 1, 4)))
+    }
+
+    @Test
+    fun `weekly freeze granted once per week`() {
+        val monday = LocalDate.of(2026, 8, 24)
+        val sunday = LocalDate.of(2026, 8, 30)
+        assertTrue(GamificationRules.shouldGrantWeeklyFreeze(null, monday))
+        assertTrue(GamificationRules.shouldGrantWeeklyFreeze("2026-W34", monday))
+        assertFalse(GamificationRules.shouldGrantWeeklyFreeze("2026-W35", monday))
+        assertFalse(GamificationRules.shouldGrantWeeklyFreeze("2026-W35", sunday))
+        assertTrue(GamificationRules.shouldGrantWeeklyFreeze("2026-W35", LocalDate.of(2026, 8, 31)))
+    }
+
+    @Test
+    fun `streak outcome bridges exactly one missed day with freeze`() {
+        // yesterday → continue (freeze kept)
+        assertEquals(GamificationRules.StreakOutcome.CONTINUE, GamificationRules.streakOutcome(1, 0))
+        assertEquals(GamificationRules.StreakOutcome.CONTINUE, GamificationRules.streakOutcome(1, 2))
+        // exactly one missed day + freeze available → consume freeze, continue
+        assertEquals(GamificationRules.StreakOutcome.CONSUME_FREEZE, GamificationRules.streakOutcome(2, 1))
+        assertEquals(GamificationRules.StreakOutcome.CONSUME_FREEZE, GamificationRules.streakOutcome(2, 2))
+        // exactly one missed day + no freeze → reset
+        assertEquals(GamificationRules.StreakOutcome.RESET, GamificationRules.streakOutcome(2, 0))
+        // two or more missed days → reset even with freezes
+        assertEquals(GamificationRules.StreakOutcome.RESET, GamificationRules.streakOutcome(3, 2))
+        assertEquals(GamificationRules.StreakOutcome.RESET, GamificationRules.streakOutcome(5, 1))
+        // same day / first check-in handled by caller
+        assertEquals(GamificationRules.StreakOutcome.CONTINUE, GamificationRules.streakOutcome(0, 0))
+    }
+
+    @Test
+    fun `freeze purchase gated by xp and cap`() {
+        assertEquals(100, GamificationRules.freezePriceXp)
+        assertEquals(2, GamificationRules.maxFreezes)
+        assertTrue(GamificationRules.canPurchaseFreeze(0, 100))
+        assertTrue(GamificationRules.canPurchaseFreeze(1, 100))
+        assertFalse(GamificationRules.canPurchaseFreeze(2, 500))
+        assertFalse(GamificationRules.canPurchaseFreeze(0, 99))
+        assertFalse(GamificationRules.canPurchaseFreeze(3, 1000))
     }
 }

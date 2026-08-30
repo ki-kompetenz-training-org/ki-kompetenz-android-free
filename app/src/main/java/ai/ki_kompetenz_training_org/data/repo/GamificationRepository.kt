@@ -62,6 +62,41 @@ object GamificationRules {
     /** Check-in XP: 5 × current streak day, capped at 30. */
     fun checkInXp(streakDay: Int): Int = minOf(5 * streakDay, 30)
 
+    // ── Streak freezes ──────────────────────────────────────────────────────
+    const val freezePriceXp = 100
+    /** Hard cap on the total freeze balance (weekly grants and purchases combined). */
+    const val maxFreezes = 2
+
+    enum class StreakOutcome { CONTINUE, CONSUME_FREEZE, RESET }
+
+    /** Stable ISO week key ("2026-W35"), independent of device locale/timezone. */
+    fun isoWeekKey(date: LocalDate): String {
+        val year = date.get(java.time.temporal.WeekFields.ISO.weekBasedYear())
+        val week = date.get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear())
+        return "%04d-W%02d".format(year, week)
+    }
+
+    /** A new free freeze SHALL be granted when the last grant was a different ISO week. */
+    fun shouldGrantWeeklyFreeze(lastGrantWeek: String?, today: LocalDate): Boolean =
+        lastGrantWeek == null || lastGrantWeek != isoWeekKey(today)
+
+    /**
+     * Streak outcome for a check-in based on the gap (days) since the last activity.
+     * - gap == 1 (yesterday): continue without touching the freeze balance
+     * - gap == 2 (exactly one missed day) + freeze available: consume freeze, continue
+     * - otherwise: reset to 1 (freeze bridges exactly one day)
+     */
+    fun streakOutcome(gapDays: Int, freezes: Int): StreakOutcome = when {
+        gapDays <= 1 -> StreakOutcome.CONTINUE
+        gapDays == 2 && freezes > 0 -> StreakOutcome.CONSUME_FREEZE
+        else -> StreakOutcome.RESET
+    }
+
+    /** A freeze purchase is allowed below the cap and with enough XP. */
+    fun canPurchaseFreeze(freezes: Int, xp: Int): Boolean =
+        freezes < maxFreezes && xp >= freezePriceXp
+
+
     val xpPerCorrectQuizAnswer = 10
     val perfectQuizBonus = 50
     val xpPerPremiumCorrectAnswer = 15
@@ -116,6 +151,7 @@ object Badges {
         "team_player" to BadgeText("Team-Player", "Team Player", "Esprit d'équipe", "团队之星"),
         "mini_game" to BadgeText("Spieler", "Player", "Joueur", "玩家"),
         "mini_game_all" to BadgeText("Meister aller Spiele", "Master of All Games", "Maître des jeux", "全能游戏大师"),
+        "fake_or_real" to BadgeText("Detektiv", "Detective", "Détective", "侦探"),
         "visionary" to BadgeText("KI-Visionär", "AI Visionary", "Visionnaire IA", "AI 远见者"),
     )
 
@@ -129,6 +165,7 @@ object Badges {
         "team_player" to BadgeText("Tritt einem Team bei", "Join a team", "Rejoignez une équipe", "加入一个团队"),
         "mini_game" to BadgeText("Spiele dein erstes KI-Mini-Spiel", "Play your first AI mini-game", "Jouez à votre premier mini-jeu IA", "玩第一个 AI 小游戏"),
         "mini_game_all" to BadgeText("Spiele alle KI-Mini-Spiele", "Play all AI mini-games", "Jouez à tous les mini-jeux IA", "玩遍所有 AI 小游戏"),
+        "fake_or_real" to BadgeText("Erkenne 10/10 Texte richtig", "Identify 10/10 texts correctly", "Identifiez 10/10 textes", "正确识别 10/10 文本"),
         "visionary" to BadgeText("Erziele 81+ Punkte im KI-Score", "Score 81+ in the AI test", "Obtenez 81+ au test IA", "在 AI 测试中获得 81 分以上"),
     )
 
@@ -142,6 +179,7 @@ object Badges {
         "team_player" to "👥",
         "mini_game" to "🎮",
         "mini_game_all" to "🏆",
+        "fake_or_real" to "🕵️",
         "visionary" to "🚀",
     )
 
@@ -179,8 +217,16 @@ class GamificationRepository(
     private val prefs: SharedPreferences? =
         context?.getSharedPreferences("kikompetenz_gamification", Context.MODE_PRIVATE)
 
+    private companion object PrefKeys {
+        const val KEY_FREEZES = "freezes"
+        const val KEY_LAST_FREEZE_WEEK = "last_freeze_week"
+    }
+
     private val json = Json { ignoreUnknownKeys = true }
     private val badgesSerializer = ListSerializer(String.serializer())
+
+    /** Weekly-mission hook; null in tests/standalone use. Set once at app start. */
+    var missions: ai.ki_kompetenz_training_org.data.missions.WeeklyMissionsRepository? = null
 
     fun observe(): Flow<GamificationEntity?> =
         db.gamificationDao().observe().flowOn(Dispatchers.IO)
@@ -212,21 +258,62 @@ class GamificationRepository(
         )
     }
 
+    /** Current freeze balance (default 0). */
+    fun freezes(): Int = prefs?.getInt(KEY_FREEZES, 0) ?: 0
+
+    private fun grantFreeze(today: LocalDate) {
+        prefs?.edit()
+            ?.putInt(KEY_FREEZES, minOf(GamificationRules.maxFreezes, freezes() + 1))
+            ?.putString(KEY_LAST_FREEZE_WEEK, GamificationRules.isoWeekKey(today))
+            ?.apply()
+    }
+
+    private fun consumeFreeze() {
+        prefs?.edit()?.putInt(KEY_FREEZES, (freezes() - 1).coerceAtLeast(0))?.apply()
+    }
+
+    /** Purchase a freeze for [GamificationRules.freezePriceXp] XP; returns success. */
+    suspend fun purchaseFreeze(): Boolean {
+        val current = db.gamificationDao().get() ?: GamificationEntity()
+        if (!GamificationRules.canPurchaseFreeze(freezes(), current.xp)) return false
+        prefs?.edit()?.putInt(KEY_FREEZES, freezes() + 1)?.apply()
+        db.gamificationDao().upsert(
+            current.copy(
+                xp = current.xp - GamificationRules.freezePriceXp,
+                updatedAt = System.currentTimeMillis(),
+            )
+        )
+        return true
+    }
+
     /** Daily check-in; returns streak day after update (0 = already checked in). */
     suspend fun dailyCheckIn(): Int {
         val now = LocalDate.now()
         val current = db.gamificationDao().get() ?: GamificationEntity()
-        val streak = when {
-            current.lastCheckInDay == now.format(DateTimeFormatter.ISO_LOCAL_DATE) -> 0
-            current.lastCheckInDay == now.minusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE) -> current.streak + 1
-            else -> 1
+        val todayStr = now.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        if (current.lastCheckInDay == todayStr) return 0
+
+        // Weekly free freeze grant (clamped at the cap; the week is marked granted either way).
+        val lastWeek = prefs?.getString(KEY_LAST_FREEZE_WEEK, null)
+        if (GamificationRules.shouldGrantWeeklyFreeze(lastWeek, now)) grantFreeze(now)
+
+        // Gap in days since the last activity; null on first-ever check-in → streak 1.
+        val gapDays = current.lastCheckInDay?.let {
+            java.time.temporal.ChronoUnit.DAYS.between(LocalDate.parse(it), now).toInt()
+        } ?: 1
+        val freezes = freezes()
+        val outcome = GamificationRules.streakOutcome(gapDays, freezes)
+        if (outcome == GamificationRules.StreakOutcome.CONSUME_FREEZE) consumeFreeze()
+        val streak = when (outcome) {
+            GamificationRules.StreakOutcome.CONTINUE -> current.streak + 1
+            GamificationRules.StreakOutcome.CONSUME_FREEZE -> current.streak + 1
+            GamificationRules.StreakOutcome.RESET -> 1
         }
-        if (streak == 0) return 0
         val xp = GamificationRules.checkInXp(streak)
         db.gamificationDao().upsert(
             current.copy(
                 streak = streak,
-                lastCheckInDay = now.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                lastCheckInDay = todayStr,
                 lastCheckInAt = System.currentTimeMillis(),
                 xp = current.xp + xp,
                 updatedAt = System.currentTimeMillis(),
@@ -259,6 +346,7 @@ class GamificationRepository(
         addXp(GamificationRules.xpPerCompletedLesson)
         unlockBadgeIfNeeded("lesson_first", completed == 0)
         unlockBadgeIfNeeded("lesson_all", completed + 1 >= 12)
+        missions?.record(ai.ki_kompetenz_training_org.data.missions.MissionMetric.LESSON_COMPLETED)
     }
 
     suspend fun onQuizFinished(correctCount: Int, totalQuestions: Int, score: Int) {
@@ -266,6 +354,10 @@ class GamificationRepository(
         unlockBadge("first_score")
         unlockBadgeIfNeeded("perfect_score", correctCount == totalQuestions)
         unlockBadgeIfNeeded("visionary", score >= 81)
+        missions?.record(ai.ki_kompetenz_training_org.data.missions.MissionMetric.QUIZ_PLAYED)
+        if (totalQuestions > 0 && correctCount.toFloat() / totalQuestions >= 0.8f) {
+            missions?.record(ai.ki_kompetenz_training_org.data.missions.MissionMetric.QUIZ_GOOD)
+        }
     }
 
     suspend fun onMiniGameFinished(correctCount: Int, totalQuestions: Int, gameId: String) {
@@ -278,6 +370,10 @@ class GamificationRepository(
         }
         unlockBadgeIfNeeded("mini_game_all", played.size >= ai.ki_kompetenz_training_org.data.minigames.MiniGames.ALL.size)
         unlockBadgeIfNeeded("perfect_score", correctCount == totalQuestions)
+        if (gameId == "fake_or_real") {
+            unlockBadgeIfNeeded("fake_or_real", correctCount == totalQuestions && totalQuestions == 10)
+        }
+        missions?.record(ai.ki_kompetenz_training_org.data.missions.MissionMetric.MINIGAME_PLAYED)
     }
 
     /** IDs der bereits gespielten Mini-Games (SharedPreferences, lokal). */
@@ -292,6 +388,7 @@ class GamificationRepository(
     /** XP per SRS card review; bonus when a session of >= 5 cards is finished. */
     suspend fun onSrsReview(sessionFinished: Boolean, sessionSize: Int) {
         addXp(GamificationRules.xpPerSrsReview)
+        missions?.record(ai.ki_kompetenz_training_org.data.missions.MissionMetric.SRS_CARDS)
         if (sessionFinished && sessionSize >= 5) {
             addXp(GamificationRules.srsSessionBonus)
         }

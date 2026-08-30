@@ -23,6 +23,7 @@ class DailyChallengeViewModel(
     private val repository: DailyChallengeRepository,
     private val dispatcher: kotlinx.coroutines.CoroutineDispatcher = kotlinx.coroutines.Dispatchers.Main,
     private val today: LocalDate = LocalDate.now(),
+    private val onDailyCompleted: (suspend () -> Unit)? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DailyChallengeUiState())
@@ -48,6 +49,7 @@ class DailyChallengeViewModel(
     fun completeChallenge(perfect: Boolean) {
         viewModelScope.launch(dispatcher) {
             val xp = repository.completeChallenge(today, perfect)
+            if (xp > 0) onDailyCompleted?.invoke()
             val streak = repository.getStreak()
             _state.value = _state.value.copy(
                 isCompleted = true,

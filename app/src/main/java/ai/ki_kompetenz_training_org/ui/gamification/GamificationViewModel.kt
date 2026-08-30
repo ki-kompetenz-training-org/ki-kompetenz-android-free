@@ -11,6 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
+data class MissionUi(
+    val id: String,
+    val target: Int,
+    val progress: Int,
+    val completed: Boolean,
+)
+
 data class GamificationUiState(
     val xp: Int = 0,
     val level: Int = 1,
@@ -18,6 +25,8 @@ data class GamificationUiState(
     val xpNeeded: Int = 100,
     val streak: Int = 0,
     val checkedInToday: Boolean = false,
+    val freezes: Int = 0,
+    val missions: List<MissionUi> = emptyList(),
     val badges: List<Pair<Badge, Boolean>> = emptyList(),
     val lessonProgress: Int = 0,
     val totalLessons: Int = 12,
@@ -48,6 +57,12 @@ class GamificationViewModel(
         }
     }
 
+    fun purchaseFreeze() {
+        viewModelScope.launch {
+            gamification.purchaseFreeze()
+        }
+    }
+
     private fun buildState(
         entity: GamificationEntity?,
         badges: List<Pair<Badge, Boolean>>,
@@ -63,8 +78,23 @@ class GamificationViewModel(
             xpNeeded = GamificationRules.xpNeededForNextLevel(xp),
             streak = entity?.streak ?: 0,
             checkedInToday = entity?.lastCheckInDay == today,
+            freezes = gamification.freezes(),
+            missions = readMissions(),
             badges = badges,
             lessonProgress = lessonCount,
         )
+    }
+
+    private fun readMissions(): List<MissionUi> {
+        val repo = gamification.missions ?: return emptyList()
+        val state = repo.current()
+        return repo.selectedFor(state.week).map { t ->
+            MissionUi(
+                id = t.id,
+                target = t.target,
+                progress = state.progress[t.id] ?: 0,
+                completed = t.id in state.completed,
+            )
+        }
     }
 }

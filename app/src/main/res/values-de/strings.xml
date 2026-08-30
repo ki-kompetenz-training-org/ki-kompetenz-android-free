@@ -328,4 +328,19 @@
     <string name="error_srs_save">Bewertung konnte nicht gespeichert werden</string>
     <string name="error_team_load">Team konnte nicht geladen werden</string>
     <string name="error_lesson_load">Lektion konnte nicht geladen werden</string>
+    <string name="profile_freezes">Serien-Schutz</string>
+    <string name="profile_freezes_count">%1$d Freeze(s)</string>
+    <string name="freeze_buy">Freeze kaufen (%1$d XP)</string>
+    <string name="freeze_buy_cap">Maximal 2 Freezes</string>
+    <string name="freeze_buy_no_xp">Zu wenig XP</string>
+    <string name="freeze_explain">Ein Freeze schuetzt deine Serie, wenn du einen Tag aussetzt. Du bekommst jede Woche einen gratis.</string>
+    <string name="mission_section_title">Wochen-Missionen</string>
+    <string name="mission_complete_tag">Abgeschlossen</string>
+    <string name="mission_bonus">Alle 3 erledigt: +%1$d Bonus-XP</string>
+    <string name="mission_title_quiz_play">Beende 3 Quizze</string>
+    <string name="mission_title_quiz_good">2 Quizze mit 80 Prozent oder mehr</string>
+    <string name="mission_title_minigame_play">Spiele 4 Mini-Spiele</string>
+    <string name="mission_title_srs_cards">Beantworte 20 SRS-Karten</string>
+    <string name="mission_title_lessons">Schließe 2 Lektionen ab</string>
+    <string name="mission_title_daily">Vervollständige 3 Tages-Challenges</string>
 </resources>

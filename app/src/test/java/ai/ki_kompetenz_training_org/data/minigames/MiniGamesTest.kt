@@ -8,14 +8,14 @@ class MiniGamesTest {
     // ── Data integrity tests ──
 
     @Test
-    fun `all 11 games are registered with 3 arena games`() {
-        assertEquals(11, MiniGames.ALL.size)
+    fun `all 12 games are registered with 3 arena games`() {
+        assertEquals(12, MiniGames.ALL.size)
         assertEquals(3, MiniGames.ARENA3D.size)
     }
 
     @Test
     fun `all games are free`() {
-        assertEquals(11, MiniGames.FREE.size)
+        assertEquals(12, MiniGames.FREE.size)
         assertEquals(0, MiniGames.PREMIUM.size)
     }
 

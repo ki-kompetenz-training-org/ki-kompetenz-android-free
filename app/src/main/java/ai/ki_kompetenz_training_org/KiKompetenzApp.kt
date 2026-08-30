@@ -13,6 +13,7 @@ import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.NetworkModule
 import ai.ki_kompetenz_training_org.data.connectivity.ConnectivityObserver
 import ai.ki_kompetenz_training_org.data.db.AppDatabase
+import ai.ki_kompetenz_training_org.data.missions.WeeklyMissionsRepository
 import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.prefs.TokenStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
@@ -83,6 +84,11 @@ class KiKompetenzApp : Application() {
         premiumRepository = PremiumRepository(api)
         teamRepository = TeamRepository(api)
         gamificationRepository = GamificationRepository(db, this)
+        // Weekly missions reuse the same preferences file; the hook lives on GamificationRepository.
+        gamificationRepository.missions = WeeklyMissionsRepository(
+            getSharedPreferences("kikompetenz_missions", android.content.Context.MODE_PRIVATE),
+            gamificationRepository,
+        )
         srsRepository = SrsRepository(api)
 
         // Create notification channels early

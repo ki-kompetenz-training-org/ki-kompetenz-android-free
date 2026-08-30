@@ -87,6 +87,90 @@ fun GamificationScreen(onBack: () -> Unit) {
                             Text(if (state.checkedInToday) stringResource(R.string.profile_checked_in) else stringResource(R.string.profile_checkin))
                         }
                     }
+                    // Streak freezes: balance + weekly-granted cap note + purchase
+                    Row(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 14.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Text("❄\uFE0F", style = MaterialTheme.typography.headlineSmall)
+                        Spacer(Modifier.width(8.dp))
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.profile_freezes), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                stringResource(R.string.freeze_explain),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            stringResource(R.string.profile_freezes_count, state.freezes),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        val canBuy = state.freezes < 2 && state.xp >= 100
+                        Button(
+                            onClick = vm::purchaseFreeze,
+                            enabled = canBuy,
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                        ) {
+                            Text(
+                                when {
+                                    state.freezes >= 2 -> stringResource(R.string.freeze_buy_cap)
+                                    state.xp < 100 -> stringResource(R.string.freeze_buy_no_xp)
+                                    else -> stringResource(R.string.freeze_buy, 100)
+                                },
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Weekly missions
+            if (state.missions.isNotEmpty()) {
+                item {
+                    Card(modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(16.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(stringResource(R.string.mission_section_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                                Spacer(Modifier.weight(1f))
+                                val done = state.missions.count { it.completed }
+                                if (done == state.missions.size) {
+                                    Text(stringResource(R.string.mission_bonus, 50), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                                } else {
+                                    Text("$done/${state.missions.size}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                }
+                            }
+                            Spacer(Modifier.height(8.dp))
+                            state.missions.forEach { m ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            missionTitle(m.id),
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = if (m.completed) FontWeight.Medium else FontWeight.Normal,
+                                            color = if (m.completed) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                                        )
+                                        Spacer(Modifier.height(4.dp))
+                                        LinearProgressIndicator(
+                                            progress = { (m.progress.toFloat() / m.target).coerceIn(0f, 1f) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
+                                    }
+                                    Spacer(Modifier.width(12.dp))
+                                    if (m.completed) {
+                                        Text(stringResource(R.string.mission_complete_tag), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                                    } else {
+                                        Text(
+                                            "${m.progress}/${m.target}",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.height(10.dp))
+                            }
+                        }
+                    }
                 }
             }
 
@@ -156,6 +240,17 @@ fun GamificationScreen(onBack: () -> Unit) {
             }
 
             item {
+                val lang by app.settingsStore.language.collectAsState(initial = SettingsStore.LANG_SYSTEM)
+                val scope = rememberCoroutineScope()
+                LanguageSection(
+                    currentLang = lang,
+                    onLanguageChange = { selected ->
+                        scope.launch { app.settingsStore.setLanguage(selected) }
+                    },
+                )
+            }
+
+            item {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     modifier = Modifier.fillMaxWidth(),
@@ -169,3 +264,16 @@ fun GamificationScreen(onBack: () -> Unit) {
             }
         }
     }
+
+/** Localized title for a mission id (titles live in strings.xml, not in code data). */
+@Composable
+fun missionTitle(id: String): String = stringResource(
+    when (id) {
+        "quiz_play" -> R.string.mission_title_quiz_play
+        "quiz_good" -> R.string.mission_title_quiz_good
+        "minigame_play" -> R.string.mission_title_minigame_play
+        "srs_cards" -> R.string.mission_title_srs_cards
+        "lessons" -> R.string.mission_title_lessons
+        else -> R.string.mission_title_daily
+    }
+)
