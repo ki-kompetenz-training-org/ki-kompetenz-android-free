@@ -26,12 +26,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
 import ai.ki_kompetenz_training_org.data.api.QuizQuestionDto
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
+import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
+import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +50,14 @@ data class LessonDetailUiState(
     val currentScore: Int = 0,
     val quizQuestions: List<QuizQuestionDto> = emptyList(),
     val showQuiz: Boolean = false,
+    val completed: LessonCompletedUi? = null,
+)
+
+/** Shown after the user completed a lesson (score, XP earned, next step). */
+data class LessonCompletedUi(
+    val scorePct: Int,
+    val xpGained: Int,
+    val nextSlug: String?,
 )
 
 class LessonDetailViewModel(
@@ -55,6 +66,8 @@ class LessonDetailViewModel(
     private val premiumRepository: PremiumRepository,
     private val gamificationRepository: ai.ki_kompetenz_training_org.data.repo.GamificationRepository,
     private val coroutineDispatcher: kotlinx.coroutines.CoroutineDispatcher = kotlinx.coroutines.Dispatchers.IO,
+    private val settingsStore: SettingsStore? = null,
+    private val totalLessonCount: Int = 14,
 ) : ViewModel() {
     private val _state = MutableStateFlow(LessonDetailUiState())
     val state: StateFlow<LessonDetailUiState> = _state
@@ -200,6 +213,8 @@ class LessonDetailViewModel(
                     loading = false,
                     quizQuestions = quizQuestions
                 )
+                // Remember for the continue-learning card on home
+                settingsStore?.setLastLesson(lesson.slug, lesson.lesson ?: 0)
             }.onFailure {
                 _state.value = _state.value.copy(
                     loading = false,
@@ -251,10 +266,22 @@ class LessonDetailViewModel(
             // Cannot complete without passing the test
             return
         }
+        val lesson = currentState.lesson ?: return
+        val totalPoints = currentState.quizQuestions.sumOf { it.points }
+        val completed = LessonCompletedUi(
+            scorePct = if (totalPoints > 0) currentState.currentScore * 100 / totalPoints else 100,
+            xpGained = GamificationRules.xpPerCompletedLesson,
+            nextSlug = nextSlugAfter(lesson.lesson ?: 0),
+        )
         viewModelScope.launch {
             gamificationRepository.markLessonCompleted(slug)
+            settingsStore?.setLastLesson(lesson.slug, lesson.lesson ?: 0)
+            _state.value = _state.value.copy(completed = completed)
         }
     }
+
+    private fun nextSlugAfter(lessonNumber: Int): String? =
+        if (lessonNumber in 1 until totalLessonCount) "lesson-${lessonNumber + 1}" else null
 
     /**
      * Check if the lesson can be completed (test passed).
@@ -273,8 +300,11 @@ fun LessonDetailScreen(
     slug: String,
     onBack: () -> Unit,
     onOpenPremium: () -> Unit,
+    onNextLesson: (String) -> Unit = {},
+    onOpenSrs: () -> Unit = {},
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
+    RewardDialogHost(rewardCenter = app.rewardCenter)
     val vm: LessonDetailViewModel = viewModel(key = slug) {
         LessonDetailViewModel(slug, app.contentRepository, app.premiumRepository, app.gamificationRepository)
     }
@@ -298,6 +328,16 @@ fun LessonDetailScreen(
             }
             state.error != null -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
                 Text(ai.ki_kompetenz_training_org.ui.common.uiErrorMessage(state.error!!))
+            }
+            state.completed != null -> {
+                CompletionSummary(
+                    modifier = Modifier.padding(padding),
+                    completed = state.completed!!,
+                    title = state.lesson?.title ?: "",
+                    onNextLesson = onNextLesson,
+                    onOpenSrs = onOpenSrs,
+                    onBackToList = onBack,
+                )
             }
             state.lesson != null -> {
                 if (vm.isPremium()) {
@@ -574,6 +614,87 @@ private fun QuizQuestionCard(
                     }
                 }
             }
+        }
+    }
+}
+
+/**
+ * Terminal state after completing a lesson: score, XP earned, next step.
+ * Pure summary - never stacks dialogs, back returns to the lesson list.
+ */
+@Composable
+private fun CompletionSummary(
+    modifier: Modifier,
+    completed: LessonCompletedUi,
+    title: String,
+    onNextLesson: (String) -> Unit,
+    onOpenSrs: () -> Unit,
+    onBackToList: () -> Unit,
+) {
+    Column(
+        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text("🎉", style = MaterialTheme.typography.displayMedium)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            stringResource(R.string.lesson_completed_title),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+        if (title.isNotBlank()) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                title,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.lesson_completed_score, completed.scorePct),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Spacer(Modifier.width(16.dp))
+            Text(
+                "+${completed.xpGained} XP",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Spacer(Modifier.height(24.dp))
+        if (completed.nextSlug != null) {
+            Button(
+                onClick = { onNextLesson(completed.nextSlug) },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+            ) {
+                Text(stringResource(R.string.lesson_completed_next), fontWeight = FontWeight.Bold)
+            }
+            Spacer(Modifier.height(8.dp))
+        } else {
+            Text(
+                stringResource(R.string.lesson_completed_all_done),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        OutlinedButton(
+            onClick = onOpenSrs,
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+        ) {
+            Text(stringResource(R.string.lesson_completed_srs), fontWeight = FontWeight.SemiBold)
+        }
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = onBackToList) {
+            Text(stringResource(R.string.lesson_completed_back))
         }
     }
 }

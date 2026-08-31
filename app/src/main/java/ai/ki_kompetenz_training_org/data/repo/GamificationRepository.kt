@@ -394,6 +394,9 @@ class GamificationRepository(
         }
     }
 
+    /** Public read-only access to the unlocked badge ids (for reward flow). */
+    fun badgeIds(badgesJson: String?): List<String> = parseBadges(badgesJson)
+
     private fun parseBadges(badgesJson: String?): List<String> {
         if (badgesJson.isNullOrBlank()) return emptyList()
         return try {

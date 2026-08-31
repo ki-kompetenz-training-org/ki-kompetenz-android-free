@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,15 +30,170 @@ import ai.ki_kompetenz_training_org.R
 import kotlinx.coroutines.launch
 
 /**
- * 3-screen onboarding flow for first-time users.
- * Page 1: Welcome - what is KI-Kompetenz
- * Page 2: KiBot intro - your AI companion grows with you
- * Page 3: Start learning - overview of features
+ * 4-step onboarding flow for first-time users.
+ * Step 1: Language selection (persisted immediately, steps render localized)
+ * Step 2: Welcome - what is KI-Kompetenz
+ * Step 3: KiBot intro - your AI companion grows with you
+ * Step 4: Start learning - overview of features
+ *
+ * [onCompleted] receives whether the user chose to start lesson 1 directly.
  */
 @Composable
 fun OnboardingScreen(
-    onCompleted: () -> Unit,
+    onCompleted: (startLesson1: Boolean) -> Unit,
+    settingsStore: ai.ki_kompetenz_training_org.data.prefs.SettingsStore,
+    onLanguageSelected: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+    val systemLanguage = LocalConfiguration.current.locales[0].language
+    val storedLang by settingsStore.language.collectAsState(
+        initial = OnboardingLang.defaultLanguage(systemLanguage)
+    )
+    // Fresh installs store LANG_SYSTEM; resolve it so English is preselected.
+    val selectedLang = when (storedLang) {
+        ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_DE ->
+            ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_DE
+        ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_EN ->
+            ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_EN
+        else -> OnboardingLang.defaultLanguage(systemLanguage)
+    }
+
+    // Language step (step 1): shown until the user picks a language.
+    var languageChosen by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    if (!languageChosen) {
+        OnboardingLanguageStep(
+            selectedLang = selectedLang,
+            onSelect = { lang ->
+                languageChosen = true
+                onLanguageSelected()
+                // Persist immediately (DataStore) + mirror to prefs so the
+                // next launch boots with the chosen locale.
+                scope.launch { settingsStore.setLanguage(lang) }
+                context.getSharedPreferences(
+                    "kikompetenz_settings", android.content.Context.MODE_PRIVATE,
+                ).edit().putString("language", lang).apply()
+            },
+        )
+        return
+    }
+
+    // Localized composition for the remaining steps: stringResource follows the
+    // selected language without an activity recreate.
+    val localizedConfig = remember(selectedLang) {
+        android.content.res.Configuration(context.resources.configuration).apply {
+            setLocale(java.util.Locale.forLanguageTag(selectedLang))
+        }
+    }
+    val localizedContext = remember(localizedConfig) {
+        context.createConfigurationContext(localizedConfig)
+    }
+    CompositionLocalProvider(
+        LocalConfiguration provides localizedConfig,
+        LocalContext provides localizedContext,
+    ) {
+        OnboardingSteps(onCompleted = onCompleted)
+    }
+}
+
+@Composable
+private fun OnboardingLanguageStep(
+    selectedLang: String,
+    onSelect: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.surface,
+                    )
+                )
+            )
+            .padding(horizontal = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text("\uD83C\uDF10", style = MaterialTheme.typography.displayMedium)
+        Spacer(Modifier.height(24.dp))
+        Text(
+            stringResource(R.string.onboarding_language_title),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            stringResource(R.string.onboarding_language_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(32.dp))
+        val store = ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_DE
+        LanguageChoice(
+            emoji = "\uD83C\uDDE9\uD83C\uDDEA",
+            label = "Deutsch",
+            selected = selectedLang == store,
+        ) { onSelect(store) }
+        Spacer(Modifier.height(12.dp))
+        val storeEn = ai.ki_kompetenz_training_org.data.prefs.SettingsStore.LANG_EN
+        LanguageChoice(
+            emoji = "\uD83C\uDDEC\uD83C\uDDE7",
+            label = "English",
+            selected = selectedLang == storeEn,
+        ) { onSelect(storeEn) }
+    }
+}
+
+@Composable
+private fun LanguageChoice(
+    emoji: String,
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 64.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.surface,
+        ),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(emoji, style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.width(12.dp))
+            Text(
+                label,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.weight(1f))
+            if (selected) {
+                Text(
+                    "\u2713",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun OnboardingSteps(onCompleted: (startLesson1: Boolean) -> Unit) {
     val pagerState = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
 
@@ -112,11 +269,13 @@ fun OnboardingScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (pagerState.currentPage < 2) {
-                TextButton(onClick = onCompleted) {
+                TextButton(onClick = { onCompleted(false) }) {
                     Text(stringResource(R.string.onboarding_skip))
                 }
             } else {
-                Spacer(Modifier.width(48.dp))
+                TextButton(onClick = { onCompleted(false) }) {
+                    Text(stringResource(R.string.onboarding_cta_explore))
+                }
             }
 
             Button(
@@ -124,7 +283,7 @@ fun OnboardingScreen(
                     if (pagerState.currentPage < 2) {
                         scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                     } else {
-                        onCompleted()
+                        onCompleted(true)
                     }
                 },
                 shape = RoundedCornerShape(16.dp),
@@ -133,7 +292,7 @@ fun OnboardingScreen(
                     if (pagerState.currentPage < 2) {
                         stringResource(R.string.onboarding_next)
                     } else {
-                        stringResource(R.string.onboarding_start_cta)
+                        stringResource(R.string.onboarding_cta_lesson1)
                     },
                     fontWeight = FontWeight.SemiBold,
                 )

@@ -16,8 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.lessons.*
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -53,9 +56,13 @@ fun InteractiveLessonScreen(
     onBack: () -> Unit,
     onMarkCompleted: (String) -> Unit,
     onOpenPremium: () -> Unit = {},
+    onNextLesson: (String) -> Unit = {},
+    onOpenSrs: () -> Unit = {},
     completedSections: Set<Int> = emptySet(),
     quizScores: Map<Int, Int> = emptyMap(), // sectionIndex -> score (0-100)
+    totalLessonCount: Int = 14,
 ) {
+    // Use LaunchedEffect to derive state instead of side-effects in composition
     var completedSectionsState by remember { mutableStateOf(completedSections.toMutableSet()) }
     var quizScoresState by remember { mutableStateOf(quizScores.toMutableMap()) }
     var allQuizzesPassed by remember {
@@ -67,6 +74,16 @@ fun InteractiveLessonScreen(
     }
     // Track which blocks have been interacted with per section
     val interactedBlocks = remember { mutableStateMapOf<Pair<Int, Int>, Boolean>() }
+
+    // Reward celebrations at result moments (completion summary) - not mid-round
+    val rewardCenter = KiKompetenzApp.from(LocalContext.current).rewardCenter
+    RewardDialogHost(rewardCenter = rewardCenter)
+
+    // Completion summary (terminal state after finishing the lesson)
+    var showCompletion by remember { mutableStateOf(false) }
+    val avgScore = quizScoresState.values.filter { it >= 0 }
+        .takeIf { it.isNotEmpty() }?.average()?.toInt() ?: 100
+    val hasNextLesson = lesson.lessonNumber in 1 until totalLessonCount
 
     Scaffold(
         topBar = {
@@ -80,6 +97,22 @@ fun InteractiveLessonScreen(
             )
         },
     ) { padding ->
+        if (showCompletion) {
+            CompletionSummaryContent(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                locale = locale,
+                title = localized(locale, lesson.titleDe, lesson.titleEn),
+                scorePct = avgScore,
+                xpGained = GamificationRules.xpPerCompletedLesson,
+                hasNextLesson = hasNextLesson,
+                onNextLesson = { onNextLesson("lesson-${lesson.lessonNumber + 1}") },
+                onOpenSrs = onOpenSrs,
+                onBackToList = onBack,
+            )
+            return@Scaffold
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -152,7 +185,10 @@ fun InteractiveLessonScreen(
             // ── Complete button ────────────────────────────────────────
             Spacer(Modifier.height(16.dp))
             Button(
-                onClick = { onMarkCompleted(lesson.id) },
+                onClick = {
+                    onMarkCompleted(lesson.id)
+                    showCompletion = true
+                },
                 enabled = allQuizzesPassed,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -169,6 +205,92 @@ fun InteractiveLessonScreen(
                 }
             }
             Spacer(Modifier.height(32.dp))
+        }
+    }
+}
+
+// ── Completion summary (terminal state) ────────────────────────────────────
+
+@Composable
+private fun CompletionSummaryContent(
+    modifier: Modifier,
+    locale: String,
+    title: String,
+    scorePct: Int,
+    xpGained: Int,
+    hasNextLesson: Boolean,
+    onNextLesson: () -> Unit,
+    onOpenSrs: () -> Unit,
+    onBackToList: () -> Unit,
+) {
+    Column(
+        modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text("🎉", style = MaterialTheme.typography.displayMedium)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            localized(locale, "Lektion geschafft!", "Lesson complete!"),
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            title,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                localized(locale, "Ergebnis: ", "Score: ") + "$scorePct%",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Spacer(Modifier.width(16.dp))
+            Text(
+                "+$xpGained XP",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Spacer(Modifier.height(24.dp))
+        if (hasNextLesson) {
+            Button(
+                onClick = onNextLesson,
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+            ) {
+                Text(
+                    localized(locale, "Nächste Lektion", "Next lesson"),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+        } else {
+            Text(
+                localized(locale, "Alle Lektionen geschafft! 🏆", "All lessons completed! 🏆"),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        OutlinedButton(
+            onClick = onOpenSrs,
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+        ) {
+            Text(
+                localized(locale, "Karten wiederholen", "Review cards"),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = onBackToList) {
+            Text(localized(locale, "Zurück zur Übersicht", "Back to overview"))
         }
     }
 }
@@ -263,7 +385,7 @@ private fun ContentBlockRenderer(
         is ContentBlock.Callout -> CalloutBlock(block, locale, onInteracted)
         is ContentBlock.KnowledgeCheck -> KnowledgeCheckBlock(block, locale)
         is ContentBlock.Classification -> ClassificationBlock(block, locale, onInteracted)
-        is ContentBlock.Quiz -> QuizBlock(block, locale, onQuizScore)
+        is ContentBlock.Quiz -> QuizBlock(block, locale, onQuizScore, onInteracted)
         is ContentBlock.FillBlank -> FillBlankBlock(block, locale, onInteracted)
         is ContentBlock.TrueFalse -> TrueFalseBlock(block, locale, onInteracted)
         is ContentBlock.RiskThermometer -> RiskThermometerBlock(
@@ -441,10 +563,20 @@ private fun QuizBlock(
     block: ContentBlock.Quiz,
     locale: String,
     onQuizScore: (Int) -> Unit,
+    onInteracted: () -> Unit,
 ) {
     var selectedIndex by remember { mutableStateOf<Int?>(null) }
     var showFeedback by remember { mutableStateOf(false) }
     val answered = selectedIndex != null
+
+    // Fire score callback once via LaunchedEffect, not in composition
+    LaunchedEffect(showFeedback, answered) {
+        if (showFeedback && answered && selectedIndex != null) {
+            val correct = block.options[selectedIndex!!].isCorrect
+            onQuizScore(if (correct) 100 else 0)
+            onInteracted()
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -524,15 +656,19 @@ private fun QuizBlock(
                     )
                 } else {
                     val correctAnswer = block.options.indexOfFirst { it.isCorrect }
+                    if (correctAnswer >= 0) {
+                        Text(
+                            localized(locale, "Richtig: ${block.options[correctAnswer].textDe}", "Correct: ${block.options[correctAnswer].textEn}"),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                     Text(
                         "❌ ${localized(locale, block.explanationDe, block.explanationEn)}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
-
-                Spacer(Modifier.height(4.dp))
-                onQuizScore(if (correct) 100 else 0)
             }
         }
     }
@@ -540,6 +676,7 @@ private fun QuizBlock(
 
 // ── Fill-in-the-blank block ─────────────────────────────────────────────────
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FillBlankBlock(
     block: ContentBlock.FillBlank,
@@ -561,8 +698,8 @@ private fun FillBlankBlock(
             )
             Spacer(Modifier.height(8.dp))
 
-            // Choices as chips
-            Row(
+            // Choices as chips (FlowRow for wrapping)
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -653,7 +790,7 @@ private fun TrueFalseBlock(
                 val falseColor = when {
                     showFeedback && !block.isTrue -> MaterialTheme.colorScheme.primaryContainer
                     showFeedback && answered == false && block.isTrue -> MaterialTheme.colorScheme.errorContainer
-                    answered == false -> MaterialTheme.colorScheme.errorContainer
+                    answered == false && !showFeedback -> MaterialTheme.colorScheme.surfaceVariant
                     else -> MaterialTheme.colorScheme.surfaceVariant
                 }
                 OutlinedButton(

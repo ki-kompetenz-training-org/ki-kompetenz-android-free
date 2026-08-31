@@ -24,6 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import android.provider.Settings
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -37,6 +42,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.theme.KiTokens
+import ai.ki_kompetenz_training_org.data.repo.RewardFormat
+import ai.ki_kompetenz_training_org.ui.common.SkeletonCard
+import ai.ki_kompetenz_training_org.ui.common.SkeletonVisibility
+import ai.ki_kompetenz_training_org.ui.theme.LocalAudienceMode
+import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeCard
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeViewModel
@@ -44,10 +55,12 @@ import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onOpenQuiz: () -> Unit,
     onOpenLessons: () -> Unit,
+    onOpenLesson: (String) -> Unit = {},
     onOpenPremium: () -> Unit,
     onOpenTeam: () -> Unit,
     onLogin: () -> Unit,
@@ -61,9 +74,21 @@ fun HomeScreen(
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: HomeViewModel = viewModel {
-        HomeViewModel(app.authRepository, app.premiumRepository, app.teamRepository, app.contentRepository, app.gamificationRepository)
+        HomeViewModel(app.authRepository, app.premiumRepository, app.teamRepository, app.contentRepository, app.gamificationRepository, app.settingsStore)
     }
     val state by vm.state.collectAsState()
+    RewardDialogHost(rewardCenter = app.rewardCenter)
+
+    // First-load skeleton (calm placeholders, no shimmer loop)
+    if (SkeletonVisibility.shouldShow(loading = state.loading, items = if (state.lessonProgress > 0) 1 else 0)) {
+        Column(Modifier.fillMaxSize().padding(top = 48.dp)) {
+            SkeletonCard()
+            SkeletonCard()
+            SkeletonCard()
+            SkeletonCard()
+        }
+        return
+    }
     
     // ── Connectivity state ──
     val isOnline by app.connectivityObserver.isOnline.collectAsState(initial = true)
@@ -102,7 +127,7 @@ fun HomeScreen(
         if (!isOnline) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(KiTokens.CardRadiusCompact),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -120,7 +145,7 @@ fun HomeScreen(
         // ── Gamification summary bar ──
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(14.dp),
+            shape = RoundedCornerShape(KiTokens.CardRadiusCompact),
             onClick = onOpenGamification,
         ) {
             Column(Modifier.padding(14.dp)) {
@@ -141,10 +166,34 @@ fun HomeScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.home_streak, state.streak.toString()), style = MaterialTheme.typography.bodySmall)
                     Spacer(Modifier.weight(1f))
+                    // Brief emphasis pulse right after a successful check-in;
+                    // skipped entirely when system animations are turned off.
+                    val checkInScale = remember { Animatable(1f) }
+                    val prevCheckedIn = remember { mutableStateOf(state.checkedInToday) }
+                    val resolver = LocalContext.current.contentResolver
+                    LaunchedEffect(state.checkedInToday) {
+                        if (state.checkedInToday && !prevCheckedIn.value) {
+                            val dur = RewardFormat.checkInAnimationMs(
+                                Settings.Global.getFloat(
+                                    resolver,
+                                    Settings.Global.ANIMATOR_DURATION_SCALE, 1f,
+                                )
+                            )
+                            if (dur > 0) {
+                                checkInScale.animateTo(1.06f, tween(dur / 2))
+                                checkInScale.animateTo(1f, tween(dur / 2))
+                            }
+                        }
+                        prevCheckedIn.value = state.checkedInToday
+                    }
                     Button(
                         onClick = vm::dailyCheckIn,
                         enabled = !state.checkedInToday,
                         contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
+                        modifier = Modifier.heightIn(min = LocalAudienceMode.current.minTouchTargetDp.dp).graphicsLayer {
+                            scaleX = checkInScale.value
+                            scaleY = checkInScale.value
+                        },
                     ) {
                         Text(if (state.checkedInToday) stringResource(R.string.home_checked_in) else stringResource(R.string.home_checkin))
                     }
@@ -167,25 +216,37 @@ fun HomeScreen(
         Spacer(Modifier.height(16.dp))
 
         // ── Lektionen: zentrale Lern-Einstieg — immer im Vordergrund ──
+        // Resume state: zeigt die zuletzt geöffnete (unvollendete) Lektion.
+        val resume = state.lastLesson
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(KiTokens.CardRadiusLarge),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-            onClick = onOpenLessons,
+            onClick = { if (resume != null) onOpenLesson(resume.slug) else onOpenLessons() },
         ) {
             Column(Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("📖", style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.width(10.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.home_lessons_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                         Text(
-                            stringResource(R.string.home_lessons_progress, state.lessonProgress, state.totalLessons),
+                            resume?.title ?: stringResource(R.string.home_lessons_title),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        Text(
+                            if (resume != null) stringResource(R.string.home_lessons_resume_lesson, resume.index, state.totalLessons)
+                            else stringResource(R.string.home_lessons_progress, state.lessonProgress, state.totalLessons),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    Text(stringResource(R.string.home_lessons_cta), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                    Text(
+                        if (resume != null) stringResource(R.string.home_lessons_cta_resume) else stringResource(R.string.home_lessons_cta),
+                        fontWeight = FontWeight.SemiBold,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
                 }
                 Spacer(Modifier.height(10.dp))
                 LinearProgressIndicator(
@@ -292,12 +353,14 @@ fun HomeScreen(
             checkedInToday = state.checkedInToday,
         )
         val kibotDescription = stringResource(R.string.kibot_level, state.level)
+        var showKibotTips by remember { mutableStateOf(false) }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
                 .semantics { contentDescription = kibotDescription },
             shape = RoundedCornerShape(20.dp),
+            onClick = { showKibotTips = true },
         ) {
             Box(
                 modifier = Modifier
@@ -318,42 +381,62 @@ fun HomeScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // ── "More" section: Kids + Seniors ──
+        // ── KiBot tips bottom sheet ──
+        if (showKibotTips) {
+            ModalBottomSheet(onDismissRequest = { showKibotTips = false }) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 32.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.kibot_tips_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        stringResource(R.string.kibot_hello_body),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        stringResource(R.string.kibot_sleepy_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        // ── "More" section: Kids + Seniors (mode-aware, card count never grows) ──
+        val audienceMode = LocalAudienceMode.current
+        val minCardHeight = audienceMode.minTouchTargetDp.dp
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp),
-                onClick = onOpenForKids,
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text("👶", style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.width(8.dp))
-                    Column {
-                        Text(stringResource(R.string.home_more_kids), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                        Text(stringResource(R.string.home_more_kids_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
+            for (cardId in audienceMode.homeCardIds()) {
+                val (emoji, titleRes, descRes, onClick) = when (cardId) {
+                    "forkids" -> Quad("👶", R.string.home_more_kids, R.string.home_more_kids_desc, onOpenForKids)
+                    else -> Quad("👴", R.string.home_more_seniors, R.string.home_more_seniors_desc, onOpenForSeniors)
                 }
-            }
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp),
-                onClick = onOpenForSeniors,
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                Card(
+                    modifier = Modifier.weight(1f).heightIn(min = minCardHeight),
+                    shape = RoundedCornerShape(KiTokens.CardRadiusCompact),
+                    onClick = onClick,
                 ) {
-                    Text("👴", style = MaterialTheme.typography.titleMedium)
-                    Spacer(Modifier.width(8.dp))
-                    Column {
-                        Text(stringResource(R.string.home_more_seniors), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
-                        Text(stringResource(R.string.home_more_seniors_desc), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(emoji, style = MaterialTheme.typography.titleMedium)
+                        Spacer(Modifier.width(8.dp))
+                        Column {
+                            Text(stringResource(titleRes), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodyMedium)
+                            Text(stringResource(descRes), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
                     }
                 }
             }
@@ -421,7 +504,7 @@ private fun QuickActionCard(
             .semantics {
                 contentDescription = "$title. $subtitle"
             },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(KiTokens.CardRadiusLarge),
         onClick = onClick,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
@@ -435,3 +518,7 @@ private fun QuickActionCard(
         }
     }
 }
+
+
+/** Minimal 4-tuple used by the mode-aware home cards. */
+private data class Quad<A, B, C, D>(val first: A, val second: B, val third: C, val fourth: D)

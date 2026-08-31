@@ -39,8 +39,15 @@ import ai.ki_kompetenz_training_org.ui.quiz.QuizScreen
 import ai.ki_kompetenz_training_org.ui.srs.SrsScreen
 import ai.ki_kompetenz_training_org.ui.team.TeamScreen
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
+
+import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
+import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
 object Routes {
     const val ONBOARDING = "onboarding"
@@ -71,17 +78,34 @@ fun KiKompetenzNavHost(
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
 ) {
+    // App-wide reward detection: diff XP levels + badges across DB emissions.
+    // Events land in the RewardCenter; screens show them at result moments /
+    // on home only (never during an active round).
+    val app = KiKompetenzApp.from(LocalContext.current)
+    LaunchedEffect(Unit) {
+        app.gamificationRepository.observe().collect { entity ->
+            app.levelUpTracker.onNext(entity?.xp ?: 0)?.let { app.rewardCenter.emit(it) }
+            val badges = app.gamificationRepository.badgeIds(entity?.badgesJson)
+            app.badgeCelebrationTracker.onNext(badges).forEach { app.rewardCenter.emit(it) }
+        }
+    }
     NavHost(navController = navController, startDestination = Routes.HOME, modifier = modifier) {
         composable(Routes.HOME) {
             HomeScreen(
                 onOpenQuiz = { navController.navigate(Routes.QUIZ) },
                 onOpenLessons = { navController.navigate(Routes.LESSONS) },
+                onOpenLesson = { slug -> navController.navigate(Routes.lesson(slug)) },
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
                 onOpenTeam = { navController.navigate(Routes.TEAM) },
                 onLogin = { navController.navigate(Routes.AUTH) },
                 onOpenMiniGames = { navController.navigate(Routes.MINIGAMES) },
                 onOpenGamification = { navController.navigate(Routes.GAMIFICATION) },
-                onOpenSrs = { navController.navigate(Routes.SRS) },
+                onOpenSrs = {
+                        navController.navigate(Routes.SRS) {
+                            // Back from the SRS handoff returns to the lesson list
+                            popUpTo(Routes.LESSONS) { inclusive = false }
+                        }
+                    },
                 onOpenForKids = { navController.navigate(Routes.FOR_KIDS) },
                 onOpenForSeniors = { navController.navigate(Routes.FOR_SENIORS) },
                 onOpenMiniGame = { gameId -> navController.navigate(Routes.minigame(gameId)) },
@@ -118,16 +142,47 @@ fun KiKompetenzNavHost(
             )
             val interactiveLesson = interactiveLessons[slug]
             if (interactiveLesson != null) {
+                val app = KiKompetenzApp.from(LocalContext.current)
+                val scope = rememberCoroutineScope()
                 InteractiveLessonScreen(
                     lesson = interactiveLesson,
+                    locale = currentLang(),
                     onBack = { navController.popBackStack() },
-                    onMarkCompleted = { navController.popBackStack() },
+                    onMarkCompleted = { completedSlug ->
+                        // Grant lesson XP + remember for the continue-learning card
+                        scope.launch {
+                            app.gamificationRepository.markLessonCompleted(completedSlug)
+                            app.settingsStore.setLastLesson(completedSlug, interactiveLesson.lessonNumber)
+                        }
+                    },
+                    onNextLesson = { nextSlug ->
+                        navController.navigate(Routes.lesson(nextSlug)) {
+                            popUpTo(Routes.LESSONS) { inclusive = false }
+                        }
+                    },
+                    onOpenSrs = {
+                        navController.navigate(Routes.SRS) {
+                            // Back from the SRS handoff returns to the lesson list
+                            popUpTo(Routes.LESSONS) { inclusive = false }
+                        }
+                    },
                 )
             } else {
                 LessonDetailScreen(
                     slug = slug,
                     onBack = { navController.popBackStack() },
                     onOpenPremium = { navController.navigate(Routes.PREMIUM) },
+                    onNextLesson = { nextSlug ->
+                        navController.navigate(Routes.lesson(nextSlug)) {
+                            popUpTo(Routes.LESSONS) { inclusive = false }
+                        }
+                    },
+                    onOpenSrs = {
+                        navController.navigate(Routes.SRS) {
+                            // Back from the SRS handoff returns to the lesson list
+                            popUpTo(Routes.LESSONS) { inclusive = false }
+                        }
+                    },
                 )
             }
         }
@@ -170,6 +225,11 @@ fun KiKompetenzNavHost(
             SrsScreen(
                 onBack = { navController.popBackStack() },
                 onLogin = { navController.navigate(Routes.AUTH) },
+                onOpenLessons = {
+                    navController.navigate(Routes.LESSONS) {
+                        popUpTo(Routes.HOME) { inclusive = false }
+                    }
+                },
             )
         }
         composable(Routes.FOR_KIDS) {

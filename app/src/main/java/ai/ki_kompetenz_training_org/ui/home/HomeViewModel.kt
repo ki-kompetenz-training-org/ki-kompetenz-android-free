@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ai.ki_kompetenz_training_org.data.api.MyTeamResponseDto
+import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
@@ -10,9 +11,12 @@ import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
 import ai.ki_kompetenz_training_org.data.repo.TeamRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 data class HomeUiState(
+    /** False after the first combine emission - drives the home skeleton. */
+    val loading: Boolean = true,
     val loggedIn: Boolean = false,
     val premium: Boolean = false,
     val premiumChecked: Boolean = false,
@@ -26,8 +30,12 @@ data class HomeUiState(
     val lastCheckInDay: String? = null,
     val missions: List<ai.ki_kompetenz_training_org.ui.gamification.MissionUi> = emptyList(),
     val lessonProgress: Int = 0,
-    val totalLessons: Int = 12,
+    val totalLessons: Int = 14,
+    val lastLesson: LastLessonUi? = null,
 )
+
+/** The lesson to resume: last opened, not yet completed. */
+data class LastLessonUi(val slug: String, val title: String, val index: Int)
 
 class HomeViewModel(
     private val authRepository: AuthRepository,
@@ -35,6 +43,7 @@ class HomeViewModel(
     private val teamRepository: TeamRepository,
     private val contentRepository: ContentRepository,
     private val gamificationRepository: GamificationRepository,
+    private val settingsStore: SettingsStore,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeUiState(loggedIn = authRepository.isLoggedIn()))
@@ -61,6 +70,23 @@ class HomeViewModel(
             gamificationRepository.observeLessonProgress().collect { completed ->
                 _state.value = _state.value.copy(
                     lessonProgress = completed.size,
+                )
+            }
+        }
+        viewModelScope.launch {
+            combine(settingsStore.lastLesson, contentRepository.observeLessons()) { last, lessons ->
+                val ui = last?.let { l ->
+                    lessons.firstOrNull { it.slug == l.slug }?.let { entity ->
+                        LastLessonUi(entity.slug, entity.title, l.index)
+                    }
+                }
+                val total = lessons.size
+                ui to total
+            }.collect { (lastLessonUi, total) ->
+                _state.value = _state.value.copy(
+                    loading = false,
+                    lastLesson = lastLessonUi,
+                    totalLessons = if (total > 0) total else 14,
                 )
             }
         }

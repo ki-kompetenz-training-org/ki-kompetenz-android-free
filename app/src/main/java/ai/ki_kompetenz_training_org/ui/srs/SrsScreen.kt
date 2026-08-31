@@ -26,7 +26,7 @@ import ai.ki_kompetenz_training_org.notification.NotificationPermissionBanner
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit) {
+fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit, onOpenLessons: () -> Unit = {}) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: SrsViewModel = viewModel {
         SrsViewModel(app.authRepository, app.srsRepository, app.gamificationRepository)
@@ -85,6 +85,10 @@ fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Spacer(Modifier.height(20.dp))
+                Button(onClick = onOpenLessons, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.srs_empty_lessons_cta), fontWeight = FontWeight.Bold)
+                }
             }
 
             SrsPhase.ERROR -> Column(

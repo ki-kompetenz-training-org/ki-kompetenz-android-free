@@ -18,8 +18,11 @@ import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.prefs.TokenStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
+import ai.ki_kompetenz_training_org.data.repo.BadgeCelebrationTracker
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
+import ai.ki_kompetenz_training_org.data.repo.LevelUpTracker
 import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
+import ai.ki_kompetenz_training_org.data.repo.RewardCenter
 import ai.ki_kompetenz_training_org.data.repo.SrsRepository
 import ai.ki_kompetenz_training_org.data.repo.TeamRepository
 import ai.ki_kompetenz_training_org.notification.NotificationHelper
@@ -48,6 +51,14 @@ class KiKompetenzApp : Application() {
     lateinit var tokenStore: TokenStore
         private set
     lateinit var settingsStore: SettingsStore
+
+    /** Central one-shot reward events (level-up, badge unlocked). */
+    val rewardCenter = RewardCenter()
+    val levelUpTracker = LevelUpTracker()
+
+    // Lazily initialized in onCreate(): getSharedPreferences needs the base
+    // context, which is null while property initializers run.
+    lateinit var badgeCelebrationTracker: BadgeCelebrationTracker
         private set
     lateinit var connectivityObserver: ConnectivityObserver
         private set
@@ -66,6 +77,10 @@ class KiKompetenzApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        badgeCelebrationTracker = BadgeCelebrationTracker(
+            getSharedPreferences("kikompetenz_gamification", MODE_PRIVATE)
+        )
 
         if (BuildConfig.DEBUG) {
             enableStrictMode()

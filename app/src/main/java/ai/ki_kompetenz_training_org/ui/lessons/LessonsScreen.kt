@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material3.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.common.SkeletonList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -29,13 +31,28 @@ fun LessonsScreen(
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: LessonsViewModel = viewModel {
-        LessonsViewModel(app.contentRepository, app.premiumRepository)
+        LessonsViewModel(app.contentRepository, app.premiumRepository, app.gamificationRepository, app.settingsStore)
     }
     val state by vm.state.collectAsState()
 
     when {
-            state.loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+            state.loading && state.lessons.isEmpty() -> SkeletonList(rows = 6)
+            state.loadFailed && state.lessons.isEmpty() -> Box(
+                Modifier.fillMaxSize().padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.lessons_load_error),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    Button(onClick = { vm.retry() }) {
+                        Text(stringResource(R.string.common_retry))
+                    }
+                }
             }
             state.lessons.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.common_no_data))
@@ -55,6 +72,8 @@ fun LessonsScreen(
                 }
                 items(state.lessons, key = { it.slug }) { lesson ->
                     val isPremium = vm.premiumRepository.isPremiumLesson(lesson.lessonNumber)
+                    val isCompleted = lesson.slug in state.completedSlugs
+                    val isInProgress = lesson.slug == state.lastOpenedSlug
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = { onOpenLesson(lesson.slug) },
@@ -64,9 +83,17 @@ fun LessonsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
-                                if (isPremium) Icons.Default.Lock else Icons.AutoMirrored.Filled.List,
-                                null,
-                                tint = if (isPremium) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
+                                when {
+                                    isCompleted -> Icons.Default.CheckCircle
+                                    isPremium -> Icons.Default.Lock
+                                    else -> Icons.AutoMirrored.Filled.List
+                                },
+                                stringResource(R.string.lessons_completed_cd).takeIf { isCompleted },
+                                tint = when {
+                                    isCompleted -> MaterialTheme.colorScheme.primary
+                                    isPremium -> MaterialTheme.colorScheme.outline
+                                    else -> MaterialTheme.colorScheme.primary
+                                },
                             )
                             Spacer(Modifier.width(12.dp))
                             Column(Modifier.weight(1f)) {
@@ -75,7 +102,8 @@ fun LessonsScreen(
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Text(
-                                    lesson.duration ?: "",
+                                    if (isInProgress) stringResource(R.string.lessons_in_progress)
+                                    else lesson.duration ?: "",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )

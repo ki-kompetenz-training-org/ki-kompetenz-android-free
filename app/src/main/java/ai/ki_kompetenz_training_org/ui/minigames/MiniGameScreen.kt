@@ -19,7 +19,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.common.Haptics
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGameRound
@@ -50,6 +53,7 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
         MiniGameViewModel(game, app.gamificationRepository, dailyRepo)
     }
     val state by vm.state.collectAsState()
+    RewardDialogHost(rewardCenter = app.rewardCenter)
 
     Scaffold(
         topBar = {
@@ -109,6 +113,7 @@ private fun PlayingContent(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 16.dp),
     ) {
+        val view = LocalView.current
         // ── Progress: thin, quiet ──
         Row(
             Modifier.fillMaxWidth(),
@@ -168,7 +173,10 @@ private fun PlayingContent(
                         selected = selected,
                         isCorrect = isCorrect,
                         revealed = revealed,
-                        onClick = { onSelect(index) },
+                        onClick = {
+                            Haptics.answerTap(view)
+                            onSelect(index)
+                        },
                     )
                     if (index < round.options(lang).lastIndex) Spacer(Modifier.height(10.dp))
                 }

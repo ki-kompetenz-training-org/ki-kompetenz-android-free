@@ -15,10 +15,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.theme.KiTokens
+import ai.ki_kompetenz_training_org.ui.common.Haptics
+import ai.ki_kompetenz_training_org.data.repo.GamificationRules
+import ai.ki_kompetenz_training_org.data.repo.RewardFormat
+import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,6 +43,8 @@ fun QuizScreen(onBack: () -> Unit) {
     }
     val state by vm.state.collectAsState()
     val context = LocalContext.current
+    // Reward celebrations show at result moments, never during a round
+    RewardDialogHost(rewardCenter = app.rewardCenter)
 
     Scaffold(
         topBar = {
@@ -147,6 +155,7 @@ private fun PlayingContent(
         return
     }
     val revealed = state.selectedOption != null
+    val view = LocalView.current
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         // HUD: Herz-System (Lives), Timer, Combo, Punkte
         HUD(state = state)
@@ -165,7 +174,7 @@ private fun PlayingContent(
         )
         Spacer(Modifier.height(16.dp))
 
-        Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp)) {
+        Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(KiTokens.CardRadiusLarge)) {
             Column(Modifier.padding(16.dp)) {
                 Text("${question.emoji}  ${question.text}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.height(12.dp))
@@ -179,7 +188,10 @@ private fun PlayingContent(
                         else -> MaterialTheme.colorScheme.outlineVariant
                     }
                     OutlinedButton(
-                        onClick = { onSelect(index) },
+                        onClick = {
+                            Haptics.answerTap(view)
+                            onSelect(index)
+                        },
                         enabled = !revealed,
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                         shape = RoundedCornerShape(12.dp),
@@ -281,6 +293,11 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             StatBox("${state.answers.count { it }}/${state.questions.size}", stringResource(R.string.quiz_stats_correct), Modifier.weight(1f))
             StatBox("${state.score}", stringResource(R.string.quiz_stats_points), Modifier.weight(1f))
+            StatBox(
+                RewardFormat.xpGain(GamificationRules.quizXp(state.answers.count { it }, state.questions.size)),
+                stringResource(R.string.quiz_stats_xp),
+                Modifier.weight(1f),
+            )
         }
         Spacer(Modifier.height(12.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -439,7 +456,7 @@ private fun ErrorContent(
 
 @Composable
 private fun StatBox(value: String, label: String, modifier: Modifier = Modifier) {
-    Card(modifier, shape = RoundedCornerShape(16.dp)) {
+    Card(modifier, shape = RoundedCornerShape(KiTokens.CardRadiusLarge)) {
         Column(Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -32,7 +32,11 @@ val BOTTOM_TABS = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavScreen(openSrs: Boolean = false) {
+fun BottomNavScreen(
+    openSrs: Boolean = false,
+    startLessonSlug: String? = null,
+    onDeepStartConsumed: () -> Unit = {},
+) {
     val navController = androidx.navigation.compose.rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -41,6 +45,14 @@ fun BottomNavScreen(openSrs: Boolean = false) {
     androidx.compose.runtime.LaunchedEffect(openSrs) {
         if (openSrs) {
             navController.navigate("srs")
+        }
+    }
+
+    // One-shot deep start (onboarding "Start Lesson 1"); back returns to the tabs.
+    androidx.compose.runtime.LaunchedEffect(startLessonSlug) {
+        if (startLessonSlug != null) {
+            navController.navigate(Routes.lesson(startLessonSlug))
+            onDeepStartConsumed()
         }
     }
 

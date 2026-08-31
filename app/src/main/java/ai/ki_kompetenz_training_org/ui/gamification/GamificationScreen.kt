@@ -11,6 +11,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.ui.gamification.LanguageSection
+import ai.ki_kompetenz_training_org.ui.theme.AudienceMode
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
@@ -25,8 +27,7 @@ import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GamificationScreen(onBack: () -> Unit) {
-    val context = LocalContext.current
-    val app = KiKompetenzApp.from(context)
+    val app = KiKompetenzApp.from(LocalContext.current)
     val vm: GamificationViewModel = viewModel {
         GamificationViewModel(app.gamificationRepository)
     }
@@ -246,6 +247,17 @@ fun GamificationScreen(onBack: () -> Unit) {
                     currentLang = lang,
                     onLanguageChange = { selected ->
                         scope.launch { app.settingsStore.setLanguage(selected) }
+                    },
+                )
+            }
+
+            item {
+                val audienceRaw by app.settingsStore.audienceMode.collectAsState(initial = "standard")
+                val scope = rememberCoroutineScope()
+                AudienceModeSection(
+                    currentMode = AudienceMode.fromKey(audienceRaw),
+                    onModeChange = { selected ->
+                        scope.launch { app.settingsStore.setAudienceMode(selected.storageKey) }
                     },
                 )
             }
