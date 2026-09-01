@@ -154,7 +154,7 @@ object GameGeometry {
         val r = cfg.arenaRadius - 1
         val x = cos(ang) * r
         val z = sin(ang) * r
-        val speed = cfg.hazardSpeed * speedScale * (0.7 + rng() * 0.6)
+        val speed = cfg.chipSpeed * speedScale * (0.7 + rng() * 0.6)
         val ta = ang + PI + (rng() - 0.5) * 1.4
         return EdgeSpawn(x, z, cos(ta) * speed, sin(ta) * speed)
     }

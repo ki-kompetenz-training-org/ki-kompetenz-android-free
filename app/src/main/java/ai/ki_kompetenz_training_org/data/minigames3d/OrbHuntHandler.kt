@@ -1,114 +1,105 @@
+/*
+ * Copyright 2026 Tobias Weiss
+ * SPDX-License-Identifier: Apache-2.0
+ * Touch-native OrbHunt mode handler - replaces OrbHuntHandler.kt in T2-T4
+ */
 package ai.ki_kompetenz_training_org.data.minigames3d
 
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.PI
+
 /**
- * orbHunt mode — Classification mechanic.
- *
- * Pedagogical design: items (orbs and chasers) carry AI-literacy statements.
- * The player approaches an item to scan it (within SCAN_RADIUS), reads the
- * statement, and classifies it as fact or risk. Correct classification scores
- * points with a streak bonus; wrong classification costs health. Chasers still
- * pursue and damage the player if not classified in time.
- *
- * Individualization: statements come from [LiteracyContentProvider], which
- * weights domains by the learner's mastery profile (weak areas appear more).
+ * Touch-native OrbHunt handler.
+ * 
+ * Mode behavior:
+ * - Orbs (disks) float around the arena
+ * - Player taps an orb to trigger a classification decision
+ * - Correct: +25 points + streak bonus, orb removed
+ * - Wrong: -1 health, orb stays
+ * - Decision timeout: -1 health, orb stays
  */
-object OrbHuntHandler : ModeHandler {
+object OrbHuntHandler : ModedHandler {
 
     override fun init(s: GameState, cfg: ModeConfig, rng: () -> Double, content: LiteracyContentProvider?) {
-        for (i in 0 until cfg.initialCollect) GameSpawn.spawnOrb(s, cfg, rng, content)
-        for (i in 0 until cfg.initialHazard) GameSpawn.spawnChaser(s, cfg, rng, content)
+        // Initialize orbs
+        topUp(s, cfg, TouchTuning.STANDARD, rng, content)
     }
 
-    override fun step(s: GameState, cfg: ModeConfig, input: InputState, rng: () -> Double, content: LiteracyContentProvider?, dt: Double) {
-        val p = s.player
-
-        // Find nearest unclassified item within scan radius
-        val allItems = s.collectibles + s.hazards
-        var nearestIdx = -1
-        var nearestDist = Double.MAX_VALUE
-        for (i in allItems.indices) {
-            val item = allItems[i]
-            if (item.classified) continue
-            val d = GameGeometry.dist2D(p.x, p.z, item.x, item.z)
-            if (d < GameConfig.SCAN_RADIUS && d < nearestDist) {
-                nearestDist = d
-                nearestIdx = i
-            }
+    override fun step(s: GameState, cfg: ModeConfig, tuning: TouchTuning, content: LiteracyContentProvider?, rng: () -> Double, dt: Double) {
+        // Move orbs in circles
+        val speed = tuning.speedMultiplier
+        s.collectibles.forEach { disk ->
+            disk.age += dt
+            // Circular motion
+            disk.x += cos(disk.phase + disk.age * 0.5) * speed * dt
+            disk.z += sin(disk.phase + disk.age * 0.5) * speed * dt
+            // Clamp to arena
+            val (clampedX, clampedZ) = GameGeometry.clampToArena(disk.x, disk.z, disk.r, cfg.arenaRadius)
+            disk.x = clampedX
+            disk.z = clampedZ
         }
+        
+        // Top up orbs if needed
+        topUp(s, cfg, tuning, rng, content)
+    }
 
-        // Update scanned item info for renderer
-        if (nearestIdx >= 0) {
-            val item = allItems[nearestIdx]
-            s.scannedIndex = nearestIdx
-            s.scannedIsRisk = item.isRisk
-            s.scannedKind = item.kind
-        } else {
-            s.scannedIndex = -1
-        }
+    override fun onTap(s: GameState, cfg: ModeConfig, diskIndex: Int, content: LiteracyContentProvider?, rng: () -> Double) {
+        if (diskIndex < 0 || diskIndex >= s.collectibles.size) return
+        
+        val disk = s.collectibles[diskIndex]
+        val decisionTimer = cfg.decisionSeconds
+        
+        s.pendingDecision = PendingDecision(
+            statement = disk.statement ?: LiteracyStatement("Error", "Error", "Error", false),
+            timerMax = decisionTimer,
+            timer = decisionTimer,
+            x = disk.x,
+            z = disk.z,
+            fromBonus = false,
+            diskIndex = diskIndex,
+            isRisk = disk.isRisk,
+        )
+    }
 
-        // Handle classification input
-        if (input.classify != null && nearestIdx >= 0) {
-            val item = allItems[nearestIdx]
-            val playerSaidRisk = input.classify == ClassifyAction.RISK
-            val correct = playerSaidRisk == item.isRisk
-            item.classified = true
-            s.lastClassify = ClassifyResult(correct, item.kind, item.isRisk)
-            val stmt = item.statement ?: LiteracyStatement("", "", "Grundlagen der KI", item.isRisk)
-            s.classifications.add(ClassifyLog(stmt.domain, correct, stmt))
-            if (correct) {
-                val bonus = minOf(s.classifyStreak * GameConfig.CLASSIFY_STREAK_BONUS, 50)
-                s.score += GameConfig.CLASSIFY_POINTS + bonus
-                s.classifyStreak++
-                s.scoreKind = item.kind
-                s.justScored = true
-                s.scoreX = item.x
-                s.scoreZ = item.z
-            } else {
-                s.health -= GameConfig.WRONG_CLASSIFY_PENALTY
-                s.classifyStreak = 0
-                s.hitKind = item.kind
-                s.justHit = true
-                s.hitX = item.x
-                s.hitZ = item.z
-            }
-            // Remove classified item and respawn
-            if (nearestIdx < s.collectibles.size) {
-                s.collectibles.removeAt(nearestIdx)
-                GameSpawn.spawnOrb(s, cfg, rng, content)
-            } else {
-                s.hazards.removeAt(nearestIdx - s.collectibles.size)
-                GameSpawn.spawnChaser(s, cfg, rng, content)
-            }
-            if (s.health <= 0) {
-                GameRules.endGame(s, EndReason.HEALTH)
-                return
-            }
-        }
+    override fun onDash(s: GameState, cfg: ModeConfig, dir: Direction, content: LiteracyContentProvider?, rng: () -> Double) {
+        // OrbHunt doesn't use dash
+    }
 
-        // Hazards chase and damage on contact (if not classified in time)
-        for (i in s.hazards.indices.reversed()) {
-            val e = s.hazards[i]
-            if (e.classified) continue
-            val d = maxOf(GameGeometry.dist2D(e.x, e.z, p.x, p.z), 0.0001)
-            e.x += ((p.x - e.x) / d) * cfg.hazardSpeed * dt
-            e.z += ((p.z - e.z) / d) * cfg.hazardSpeed * dt
-            if (GameGeometry.overlaps(p.x, p.z, cfg.playerRadius, e.x, e.z, e.r)) {
-                if (p.invuln <= 0) {
-                    p.invuln = 1.2
-                    s.health -= 1
-                    s.hitKind = e.kind
-                    s.justHit = true
-                    s.hitX = e.x
-                    s.hitZ = e.z
-                    s.hazards.removeAt(i)
-                    GameSpawn.spawnChaser(s, cfg, rng, content)
-                    if (s.health <= 0) {
-                        GameRules.endGame(s, EndReason.HEALTH)
-                        return
-                    }
-                }
-            }
+    override fun onDecisionClosed(s: GameState, cfg: ModeConfig, closed: PendingDecision, correct: Boolean, content: LiteracyContentProvider?, rng: () -> Double) {
+        if (correct && closed.diskIndex >= 0 && closed.diskIndex < s.collectibles.size) {
+            // Remove the orb on correct classification
+            s.collectibles.removeAt(closed.diskIndex)
         }
-        GameSpawn.topUp(s, cfg, rng, GameMode.ORB_HUNT, content)
+    }
+
+    override fun topUp(s: GameState, cfg: ModeConfig, tuning: TouchTuning, rng: () -> Double, content: LiteracyContentProvider?) {
+        while (s.collectibles.size < cfg.minChips) {
+            spawnOrb(s, cfg, tuning, rng, content)
+        }
+    }
+
+    private fun spawnOrb(s: GameState, cfg: ModeConfig, tuning: TouchTuning, rng: () -> Double, content: LiteracyContentProvider?) {
+        val contentProvider = content ?: return
+        val isRisk = rng() < 0.5
+        val statement = if (isRisk) contentProvider.randomRisk(rng) else contentProvider.randomFact(rng)
+        
+        val spawn = GameGeometry.randomSpawn(cfg.arenaRadius, cfg.chipRadius, 0.0, 0.0, rng)
+        
+        val disk = Disk(
+            x = spawn.x,
+            z = spawn.z,
+            r = cfg.chipRadius,
+            vx = 0.0,
+            vz = 0.0,
+            kind = if (isRisk) 1 else 0,
+            isRisk = isRisk,
+            statement = statement,
+            classified = false,
+            age = 0.0,
+            phase = rng() * 2 * PI,
+        )
+        
+        s.collectibles.add(disk)
     }
 }

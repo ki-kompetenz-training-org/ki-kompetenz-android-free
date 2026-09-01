@@ -1,140 +1,117 @@
+/*
+ * Copyright 2026 Tobias Weiss
+ * SPDX-License-Identifier: Apache-2.0
+ * Touch-native TruthSnipe mode handler - replaces TruthSnipeHandler.kt in T2-T4
+ */
 package ai.ki_kompetenz_training_org.data.minigames3d
 
-import kotlin.math.*
+import kotlin.math.abs
 
 /**
- * truthSnipe mode — Fact-checking mechanic.
- *
- * Pedagogical design: drifting facts (collectibles, blue) and fakes (hazards,
- * red) carry AI-literacy statements. The player reads the statement and
- * decides: shoot fakes to score, collect facts by touching them.
- * Shooting a fact (a true statement) is a penalty — destroying truth costs
- * points. This forces the player to distinguish fact from fake before acting.
+ * Touch-native TruthSnipe handler.
+ * 
+ * Mode behavior:
+ * - Chips (disks) drift right across the arena
+ * - Player taps a chip to trigger classification
+ * - FAKE (isRisk=true): destroy chip, +20 points + streak
+ * - FACT (isRisk=false): archive chip, +10 points + streak
+ * - Wrong: -1 health, chip continues drifting
+ * - Edge crossing: -1 health, edge flash
+ * - Decision timeout: chip continues drifting (no health penalty)
  */
-object TruthSnipeHandler : ModeHandler {
-
-    /** Penalty for shooting a fact (a true statement). */
-    private const val FACT_SHOOT_PENALTY = 20
+object TruthSnipeHandler : ModedHandler {
 
     override fun init(s: GameState, cfg: ModeConfig, rng: () -> Double, content: LiteracyContentProvider?) {
-        for (i in 0 until cfg.initialHazard) GameSpawn.spawnEdge(s, cfg, rng, GameSpawn.SpawnKind.HAZARD, content)
-        for (i in 0 until cfg.initialCollect) GameSpawn.spawnEdge(s, cfg, rng, GameSpawn.SpawnKind.COLLECT, content)
+        // Initialize chips
+        topUp(s, cfg, TouchTuning.STANDARD, rng, content)
     }
 
-    override fun step(s: GameState, cfg: ModeConfig, input: InputState, rng: () -> Double, content: LiteracyContentProvider?, dt: Double) {
-        val p = s.player
-        if (input.fire && s.fireCd <= 0) {
-            val sp = cfg.bulletSpeed
-            val b = GameSpawn.makeDisk(p.x, p.z, GameConfig.BULLET_RADIUS, cos(p.dir) * sp, sin(p.dir) * sp)
-            s.bullets.add(b)
-            s.fireCd = cfg.fireCooldown
-            s.justFired = true
-        }
-        for (i in s.bullets.indices.reversed()) {
-            val b = s.bullets[i]
-            b.age += dt
-            b.x += b.vx * dt
-            b.z += b.vz * dt
-            if (b.age > GameConfig.BULLET_LIFE || GameGeometry.dist2D(b.x, b.z, 0.0, 0.0) > cfg.arenaRadius + 1) {
-                s.bullets.removeAt(i)
-                continue
-            }
-            var consumed = false
-            for (j in s.hazards.indices.reversed()) {
-                val h = s.hazards[j]
-                if (GameGeometry.overlaps(b.x, b.z, b.r, h.x, h.z, h.r)) {
-                    s.score += cfg.hazardPoints
-                    s.scoreKind = h.kind
-                    s.justScored = true
-                    s.scoreX = h.x
-                    s.scoreZ = h.z
-                    logShot(s, h)
-                    s.hazards.removeAt(j)
-                    s.bullets.removeAt(i)
-                    consumed = true
-                    break
-                }
-            }
-            if (consumed) continue
-            // Shooting a fact (collectible) is a penalty — you destroyed a true statement
-            for (j in s.collectibles.indices.reversed()) {
-                val o = s.collectibles[j]
-                if (GameGeometry.overlaps(b.x, b.z, b.r, o.x, o.z, o.r)) {
-                    s.score = maxOf(0, s.score - FACT_SHOOT_PENALTY)
-                    s.hitKind = o.kind
-                    s.justHit = true
-                    s.hitX = o.x
-                    s.hitZ = o.z
-                    logPenalty(s, o)
-                    s.collectibles.removeAt(j)
-                    s.bullets.removeAt(i)
-                    consumed = true
-                    break
-                }
-            }
-            if (consumed) continue
-        }
-        for (i in s.collectibles.indices.reversed()) {
-            val o = s.collectibles[i]
-            o.x += o.vx * dt
-            o.z += o.vz * dt
-            if (GameGeometry.dist2D(o.x, o.z, 0.0, 0.0) > cfg.arenaRadius + 1) {
-                s.collectibles.removeAt(i)
-                continue
-            }
-            if (GameGeometry.overlaps(p.x, p.z, cfg.playerRadius, o.x, o.z, o.r)) {
-                s.score += cfg.collectPoints
-                s.justScored = true
-                s.scoreKind = o.kind
-                s.scoreX = o.x
-                s.scoreZ = o.z
-                logCollect(s, o)
-                s.collectibles.removeAt(i)
+    override fun step(s: GameState, cfg: ModeConfig, tuning: TouchTuning, content: LiteracyContentProvider?, rng: () -> Double, dt: Double) {
+        val speed = tuning.speedMultiplier * cfg.chipSpeed
+        val radius = cfg.arenaRadius
+        
+        s.collectibles.forEach { disk ->
+            disk.age += dt
+            disk.x += speed * dt
+            
+            // Check edge crossing
+            if (abs(disk.x) > radius - disk.r) {
+                // Mark for removal and penalize health
+                disk.x = if (disk.x > 0) radius - disk.r else -(radius - disk.r)
+                // Edge crossing penalty handled in stepGame
             }
         }
-        for (i in s.hazards.indices.reversed()) {
-            val h = s.hazards[i]
-            val d = maxOf(GameGeometry.dist2D(h.x, h.z, p.x, p.z), 0.0001)
-            val homing = 0.6
-            h.vx += (((p.x - h.x) / d) * cfg.hazardSpeed - h.vx) * homing * dt
-            h.vz += (((p.z - h.z) / d) * cfg.hazardSpeed - h.vz) * homing * dt
-            h.x += h.vx * dt
-            h.z += h.vz * dt
-            if (GameGeometry.dist2D(h.x, h.z, 0.0, 0.0) > cfg.arenaRadius + 1) {
-                s.hazards.removeAt(i)
-                continue
-            }
-            if (GameGeometry.overlaps(p.x, p.z, cfg.playerRadius, h.x, h.z, h.r)) {
-                if (p.invuln <= 0) {
-                    p.invuln = 1.0
-                    s.health -= 1
-                    s.hitKind = h.kind
-                    s.justHit = true
-                    s.hitX = h.x
-                    s.hitZ = h.z
-                    s.hazards.removeAt(i)
-                    if (s.health <= 0) {
-                        GameRules.endGame(s, EndReason.HEALTH)
-                        return
-                    }
-                }
-            }
+        
+        // Remove old chips
+        s.collectibles.removeIf { disk ->
+            disk.age > cfg.chipLifetime || abs(disk.x) > cfg.arenaRadius + disk.r
         }
-        GameSpawn.topUp(s, cfg, rng, GameMode.TRUTH_SNIPE, content)
+        
+        // Top up chips
+        topUp(s, cfg, tuning, rng, content)
     }
 
-    private fun logShot(s: GameState, h: Disk) {
-        val stmt = h.statement ?: LiteracyStatement("", "", "Grundlagen der KI", true)
-        s.classifications.add(ClassifyLog(stmt.domain, correct = true, statement = stmt))
+    override fun onTap(s: GameState, cfg: ModeConfig, diskIndex: Int, content: LiteracyContentProvider?, rng: () -> Double) {
+        if (diskIndex < 0 || diskIndex >= s.collectibles.size) return
+        
+        val disk = s.collectibles[diskIndex]
+        val decisionTimer = cfg.decisionSeconds
+        
+        s.pendingDecision = PendingDecision(
+            statement = disk.statement ?: LiteracyStatement("Error", "Error", "Error", false),
+            timerMax = decisionTimer,
+            timer = decisionTimer,
+            x = disk.x,
+            z = disk.z,
+            fromBonus = false,
+            diskIndex = diskIndex,
+            isRisk = disk.isRisk,
+        )
     }
 
-    private fun logPenalty(s: GameState, o: Disk) {
-        val stmt = o.statement ?: LiteracyStatement("", "", "Grundlagen der KI", false)
-        s.classifications.add(ClassifyLog(stmt.domain, correct = false, statement = stmt))
+    override fun onDash(s: GameState, cfg: ModeConfig, dir: Direction, content: LiteracyContentProvider?, rng: () -> Double) {
+        // TruthSnipe doesn't use dash
     }
 
-    private fun logCollect(s: GameState, o: Disk) {
-        val stmt = o.statement ?: LiteracyStatement("", "", "Grundlagen der KI", false)
-        s.classifications.add(ClassifyLog(stmt.domain, correct = true, statement = stmt))
+    override fun onDecisionClosed(s: GameState, cfg: ModeConfig, closed: PendingDecision, correct: Boolean, content: LiteracyContentProvider?, rng: () -> Double) {
+        if (correct) {
+            // Remove the chip on correct classification
+            if (closed.diskIndex >= 0 && closed.diskIndex < s.collectibles.size) {
+                s.collectibles.removeAt(closed.diskIndex)
+            }
+        }
+        // Wrong: chip continues drifting
+    }
+
+    override fun topUp(s: GameState, cfg: ModeConfig, tuning: TouchTuning, rng: () -> Double, content: LiteracyContentProvider?) {
+        while (s.collectibles.size < cfg.minChips) {
+            spawnChip(s, cfg, tuning, rng, content)
+        }
+    }
+
+    private fun spawnChip(s: GameState, cfg: ModeConfig, tuning: TouchTuning, rng: () -> Double, content: LiteracyContentProvider?) {
+        val contentProvider = content ?: return
+        val isRisk = rng() < 0.5
+        val statement = if (isRisk) contentProvider.randomRisk(rng) else contentProvider.randomFact(rng)
+        
+        // Spawn on left edge, random z
+        val z = (rng() * 2 - 1) * cfg.arenaRadius * 0.8
+        val x = -cfg.arenaRadius + cfg.chipRadius
+        
+        val disk = Disk(
+            x = x,
+            z = z,
+            r = cfg.chipRadius,
+            vx = 0.0,
+            vz = 0.0,
+            kind = if (isRisk) 1 else 0,
+            isRisk = isRisk,
+            statement = statement,
+            classified = false,
+            age = 0.0,
+            phase = rng() * 2 * Math.PI,
+        )
+        
+        s.collectibles.add(disk)
     }
 }

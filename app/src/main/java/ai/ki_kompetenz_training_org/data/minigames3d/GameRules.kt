@@ -1,31 +1,23 @@
+/*
+ * Copyright 2026 Tobias Weiss
+ * SPDX-License-Identifier: Apache-2.0
+ * Touch-native game rules - replaces GameRules.kt in T2-T4
+ */
 package ai.ki_kompetenz_training_org.data.minigames3d
 
-/** Shared game rules: win/lose computation and game-end mutation. */
+/**
+ * Touch-native game rules utility.
+ * Centralized game end logic.
+ */
 object GameRules {
 
-    fun computeResult(
-        score: Int,
-        target: Int,
-        health: Int,
-        reason: EndReason,
-    ): GameResult {
-        val won = if (reason == EndReason.TIME) score >= target else health > 0
-        return GameResult(won, reason, score, target)
-    }
-
-    /** Mark the game as ended with the given reason and compute the win flag. */
+    /**
+     * End the game with the given reason.
+     * Sets ended=true, endReason, and won based on whether target was reached.
+     */
     fun endGame(s: GameState, reason: EndReason) {
-        if (s.ended) return
         s.ended = true
         s.endReason = reason
-        val res = computeResult(s.score, s.target, s.health, reason)
-        s.won = res.won
+        s.won = s.score >= s.target
     }
 }
-
-data class GameResult(
-    val won: Boolean,
-    val reason: EndReason,
-    val score: Int,
-    val target: Int,
-)
