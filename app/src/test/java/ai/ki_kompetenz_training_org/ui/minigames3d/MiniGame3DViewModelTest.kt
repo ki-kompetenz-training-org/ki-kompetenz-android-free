@@ -94,7 +94,10 @@ class MiniGame3DViewModelTest {
 
     @Test
     fun classify_wrongRisk_decreasesHealth() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
+        // null-Content: leere Arena → der manuelle Disk ist wirklich Index 0
+        // (mit emptyContent spawnt topUp minChips und diskIndex=0 träfe den
+        // falschen, gespawnten Chip → Entscheidung wäre fälschlich korrekt)
+        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
         s.pendingDecision = PendingDecision(
             LiteracyStatement("Risk", "Risk", "Test", true),
             10.0, 10.0, 0.0, 0.0, false, 0, true
@@ -173,7 +176,8 @@ class MiniGame3DViewModelTest {
 
     @Test
     fun stepGame_entitiesMoveWithNoPendingDecision() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        // emptyContent: topUp spawnt Chips, die drift-animiert werden
+        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         val initialX = s.collectibles[0].x
         GameEngine.stepGame(s, null, TouchTuning.STANDARD, { 0.5 }, 0.1)
         assertFalse("Entities should move when no decision pending", 
@@ -182,7 +186,8 @@ class MiniGame3DViewModelTest {
 
     @Test
     fun stepGame_entitiesFreezeWithPendingDecision() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        // emptyContent: damit existiert ein beobachtbarer Chip während der Decision
+        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         s.pendingDecision = PendingDecision(
             LiteracyStatement("T", "T", "Test", false),
             10.0, 10.0, 0.0, 0.0, false, 0, false

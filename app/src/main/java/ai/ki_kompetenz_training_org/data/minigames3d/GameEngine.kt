@@ -88,7 +88,9 @@ object GameEngine {
 
         if (s.timeLeft <= 0.0) {
             s.timeLeft = 0.0
-            GameRules.endGame(s, EndReason.HEALTH)
+            // FIX (2026-09-01): Zeitablauf endete fälschlich mit HEALTH statt TIME
+            // → falsche "won"-Bewertung und falsche Endbegründung im Ergebnis-Screen.
+            GameRules.endGame(s, EndReason.TIME)
         }
     }
 

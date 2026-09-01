@@ -3,32 +3,15 @@ package ai.ki_kompetenz_training_org.data.minigames3d
 import org.junit.Assert.*
 import org.junit.Test
 
+/**
+ * GameRules-Tests (touch-native API).
+ *
+ * Die ehemaligen computeResult-Tests (score/target/health/reason → result)
+ * sind mit der T2-T4-Migration obsolet: Diese Logik liegt jetzt in
+ * GameEngine.endGame + GameRules.endGame(s, reason) und wird in
+ * GameEngineTest abgedeckt.
+ */
 class GameRulesTest {
-
-    @Test
-    fun computeResult_time_and_enough_score_wins() {
-        val r = GameRules.computeResult(250, 250, 3, EndReason.TIME)
-        assertTrue(r.won)
-        assertEquals(EndReason.TIME, r.reason)
-    }
-
-    @Test
-    fun computeResult_time_and_low_score_loses() {
-        val r = GameRules.computeResult(100, 250, 3, EndReason.TIME)
-        assertFalse(r.won)
-    }
-
-    @Test
-    fun computeResult_health_death_loses() {
-        val r = GameRules.computeResult(500, 250, 0, EndReason.HEALTH)
-        assertFalse(r.won)
-    }
-
-    @Test
-    fun computeResult_health_survived_wins() {
-        val r = GameRules.computeResult(500, 250, 1, EndReason.HEALTH)
-        assertTrue(r.won)
-    }
 
     @Test
     fun endGame_sets_flags() {

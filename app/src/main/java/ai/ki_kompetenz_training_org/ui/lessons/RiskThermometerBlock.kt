@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.ui.lessons
 import androidx.compose.animation.core.*
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -136,6 +137,11 @@ fun RiskThermometerBlock(
         Spacer(Modifier.height(16.dp))
 
         // Thermometer visualization
+        // FIX (BUG 2026-09-01): Der Glow ist jetzt als Overlay innerhalb
+        // eines BoxWithConstraints positioniert (relativer Segmentmittelpunkt
+        // via ThermometerMath.glowCenterFraction × REAL gemessene Höhe).
+        // Vorher: Flow-Child der Column mit harter 260dp-Annahme → falsche
+        // Position + 56dp Layout-Verschiebung bei Auswahl.
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -143,40 +149,26 @@ fun RiskThermometerBlock(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Thermometer bar (left)
-            Column(
+            BoxWithConstraints(
                 modifier = Modifier
                     .width(48.dp)
                     .heightIn(min = 260.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+                val barHeightPx = maxHeight
                 EuAiActRiskLevels.levels.forEachIndexed { index, level ->
-                    val fraction = 1f / EuAiActRiskLevels.levels.size
                     val isSelected = selectedLevel == index
-                    val scale by infiniteTransition.animateFloat(
-                        initialValue = if (isSelected) 1f else 0.97f,
-                        targetValue = if (isSelected) 1f else 0.97f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(800, easing = FastOutSlowInEasing),
-                            repeatMode = RepeatMode.Reverse,
-                        ),
-                        label = "scale",
-                    )
 
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f)
+                            .height(barHeightPx / EuAiActRiskLevels.levels.size)
+                            .align(Alignment.TopStart)
+                            .offset(y = barHeightPx / EuAiActRiskLevels.levels.size * index)
                             .shadow(
                                 elevation = if (isSelected) 8.dp else 0.dp,
                                 shape = CircleShape,
                             )
                             .clip(CircleShape)
-                            .run {
-                                if (index == 0) this.offset(y = 4.dp) else this
-                            }
-                            .run {
-                                if (index == EuAiActRiskLevels.levels.lastIndex) this.offset(y = (-4).dp) else this
-                            }
                     ) {
                         Surface(
                             modifier = Modifier
@@ -197,7 +189,7 @@ fun RiskThermometerBlock(
                     }
                 }
 
-                // Selection indicator (3D-style glow)
+                // Selection indicator (3D-style glow) — Overlay, kein Flow-Child:
                 if (selectedLevel >= 0) {
                     val glowAlpha by infiniteTransition.animateFloat(
                         initialValue = 0.3f,
@@ -208,19 +200,23 @@ fun RiskThermometerBlock(
                         ),
                         label = "glow",
                     )
-                    val selectedFraction = 1f / EuAiActRiskLevels.levels.size
-                    val offset = (selectedLevel * selectedFraction * 260).dp
+                    val glowFraction = ThermometerMath.glowCenterFraction(
+                        selectedLevel = selectedLevel,
+                        totalLevels = EuAiActRiskLevels.levels.size,
+                    )
 
                     Box(
                         modifier = Modifier
-                            .offset(y = offset)
+                            .align(Alignment.TopStart)
+                            .offset(y = barHeightPx * glowFraction - 28.dp)
                             .size(56.dp)
-                            .offset(x = (-8).dp)
                             .shadow(12.dp, CircleShape)
                             .clip(CircleShape)
                     ) {
                         Surface(
+                            modifier = Modifier.fillMaxSize(),
                             color = EuAiActRiskLevels.levels[selectedLevel].color.copy(alpha = glowAlpha),
+                            shape = CircleShape,
                         ) {}
                     }
                 }
@@ -311,9 +307,9 @@ private fun RiskLevelDetail(
             HorizontalDivider()
             Spacer(Modifier.height(8.dp))
 
-            // Examples
+            // Examples — FIX (BUG 2026-09-01): war vorher in beiden Locales deutsch
             Text(
-                if (locale == "en") "Beispiele:" else "Examples:",
+                ThermometerMath.examplesLabel(locale),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -323,9 +319,9 @@ private fun RiskLevelDetail(
 
             Spacer(Modifier.height(8.dp))
 
-            // Obligations
+            // Obligations — FIX (BUG 2026-09-01): sprachabhängig via ThermometerMath
             Text(
-                if (locale == "en") "Pflichten:" else "Obligations:",
+                ThermometerMath.obligationsLabel(locale),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )

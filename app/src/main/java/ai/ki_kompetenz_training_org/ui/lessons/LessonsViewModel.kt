@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.ui.lessons
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ai.ki_kompetenz_training_org.data.db.LessonEntity
+import ai.ki_kompetenz_training_org.data.lessons.BundledLessons
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
@@ -48,14 +49,29 @@ class LessonsViewModel(
 
     private fun load() {
         viewModelScope.launch {
-            val result = contentRepository.fetchLessons(currentLang())
-            if (result.isFailure && _state.value.lessons.isEmpty()) {
-                _state.value = _state.value.copy(loadFailed = true)
-            }
+            // Fetch zuerst abschließen (Suspension), DANN collecten — sonst
+            // emittiert der DAO-Flow (leerer Cache) VOR Fetch-Abschluss und der
+            // Offline-Fallback greift nie (Race, BUG 2026-09-01).
+            val fetchResult = contentRepository.fetchLessons(currentLang())
             contentRepository.observeLessons()
                 .flowOn(Dispatchers.IO)  // Move database access to IO thread
                 .collectLatest { lessons ->
-                    _state.value = _state.value.copy(lessons = lessons, loading = false)
+                    if (lessons.isEmpty() && fetchResult.isFailure) {
+                        // FIX (BUG 2026-09-01): Offline-Fallback auf gebündelte
+                        // Lektionen statt Fehlermeldung — die Inhalte sind
+                        // komplett lokal verfügbar (BundledLessons).
+                        _state.value = _state.value.copy(
+                            lessons = BundledLessons.asEntities(),
+                            loading = false,
+                            loadFailed = false,
+                        )
+                    } else {
+                        _state.value = _state.value.copy(
+                            lessons = lessons,
+                            loading = false,
+                            loadFailed = false,
+                        )
+                    }
                 }
         }
         viewModelScope.launch {

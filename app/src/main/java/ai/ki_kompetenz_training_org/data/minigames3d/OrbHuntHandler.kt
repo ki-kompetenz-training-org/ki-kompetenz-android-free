@@ -74,6 +74,9 @@ object OrbHuntHandler : ModedHandler {
     }
 
     override fun topUp(s: GameState, cfg: ModeConfig, tuning: TouchTuning, rng: () -> Double, content: LiteracyContentProvider?) {
+        // FIX (Freeze-Bug 2026-09-01): Ohne Content kann spawnOrb keinen Chip
+        // hinzufügen (early return) → die while-Schleife lief endlos → App-Freeze.
+        if (content == null) return
         while (s.collectibles.size < cfg.minChips) {
             spawnOrb(s, cfg, tuning, rng, content)
         }

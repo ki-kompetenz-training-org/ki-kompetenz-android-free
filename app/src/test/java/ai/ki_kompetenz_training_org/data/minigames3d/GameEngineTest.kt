@@ -36,7 +36,8 @@ class GameEngineTest {
 
     @Test
     fun createState_orbHunt_initializesCorrectly() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        // Mit Content werden minChips gespawnt:
+        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         assertEquals(GameMode.ORB_HUNT, s.mode)
         assertEquals(250, s.target)
         assertEquals(3, s.maxHealth)
@@ -45,6 +46,23 @@ class GameEngineTest {
         assertEquals(0, s.score)
         assertNotNull(s.collectibles)
         assertTrue("Should have minChips collectibles", s.collectibles.size >= 6)
+    }
+
+    /**
+     * REGRESSION (Freeze-Bug 2026-09-01): createState ohne Content lief in
+     * OrbHuntHandler.topUp / TruthSnipeHandler.topUp in eine Endlosschleife
+     * (while minChips, aber spawnOrb/spawnChip kehrt bei content==null ohne
+     * Hinzufügen zurück) → App-Freeze. Ohne Content muss createState
+     * terminieren und eine leere Arena liefern.
+     */
+    @Test(timeout = 5000)
+    fun createState_ohneContent_terminiertOhneFreeze() {
+        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        assertEquals(GameMode.ORB_HUNT, s.mode)
+        assertTrue("Ohne Content keine Chips", s.collectibles.isEmpty())
+
+        val t = GameEngine.createState(GameMode.TRUTH_SNIPE, null, { 0.5 }, TouchTuning.STANDARD)
+        assertTrue("Ohne Content keine Chips", t.collectibles.isEmpty())
     }
 
     @Test
@@ -62,7 +80,8 @@ class GameEngineTest {
 
     @Test
     fun createState_truthSnipe_initializesCorrectly() {
-        val s = GameEngine.createState(GameMode.TRUTH_SNIPE, null, { 0.5 }, TouchTuning.STANDARD)
+        // Mit Content werden minChips gespawnt:
+        val s = GameEngine.createState(GameMode.TRUTH_SNIPE, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         assertEquals(GameMode.TRUTH_SNIPE, s.mode)
         assertEquals(300, s.target)
         assertEquals(3, s.maxHealth)
@@ -81,7 +100,9 @@ class GameEngineTest {
 
     @Test
     fun stepGame_withPendingDecision_freezesEntities() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        // emptyContent: damit existiert ein Chip (Fix: Freeze-Regression machte
+        // createState ohne Content früher endlos, jetzt leer → Test braucht Chip)
+        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         s.pendingDecision = PendingDecision(
             LiteracyStatement("T", "T", "Test", false),
             5.0, 5.0, 0.0, 0.0, false, 0, false
@@ -138,7 +159,8 @@ class GameEngineTest {
 
     @Test
     fun onAction_tapEntity_withoutPending_decisionDispatchesToHandler() {
-        val s = GameEngine.createState(GameMode.ORB_HUNT, null, { 0.5 }, TouchTuning.STANDARD)
+        // emptyContent: Arena hat Chips → TapEntity(0) trifft ein Ziel
+        val s = GameEngine.createState(GameMode.ORB_HUNT, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         assertNull(s.pendingDecision)
         GameEngine.onAction(s, GameAction.TapEntity(0), null, { 0.5 }, TouchTuning.STANDARD)
         assertNotNull("TapEntity should trigger pendingDecision in OrbHunt", s.pendingDecision)
@@ -284,7 +306,9 @@ class GameEngineTest {
         val goal = s.maze!!.goalPositions().first()
         s.playerCellRow = goal.first - 1
         s.playerCellCol = goal.second
-        GameEngine.onAction(s, GameAction.Dash(Direction.DOWN), null, { 0.5 }, TouchTuning.STANDARD)
+        // emptyContent: checkCellTrigger braucht einen ContentProvider (ohne
+        // Content wird Goal-Decision still ignoriert)
+        GameEngine.onAction(s, GameAction.Dash(Direction.DOWN), emptyContent, { 0.5 }, TouchTuning.STANDARD)
         assertNotNull("Should trigger decision at goal", s.pendingDecision)
     }
 
@@ -292,7 +316,8 @@ class GameEngineTest {
 
     @Test
     fun snipe_chipDrifts_rightward() {
-        val s = GameEngine.createState(GameMode.TRUTH_SNIPE, null, { 0.5 }, TouchTuning.STANDARD)
+        // Mit emptyContent: topUp spawnt die minChips (ohne Content wäre die Arena leer):
+        val s = GameEngine.createState(GameMode.TRUTH_SNIPE, emptyContent, { 0.5 }, TouchTuning.STANDARD)
         val chip = s.collectibles.first()
         val initialX = chip.x
         GameEngine.stepGame(s, null, TouchTuning.STANDARD, { 0.5 }, 0.1)

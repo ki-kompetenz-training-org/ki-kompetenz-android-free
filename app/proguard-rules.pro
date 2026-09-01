@@ -31,6 +31,8 @@
 }
 
 # ── App-specific ─────────────────────────────────────────────────────
+# FIX (2026-09-01): verwies auf das alte Paket de.kikompetenz.app → DTOs
+# unter ai.ki_kompetenz_training_org wurden von R8 obfuskiert/entfernt.
 -keep class ai.ki_kompetenz_training_org.data.api.** { *; }
 -keep class ai.ki_kompetenz_training_org.data.db.** { *; }
 -keep class ai.ki_kompetenz_training_org.BuildConfig { *; }
@@ -39,11 +41,6 @@
 -dontwarn com.google.errorprone.annotations.**
 -dontwarn com.google.crypto.tink.**
 -keep class com.google.crypto.tink.** { *; }
-
-# ── WorkManager ─────────────────────────────────────────────────────
--keep class androidx.work.** { *; }
--keep class androidx.work.impl.** { *; }
--dontwarn androidx.work.**
 
 # ── Misc ──────────────────────────────────────────────────────────────
 -dontwarn org.jetbrains.annotations.**
