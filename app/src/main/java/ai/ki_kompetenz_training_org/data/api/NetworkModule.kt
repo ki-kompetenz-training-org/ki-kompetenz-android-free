@@ -35,10 +35,7 @@ object NetworkModule {
     private const val TAG = "NetworkModule"
     private const val MAX_RETRIES = 2
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-        coerceInputValues = true
-    }
+    private val json = ai.ki_kompetenz_training_org.data.api.ApiJson
 
     fun createApiService(context: Context): ApiService {
         val tokenStore = TokenStore(context)

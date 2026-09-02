@@ -167,4 +167,49 @@ class LessonsViewModelFallbackTest {
         assertThat(vm.state.value.loadFailed).isFalse()
         assertThat(vm.state.value.lessons).hasSize(14)
     }
+
+    // ── Weitere Szenarien (Nachtrag 2026-09-01) ──────────────────────────
+
+    @Test
+    fun `Online-Erfolg aber DAO leer - keine Fallback-Liste keine Fehlermeldung`() = runTest(dispatcher) {
+        // Server erreichbar, liefert aber leere Liste; DB auch leer →
+        // leerer Zustand ist korrekt (kein Fehler, kein Fallback, nicht loading):
+        coEvery { contentRepository.fetchLessons(any()) } returns Result.success(emptyList())
+
+        val vm = createVm()
+        advanceUntilIdle()
+
+        val state = vm.state.value
+        assertThat(state.loadFailed).isFalse()
+        assertThat(state.lessons).isEmpty()
+        assertThat(state.loading).isFalse()
+    }
+
+    @Test
+    fun `Offline aber Room-Cache gefüllt - Cache gewinnt über Fallback`() = runTest(dispatcher) {
+        // Server offline, aber alter Cache vorhanden → Cache zeigen, kein Fallback:
+        coEvery { contentRepository.fetchLessons(any()) } returns Result.failure(java.io.IOException("offline"))
+        every { contentRepository.observeLessons() } returns flowOf(
+            listOf(
+                ai.ki_kompetenz_training_org.data.db.LessonEntity(
+                    slug = "lesson-1",
+                    title = "Was ist Künstliche Intelligenz? (Cache)",
+                    lessonNumber = 1,
+                    duration = "15 min",
+                    description = "Aus dem Room-Cache",
+                    objectivesJson = "[]",
+                    body = null,
+                ),
+            ),
+        )
+
+        val vm = createVm()
+        advanceUntilIdle()
+
+        val state = vm.state.value
+        assertThat(state.loadFailed).isFalse()
+        assertThat(state.lessons).hasSize(1)
+        assertThat(state.lessons[0].title).contains("Cache")
+        assertThat(state.loading).isFalse()
+    }
 }

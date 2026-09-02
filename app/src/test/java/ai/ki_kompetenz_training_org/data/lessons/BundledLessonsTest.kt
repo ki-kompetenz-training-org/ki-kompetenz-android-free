@@ -80,4 +80,37 @@ class BundledLessonsTest {
         assertThat(allBlocks.filterIsInstance<ContentBlock.Quiz>()).isNotEmpty()
         assertThat(allBlocks.filterIsInstance<ContentBlock.KnowledgeCheck>()).isNotEmpty()
     }
+
+    // ── asEntities (Offline-Fallback → LessonsScreen) ────────────────────
+
+    @Test
+    fun `asEntities bildet alle 14 Lektionen 1-zu-1 ab`() {
+        val entities = BundledLessons.asEntities()
+        assertThat(entities).hasSize(14)
+        assertThat(entities.map { it.slug }).containsExactlyElementsIn((1..14).map { "lesson-$it" })
+    }
+
+    @Test
+    fun `asEntities - Slug Titel und Nummer stimmen mit gebündelter Lektion überein`() {
+        val entities = BundledLessons.asEntities().associateBy { it.slug }
+        BundledLessons.all.forEach { lesson ->
+            val e = entities.getValue(lesson.id)
+            assertThat(e.title).isEqualTo(lesson.titleDe)
+            assertThat(e.lessonNumber).isEqualTo(lesson.lessonNumber)
+            assertThat(e.description).isEqualTo(lesson.descriptionDe)
+            assertThat(e.duration).isEqualTo("${lesson.durationMinutes} min")
+            assertThat(e.body).isNull() // Detail-Body kommt beim Öffnen aus dem Objekt
+        }
+    }
+
+    @Test
+    fun `asEntities - objectivesJson round-trip zu ObjectivesDe`() {
+        val json = kotlinx.serialization.json.Json {
+            ignoreUnknownKeys = true
+        }
+        BundledLessons.asEntities().forEachIndexed { index, e ->
+            val decoded = json.decodeFromString<List<String>>(e.objectivesJson)
+            assertThat(decoded).isEqualTo(BundledLessons.all[index].objectivesDe)
+        }
+    }
 }
