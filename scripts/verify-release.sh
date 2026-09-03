@@ -148,7 +148,7 @@ if [ "$DEVICE" = "1" ]; then
     fi
     DUMP="$REPO/build/ui-dump.xml"
     adb shell uiautomator dump //sdcard//ui.xml >/dev/null 2>&1 && adb pull //sdcard//ui.xml "$DUMP" >/dev/null 2>&1
-    MARKERS="${KIKOMPETENZ_UI_MARKERS:-Lessons|Mini-Games|Profile|KI Competence}"
+    MARKERS="${KIKOMPETENZ_UI_MARKERS:-Lektionen|Mini-Spiele|Profil|KI-Kompetenz|KI-Score}"
     if [ -f "$DUMP" ] && python -X utf8 -c "
 import re, sys
 xml = open(sys.argv[1], encoding='utf-8', errors='replace').read()
@@ -163,7 +163,7 @@ sys.exit(0 if re.search(sys.argv[2], xml) else 1)" "$DUMP" "$MARKERS"; then
       adb shell input tap "$LX" "$LY"
       sleep 7
       adb shell uiautomator dump //sdcard//ui.xml >/dev/null 2>&1 && adb pull //sdcard//ui.xml "$DUMP" >/dev/null 2>&1
-      LMARKERS="${KIKOMPETENZ_LESSON_MARKERS:-KI-Lernen|EU AI Act|Was ist|Lessons could not}"
+      LMARKERS="${KIKOMPETENZ_LESSON_MARKERS:-KI-Lernen|EU AI Act|Was ist|Lektionen|Lessons could not}"
       if [ -f "$DUMP" ] && python -X utf8 -c "
 import re, sys
 xml = open(sys.argv[1], encoding='utf-8', errors='replace').read()
