@@ -31,6 +31,7 @@ import ai.ki_kompetenz_training_org.data.lessons.Lesson12
 import ai.ki_kompetenz_training_org.data.lessons.Lesson13
 import ai.ki_kompetenz_training_org.data.lessons.Lesson14
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGameScreen
+import ai.ki_kompetenz_training_org.ui.minigames.AdaptiveQuizScreen
 import ai.ki_kompetenz_training_org.ui.minigames3d.MiniGame3DScreen
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGamesMenuScreen
 import ai.ki_kompetenz_training_org.ui.onboarding.OnboardingScreen
@@ -209,7 +210,9 @@ fun KiKompetenzNavHost(
             val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
             val game = MiniGames.byId(gameId)
             if (game != null) {
-                if (game.isArena3D) {
+                if (game.isAdaptiveQuiz) {
+                    AdaptiveQuizScreen(game = game, onBack = { navController.popBackStack() })
+                } else if (game.isArena3D) {
                     MiniGame3DScreen(game = game, onBack = { navController.popBackStack() })
                 } else {
                     MiniGameScreen(game = game, onBack = { navController.popBackStack() })

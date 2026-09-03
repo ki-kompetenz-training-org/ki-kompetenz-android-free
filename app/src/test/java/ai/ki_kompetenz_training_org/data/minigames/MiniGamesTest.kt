@@ -8,9 +8,10 @@ class MiniGamesTest {
     // ── Data integrity tests ──
 
     @Test
-    fun `all 12 games are registered with 3 arena games`() {
+    fun `all 12 games are registered with 3 adaptive quiz games`() {
         assertEquals(12, MiniGames.ALL.size)
-        assertEquals(3, MiniGames.ARENA3D.size)
+        assertEquals(3, MiniGames.ADAPTIVE.size)
+        assertEquals(0, MiniGames.ARENA3D.size)
     }
 
     @Test
@@ -43,12 +44,30 @@ class MiniGamesTest {
     }
 
     @Test
-    fun `arena games have no rounds but valid mode`() {
-        MiniGames.ARENA3D.forEach { game ->
+    fun `adaptive quiz games have no rounds but valid domain filter`() {
+        MiniGames.ADAPTIVE.forEach { game ->
             assertEquals(0, game.rounds.size)
-            assertEquals(MiniGameKind.ARENA_3D, game.kind)
-            assertNotNull("Game ${game.id} missing threeMode", game.threeMode)
+            assertEquals(MiniGameKind.ADAPTIVE_QUIZ, game.kind)
+            assertTrue("Game ${game.id} should be adaptive", game.isAdaptiveQuiz)
+            assertTrue("Game ${game.id} missing threeMode", game.threeMode == null)
         }
+    }
+
+    @Test
+    fun `adaptive quiz games have correct domain filters`() {
+        // KI-Detektiv: all domains (null filter)
+        val detective = MiniGames.byId("orb_hunt")!!
+        assertNull(detective.domainFilter)
+        // Risiko-Radar: EU AI Act + compliance domains
+        val radar = MiniGames.byId("maze_run")!!
+        assertNotNull(radar.domainFilter)
+        assertEquals(3, radar.domainFilter!!.size)
+        assertTrue(radar.domainFilter!!.contains("EU AI Act & Risikoklassen"))
+        // Fakten-Feuer: fundamentals + tools + transparency
+        val fire = MiniGames.byId("truth_snipe")!!
+        assertNotNull(fire.domainFilter)
+        assertEquals(3, fire.domainFilter!!.size)
+        assertTrue(fire.domainFilter!!.contains("Grundlagen der KI"))
     }
 
     @Test

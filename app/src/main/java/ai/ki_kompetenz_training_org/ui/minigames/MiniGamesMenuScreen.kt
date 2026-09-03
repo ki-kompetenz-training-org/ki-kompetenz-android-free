@@ -63,7 +63,7 @@ class MiniGamesMenuViewModel(
 fun MiniGamesMenuScreen(
     onBack: () -> Unit,
     onOpenGame: (MiniGame) -> Unit,
-    onOpenPremium: () -> Unit,
+    onOpenPremium: () -> Unit = {},
 ) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: MiniGamesMenuViewModel = viewModel {
@@ -92,37 +92,12 @@ fun MiniGamesMenuScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            // Free games
-            items(MiniGames.FREE, key = { it.id }) { game ->
+            // All games (all 8 are free)
+            items(MiniGames.ALL, key = { it.id }) { game ->
                 GameCard(
                     game = game,
                     locked = false,
                     onClick = { onOpenGame(game) },
-                )
-            }
-
-            // Premium games
-            item {
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    "⭐ Premium-Spiele",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    "Fortgeschrittene Deep-Dives mit höheren XP-Belohnungen.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(8.dp))
-            }
-            items(MiniGames.PREMIUM, key = { it.id }) { game ->
-                GameCard(
-                    game = game,
-                    locked = !state.premium,
-                    onClick = {
-                        if (state.premium) onOpenGame(game) else onOpenPremium()
-                    },
                 )
             }
 
@@ -146,7 +121,7 @@ fun MiniGamesMenuScreen(
 private fun DifficultyBadge(difficulty: Difficulty) {
     val color = when (difficulty) {
         Difficulty.BEGINNER -> Color(0xFF22C55E)
-        Difficulty.INTERMEDIATE -> Color(0xFFFFA500)
+        Difficulty.INTERMEDIATE -> Color(0xFFF59E0B)
         Difficulty.EXPERT -> Color(0xFFEF4444)
     }
     val label = when (difficulty) {
@@ -212,7 +187,9 @@ private fun GameCard(
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    if (game.isArena3D) {
+                    if (game.isAdaptiveQuiz) {
+                        stringResource(R.string.games_adaptive_badge)
+                    } else if (game.isArena3D) {
                         stringResource(R.string.games_arena_badge)
                     } else if (game.premium) {
                         if (locked) stringResource(R.string.games_premium_locked, game.rounds.size)

@@ -305,6 +305,13 @@
     <string name="games_arena_review">Zum Wiederholen empfohlen</string>
     <string name="games_arena_xp">Punkte: %1$d / Ziel %2$d  |  XP +%3$d</string>
     <string name="games_arena_badge">Echtzeit-Arena</string>
+    <string name="games_adaptive_badge">Adaptiv</string>
+    <string name="games_adaptive_fact">Fakt</string>
+    <string name="games_adaptive_risk">Risiko</string>
+    <string name="games_adaptive_wrong">Falsch</string>
+    <string name="games_adaptive_domain">Domäne</string>
+    <string name="games_adaptive_weak">Zum Wiederholen empfohlen</string>
+    <string name="games_adaptive_no_statements">Keine Aussagen verfügbar</string>
     <string name="lesson_quiz_intro">Beantworte %1$d Fragen, um dein Wissen zu testen</string>
     <string name="lesson_quiz_tip">💡 Tipp: Beantworte die Quiz-Fragen, um diese Lektion abzuschließen!</string>
     <string name="lesson_question_n">Frage %1$d: %2$s</string>

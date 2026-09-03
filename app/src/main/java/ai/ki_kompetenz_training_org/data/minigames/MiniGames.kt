@@ -28,7 +28,7 @@ data class MiniGameRound(
     fun explanation(lang: String): String = if (lang == "de") explanationDe else explanationEn
 }
 
-enum class MiniGameKind { QUIZ, ARENA_3D, FAKE_OR_REAL }
+enum class MiniGameKind { QUIZ, ARENA_3D, FAKE_OR_REAL, ADAPTIVE_QUIZ }
 
 data class MiniGame(
     val id: String, 
@@ -40,6 +40,8 @@ data class MiniGame(
     val difficulty: Difficulty = Difficulty.BEGINNER,
     val kind: MiniGameKind = MiniGameKind.QUIZ,
     val threeMode: GameMode? = null,
+    /** For ADAPTIVE_QUIZ: restrict statement selection to these LiteracyBank domains (null = all). */
+    val domainFilter: List<String>? = null,
 ) {
     fun title(lang: String): String = if (lang == "de") titleDe else titleEn
     fun description(lang: String): String = if (lang == "de") descriptionDe else descriptionEn
@@ -49,6 +51,9 @@ data class MiniGame(
 
     /** True for the Fake-or-Echt text game (10 random rounds per session). */
     val isFakeOrReal: Boolean get() = kind == MiniGameKind.FAKE_OR_REAL
+
+    /** True for adaptive retrieval-practice games (LiteracyBank + MasteryTracker). */
+    val isAdaptiveQuiz: Boolean get() = kind == MiniGameKind.ADAPTIVE_QUIZ
 }
 
 enum class Difficulty(val displayNameDe: String, val displayNameEn: String, val xpMultiplier: Float) {
@@ -872,33 +877,45 @@ object MiniGames {
         premium = false,
     )
 
-    // ── FREE 3D ARENA GAMES (individualized AI-literacy, real-time) ──────
+    // ── ADAPTIVE QUIZ GAMES (individualized AI-literacy retrieval practice) ──
+    // Wissenschaftlich fundiert: Retrieval Practice (Roediger & Karpicke 2006),
+    // adaptives Interleaving über MasteryTracker (Bjork, desirable difficulties),
+    // sofortiges ausgearbeitetes Feedback (Hattie & Timperley 2007).
+    // Keine extraneous cognitive load: kein 3D-Feld, kein Timer, keine Herzen.
     private val orb_hunt = MiniGame(
         id = "orb_hunt", emoji = "🕵️",
-        titleDe = "KI-Detektiv: Orb-Hunt", titleEn = "AI Detective: Orb Hunt",
-        descriptionDe = "3D-Arena: Sammle die blauen Wahrheits-Orbs und meide die roten KI-Halluzinationen.",
-        descriptionEn = "3D arena: collect the blue truth orbs and avoid the red AI hallucinations.",
+        titleDe = "KI-Detektiv", titleEn = "AI Detective",
+        descriptionDe = "Adaptives Training: KI-Aussagen aus allen 9 Domänen einordnen — Fakt oder Risiko?",
+        descriptionEn = "Adaptive training: classify AI statements from all 9 domains — fact or risk?",
         rounds = emptyList(),
-        kind = MiniGameKind.ARENA_3D,
-        threeMode = GameMode.ORB_HUNT,
+        kind = MiniGameKind.ADAPTIVE_QUIZ,
+        domainFilter = null, // alle 9 Domänen
     )
     private val maze_run = MiniGame(
-        id = "maze_run", emoji = "🌀",
-        titleDe = "KI-Labyrinth", titleEn = "AI Labyrinth",
-        descriptionDe = "3D-Arena: Steuere den Lernenden durch das Labyrinth zum grünen Wahrheits-Ziel und meide die roten Halluzinationen.",
-        descriptionEn = "3D arena: steer the learner through the maze to the green truth goal, dodging the red hallucinations.",
+        id = "maze_run", emoji = "⚖️",
+        titleDe = "Risiko-Radar", titleEn = "Risk Radar",
+        descriptionDe = "EU AI Act, Compliance & verbotene Nutzung: Erkenne Hochrisiko-Fälle im Arbeitsalltag.",
+        descriptionEn = "EU AI Act, compliance & prohibited use: spot high-risk cases in everyday work.",
         rounds = emptyList(),
-        kind = MiniGameKind.ARENA_3D,
-        threeMode = GameMode.MAZE_RUN,
+        kind = MiniGameKind.ADAPTIVE_QUIZ,
+        domainFilter = listOf(
+            "EU AI Act & Risikoklassen",
+            "Erlaubte & verbotene Nutzung",
+            "Haftung & Compliance",
+        ),
     )
     private val truth_snipe = MiniGame(
         id = "truth_snipe", emoji = "🎯",
         titleDe = "Fakten-Feuer", titleEn = "Fact Fire",
-        descriptionDe = "3D-Arena: Sammle fliegende blaue Fakten, zerstöre rote Falschmeldungen mit Feuer und meide Treffer.",
-        descriptionEn = "3D arena: collect the drifting blue facts, blast red fakes with fire, and avoid getting hit.",
+        descriptionDe = "KI-Grundlagen & Werkzeuge: Trenne Fakten von Halluzinationen — adaptiv, mit Erklärung.",
+        descriptionEn = "AI fundamentals & tools: separate facts from hallucinations — adaptive, with explanations.",
         rounds = emptyList(),
-        kind = MiniGameKind.ARENA_3D,
-        threeMode = GameMode.TRUTH_SNIPE,
+        kind = MiniGameKind.ADAPTIVE_QUIZ,
+        domainFilter = listOf(
+            "Grundlagen der KI",
+            "KI-Tools im Arbeitsalltag",
+            "Transparenzpflichten",
+        ),
     )
 
     /** Fake or Echt: is this text written by a human or by AI? 10 random rounds per session. */
@@ -934,6 +951,7 @@ object MiniGames {
     val FREE: List<MiniGame> = ALL.filter { !it.premium }
     val PREMIUM: List<MiniGame> = ALL.filter { it.premium }
     val ARENA3D: List<MiniGame> = ALL.filter { it.isArena3D }
+    val ADAPTIVE: List<MiniGame> = ALL.filter { it.isAdaptiveQuiz }
     
     fun byId(id: String): MiniGame? = ALL.firstOrNull { it.id == id }
     
