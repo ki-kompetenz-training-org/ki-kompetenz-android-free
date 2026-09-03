@@ -2,6 +2,7 @@ package ai.ki_kompetenz_training_org.ui.lessons
 
 import androidx.compose.animation.core.*
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.shape.CircleShape
@@ -169,6 +170,10 @@ fun RiskThermometerBlock(
                                 shape = CircleShape,
                             )
                             .clip(CircleShape)
+                            .clickable {
+                                selectedLevel = index
+                                onInteracted()
+                            }
                     ) {
                         Surface(
                             modifier = Modifier

@@ -494,65 +494,192 @@ private fun KnowledgeCheckBlock(block: ContentBlock.KnowledgeCheck, locale: Stri
 }
 
 // ── Classification block ────────────────────────────────────────────────────
+// FIX (BUG 2026-09-03): War nicht interaktiv — Items waren mit ✅ vorsortiert.
+// Neu: Tap-to-assign — Element antippen, dann Kategorie antippen.
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ClassificationBlock(
     block: ContentBlock.Classification,
     locale: String,
     onInteracted: () -> Unit,
 ) {
-    // All items flattened with state tracking
-    val allItems = remember {
-        block.categories.flatMap { cat ->
-            cat.items.map { item -> Triple(cat, item, false) }
-        }.toMutableStateList()
+    // Flatten: (displayText, korrekter Kategorie-Index) — gemischt für den Pool
+    val allItems = remember(block.categories, locale) {
+        block.categories.flatMapIndexed { catIdx, cat ->
+            cat.items.map { item ->
+                localized(locale, item.textDe, item.textEn) to catIdx
+            }
+        }.shuffled()
+    }
+
+    var selectedIdx by remember { mutableStateOf<Int?>(null) }
+    val assigned = remember { mutableStateMapOf<Int, Boolean>() } // Item-Index → korrekt
+    var wrongFlash by remember { mutableStateOf<Int?>(null) } // Kategorie mit Fehler-Feedback
+
+    // Fehler-Feedback automatisch zurücksetzen
+    LaunchedEffect(wrongFlash) {
+        if (wrongFlash != null) {
+            kotlinx.coroutines.delay(900)
+            wrongFlash = null
+        }
+    }
+
+    val allAssigned = allItems.isNotEmpty() && assigned.size == allItems.size
+    LaunchedEffect(allAssigned) {
+        if (allAssigned) onInteracted()
     }
 
     Text(
         localized(locale, block.instructionDe, block.instructionEn),
         style = MaterialTheme.typography.labelMedium,
         fontWeight = FontWeight.Medium,
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier.padding(bottom = 4.dp),
     )
 
-    // Categories as drop targets
+    if (!allAssigned) {
+        Text(
+            if (locale == "en") "Tap an item, then tap its category"
+            else "Tippe ein Element an, dann seine Kategorie",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 6.dp),
+        )
+
+        // ── Item-Pool (noch nicht zugeordnete Elemente) ──
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            allItems.forEachIndexed { idx, (text, _) ->
+                if (!assigned.containsKey(idx)) {
+                    val isSelected = selectedIdx == idx
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = {
+                            selectedIdx = if (isSelected) null else idx
+                            wrongFlash = null
+                        },
+                        label = {
+                            Text(
+                                text,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            )
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            containerColor = if (isSelected)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else
+                                MaterialTheme.colorScheme.surfaceVariant,
+                        ),
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(8.dp))
+    } else {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        ) {
+            Text(
+                if (locale == "en") "✅ All items assigned!" else "✅ Alles richtig zugeordnet!",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(12.dp),
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+    }
+
+    // Categories as tap targets
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        block.categories.forEach { cat ->
+        block.categories.forEachIndexed { catIdx, cat ->
             val catColor = if (cat.emoji == "🤖")
                 MaterialTheme.colorScheme.primaryContainer
             else
                 MaterialTheme.colorScheme.tertiaryContainer
+            val isWrongTarget = wrongFlash == catIdx
+            val assignedInCat = allItems.withIndex().count { (idx, item) ->
+                assigned.containsKey(idx) && item.second == catIdx
+            }
 
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = catColor),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        val sel = selectedIdx
+                        if (sel != null) {
+                            val (_, correctCat) = allItems[sel]
+                            if (correctCat == catIdx) {
+                                assigned[sel] = true
+                                selectedIdx = null
+                                wrongFlash = null
+                            } else {
+                                wrongFlash = catIdx
+                            }
+                        }
+                    },
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isWrongTarget)
+                        MaterialTheme.colorScheme.errorContainer
+                    else catColor,
+                ),
+                border = if (isWrongTarget)
+                    BorderStroke(2.dp, MaterialTheme.colorScheme.error)
+                else null,
             ) {
                 Column(modifier = Modifier.padding(10.dp)) {
-                    Text(
-                        "${cat.emoji} ${localized(locale, cat.nameDe, cat.nameEn)}",
-                        style = MaterialTheme.typography.labelLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    // Show items assigned to this category
-                    cat.items.forEach { item ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            "  ✅ ${localized(locale, item.textDe, item.textEn)}",
-                            style = MaterialTheme.typography.bodySmall,
+                            "${cat.emoji} ${localized(locale, cat.nameDe, cat.nameEn)}",
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            "$assignedInCat/${cat.items.size}",
+                            style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    // Korrekt zugeordnete Items dieser Kategorie
+                    allItems.forEachIndexed { idx, item ->
+                        if (assigned.containsKey(idx) && item.second == catIdx) {
+                            Text(
+                                "  ✅ ${item.first}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                     }
                 }
             }
         }
     }
 
-    Spacer(Modifier.height(8.dp))
-    TextButton(onClick = onInteracted) {
+    // Fehler-Feedback
+    if (wrongFlash != null) {
+        Spacer(Modifier.height(4.dp))
         Text(
-            if (locale == "en") "✓ Got it" else "✓ Verstanden",
-            fontWeight = FontWeight.Bold,
+            if (locale == "en") "❌ Not there — try again!"
+            else "❌ Nicht dort — versuche es nochmal!",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.error,
         )
+    }
+
+    // Skip-Möglichkeit (Section gilt auch so als bearbeitet)
+    if (!allAssigned) {
+        Spacer(Modifier.height(8.dp))
+        TextButton(onClick = onInteracted) {
+            Text(
+                if (locale == "en") "✓ Got it" else "✓ Verstanden",
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
 }
 
