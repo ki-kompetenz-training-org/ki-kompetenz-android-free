@@ -35,7 +35,7 @@ object Lesson9 {
                         instructionEn = "Assign the activities to strategy phases:",
                         categories = listOf(
                             ClassificationCategory(
-                                nameDe = "Assessment", nameEn = "Assessment", emoji = "1F4CB",
+                                nameDe = "Assessment", nameEn = "Assessment", emoji = "📋",
                                 items = listOf(
                                     ClassificationItem("Datenqualitaets-Audit", "Data quality audit"),
                                     ClassificationItem("Mitarbeiter-Umfrage zu KI-Kompetenzen", "Employee survey on AI skills"),
@@ -43,7 +43,7 @@ object Lesson9 {
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Vision und Roadmap", nameEn = "Vision and Roadmap", emoji = "1F3AF",
+                                nameDe = "Vision und Roadmap", nameEn = "Vision and Roadmap", emoji = "🎯",
                                 items = listOf(
                                     ClassificationItem("KPIs definieren", "Define KPIs"),
                                     ClassificationItem("3-Jahres-Plan erstellen", "Create 3-year plan"),
@@ -51,7 +51,7 @@ object Lesson9 {
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Scale", nameEn = "Scale", emoji = "1F4C8",
+                                nameDe = "Scale", nameEn = "Scale", emoji = "📈",
                                 items = listOf(
                                     ClassificationItem("Erfolgreichen PoC ausrollen", "Roll out successful PoC"),
                                     ClassificationItem("Trainings fuer alle Abteilungen", "Training for all departments"),

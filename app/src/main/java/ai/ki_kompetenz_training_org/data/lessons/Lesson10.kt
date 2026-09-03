@@ -33,14 +33,14 @@ object Lesson10 {
                         instructionEn = "Assign the prompts:",
                         categories = listOf(
                             ClassificationCategory(
-                                nameDe = "Gut", nameEn = "Good", emoji = "2705",
+                                nameDe = "Gut", nameEn = "Good", emoji = "✅",
                                 items = listOf(
                                     ClassificationItem("Du bist Datenschutzbeauftragter. Erstelle eine Checkliste.", "You are a DPO. Create a checklist."),
                                     ClassificationItem("Format: Tabelle. Spalten: Risiko, Prioritaet.", "Format: Table. Columns: Risk, Priority."),
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Schlecht", nameEn = "Bad", emoji = "274C",
+                                nameDe = "Schlecht", nameEn = "Bad", emoji = "❌",
                                 items = listOf(
                                     ClassificationItem("Schreib etwas ueber DSGVO.", "Write something about GDPR."),
                                     ClassificationItem("KI ist gut oder schlecht?", "Is AI good or bad?"),

@@ -57,7 +57,7 @@ object Lesson14 {
                         instructionEn = "Assign the measures:",
                         categories = listOf(
                             ClassificationCategory(
-                                nameDe = "Energie sparen", nameEn = "Save Energy", emoji = "1F50B",
+                                nameDe = "Energie sparen", nameEn = "Save Energy", emoji = "🔋",
                                 items = listOf(
                                     ClassificationItem("Kleineres Modell nutzen", "Use smaller model"),
                                     ClassificationItem("Caching implementieren", "Implement caching"),
@@ -65,7 +65,7 @@ object Lesson14 {
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Gruene Energie", nameEn = "Green Energy", emoji = "1F33F",
+                                nameDe = "Gruene Energie", nameEn = "Green Energy", emoji = "🌿",
                                 items = listOf(
                                     ClassificationItem("Oekostrom-Rechenzentrum", "Renewable energy data center"),
                                     ClassificationItem("Standort: Kuehle Regionen", "Location: cool regions"),

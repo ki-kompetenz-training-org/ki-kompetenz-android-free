@@ -33,14 +33,14 @@ object Lesson12 {
                         instructionEn = "Which reactions to AI adoption?",
                         categories = listOf(
                             ClassificationCategory(
-                                nameDe = "Positiv", nameEn = "Positive", emoji = "1F4AA",
+                                nameDe = "Positiv", nameEn = "Positive", emoji = "💪",
                                 items = listOf(
                                     ClassificationItem("Freude ueber Zeitersparnis", "Excitement about time savings"),
                                     ClassificationItem("Neugier auf neue Tools", "Curiosity about new tools"),
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Negativ", nameEn = "Negative", emoji = "1F614",
+                                nameDe = "Negativ", nameEn = "Negative", emoji = "😔",
                                 items = listOf(
                                     ClassificationItem("Angst vor Jobverlust", "Fear of job loss"),
                                     ClassificationItem("Skepsis gegenueber KI-Qualitaet", "Skepticism about AI quality"),

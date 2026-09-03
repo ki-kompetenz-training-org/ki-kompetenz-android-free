@@ -38,7 +38,7 @@ object Lesson8 {
                             ClassificationCategory(
                                 nameDe = "Daten-Bias",
                                 nameEn = "Data Bias",
-                                emoji = "1F4D8",
+                                emoji = "📊",
                                 items = listOf(
                                     ClassificationItem("HR-KI mit 80% Maenner-Profilen", "HR AI with 80% male profiles"),
                                     ClassificationItem("Kredit-KI nur mit Daten einer Stadt", "Credit AI only with data from one city"),
@@ -48,7 +48,7 @@ object Lesson8 {
                             ClassificationCategory(
                                 nameDe = "Algorithmus-Bias",
                                 nameEn = "Algorithm Bias",
-                                emoji = "2699",
+                                emoji = "⚙️",
                                 items = listOf(
                                     ClassificationItem("Sprachmodell unterschaetzt nicht-englische Accents", "Language model undervalues non-English accents"),
                                     ClassificationItem("Bild-KI erkennt dunkle Gesichter schlechter", "Image AI recognizes darker faces worse"),
@@ -57,7 +57,7 @@ object Lesson8 {
                             ClassificationCategory(
                                 nameDe = "Interaktions-Bias",
                                 nameEn = "Interaction Bias",
-                                emoji = "1F4D4",
+                                emoji = "👥",
                                 items = listOf(
                                     ClassificationItem("Empfehlungen zeigen nur Mainstream-Content", "Recommendations show only mainstream content"),
                                     ClassificationItem("Social Media verstaerkt extreme Meinungen", "Social media amplifies extreme opinions"),

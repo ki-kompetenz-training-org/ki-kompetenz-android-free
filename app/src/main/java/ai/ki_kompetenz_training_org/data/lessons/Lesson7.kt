@@ -55,7 +55,7 @@ object Lesson7 {
                         instructionEn = "Assign the tasks to:",
                         categories = listOf(
                             ClassificationCategory(
-                                nameDe = "Bilderkennung", nameEn = "Image Classification", emoji = "1F4D8",
+                                nameDe = "Bilderkennung", nameEn = "Image Classification", emoji = "🏷️",
                                 items = listOf(
                                     ClassificationItem("Katze oder Hund?", "Cat or dog?"),
                                     ClassificationItem("Roentgenbild: Tumor ja/nein?", "X-ray: tumor yes/no?"),
@@ -63,7 +63,7 @@ object Lesson7 {
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Objekterkennung", nameEn = "Object Detection", emoji = "1F4D8",
+                                nameDe = "Objekterkennung", nameEn = "Object Detection", emoji = "🔍",
                                 items = listOf(
                                     ClassificationItem("Autos im Verkehr finden", "Find all cars in traffic"),
                                     ClassificationItem("Personen im Raum zaehlen", "Count people in room"),
@@ -71,7 +71,7 @@ object Lesson7 {
                                 ),
                             ),
                             ClassificationCategory(
-                                nameDe = "Segmentierung", nameEn = "Segmentation", emoji = "1F4D8",
+                                nameDe = "Segmentierung", nameEn = "Segmentation", emoji = "🧩",
                                 items = listOf(
                                     ClassificationItem("Selbstfahrer-Spur markieren", "Mark self-driving lane"),
                                     ClassificationItem("Tumor-Gewebe abgrenzen", "Outline tumor tissue"),
