@@ -2,13 +2,16 @@ package ai.ki_kompetenz_training_org.ui.gamification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity
 import ai.ki_kompetenz_training_org.data.db.GamificationEntity
 import ai.ki_kompetenz_training_org.data.repo.Badge
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 data class MissionUi(
@@ -30,10 +33,12 @@ data class GamificationUiState(
     val badges: List<Pair<Badge, Boolean>> = emptyList(),
     val lessonProgress: Int = 0,
     val totalLessons: Int = 12,
+    val latestSnapshot: CompetencySnapshotEntity? = null,
 )
 
 class GamificationViewModel(
     private val gamification: GamificationRepository,
+    private val competency: CompetencyRepository? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(GamificationUiState())
@@ -45,8 +50,9 @@ class GamificationViewModel(
                 gamification.observe(),
                 gamification.observeBadgeState(),
                 gamification.observeLessonProgress(),
-            ) { entity, badges, lessons ->
-                buildState(entity, badges, lessons.size)
+                competency?.observeLatest() ?: flowOf(null),
+            ) { entity, badges, lessons, snapshot ->
+                buildState(entity, badges, lessons.size, snapshot)
             }.collect { _state.value = it }
         }
     }
@@ -67,6 +73,7 @@ class GamificationViewModel(
         entity: GamificationEntity?,
         badges: List<Pair<Badge, Boolean>>,
         lessonCount: Int,
+        snapshot: CompetencySnapshotEntity? = null,
     ): GamificationUiState {
         val xp = entity?.xp ?: 0
         val level = GamificationRules.levelForXp(xp)
@@ -82,6 +89,7 @@ class GamificationViewModel(
             missions = readMissions(),
             badges = badges,
             lessonProgress = lessonCount,
+            latestSnapshot = snapshot,
         )
     }
 

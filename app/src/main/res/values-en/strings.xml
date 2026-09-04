@@ -389,4 +389,24 @@
 <string name="lessons_load_error">Lessons could not be loaded. Check your connection.</string>
     <string name="srs_empty_lessons_cta">Go to lessons</string>
     <string name="kibot_tips_title">KiBot tips</string>
+
+    <!-- KIKI: AI competency index (radar + sparkline) -->
+    <string name="kiki_title">Your AI competency index</string>
+    <string name="kiki_delta">%1$s → %2$s (%3$s)</string>
+    <string name="kiki_no_data">Your learning progress will appear here after your first quiz session.</string>
+    <string name="kiki_label">AI competency index: %1$s</string>
+    <string name="radar_title">AI competency radar</string>
+    <string name="radar_weak_domain">Weak: %1$s</string>
+    <string name="radar_strong_domain">Strong: %1$s</string>
+    <string-array name="radar_axes">
+        <item>Basics</item>
+        <item>Privacy</item>
+        <item>EU AI Act</item>
+        <item>Liability</item>
+        <item>Governance</item>
+        <item>Tools</item>
+        <item>Transparency</item>
+        <item>Usage</item>
+        <item>Context</item>
+    </string-array>
 </resources>

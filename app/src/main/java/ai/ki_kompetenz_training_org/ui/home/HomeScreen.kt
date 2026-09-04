@@ -49,8 +49,11 @@ import ai.ki_kompetenz_training_org.ui.common.SkeletonVisibility
 import ai.ki_kompetenz_training_org.ui.theme.LocalAudienceMode
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeCard
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeViewModel
+import ai.ki_kompetenz_training_org.ui.home.KikiSparklineCard
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotScene
 import ai.ki_kompetenz_training_org.ui.kibot.KiBotState
 import ai.ki_kompetenz_training_org.ui.kibot.daysSinceLastCheckIn
@@ -296,6 +299,20 @@ fun HomeScreen(
                 }
             },
         )
+
+        Spacer(Modifier.height(16.dp))
+
+        // ── KIKI-Sparkline card (woechentlicher KI-Kompetenz-Index-Trend) ──
+        val kikiSnapshots by remember {
+            val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+            CompetencyRepository(
+                snapshotDao = app.db.competencySnapshotDao(),
+                tracker = MasteryTracker(prefs),
+                prefs = prefs,
+                gamification = app.gamificationRepository,
+            ).observeSnapshots()
+        }.collectAsState(initial = emptyList())
+        KikiSparklineCard(snapshots = kikiSnapshots)
 
         Spacer(Modifier.height(16.dp))
 

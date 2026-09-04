@@ -4,6 +4,7 @@
  */
 package ai.ki_kompetenz_training_org.ui.gamification
 
+import ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity
 import ai.ki_kompetenz_training_org.data.db.GamificationEntity
 import ai.ki_kompetenz_training_org.data.db.LessonProgressEntity
 import ai.ki_kompetenz_training_org.data.missions.MissionMetric
@@ -11,6 +12,7 @@ import ai.ki_kompetenz_training_org.data.missions.MissionTemplate
 import ai.ki_kompetenz_training_org.data.missions.WeeklyMissionsRepository
 import ai.ki_kompetenz_training_org.data.missions.WeeklyMissionsState
 import ai.ki_kompetenz_training_org.data.repo.Badge
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
@@ -44,6 +46,7 @@ class GamificationViewModelTest {
 
     private lateinit var gamification: GamificationRepository
     private lateinit var missionsRepo: WeeklyMissionsRepository
+    private lateinit var competency: CompetencyRepository
 
     private fun today(): String = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
     private fun yesterday(): String =
@@ -55,6 +58,8 @@ class GamificationViewModelTest {
 
         gamification = mockk()
         missionsRepo = mockk()
+        competency = mockk()
+        every { competency.observeLatest() } returns flowOf(null)
 
         // Grund-Stubbing: alle im init-Block kombinierten Flows + Leszugriffe.
         every { gamification.observe() } returns flowOf(GamificationEntity())
@@ -69,7 +74,7 @@ class GamificationViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createVm(): GamificationViewModel = GamificationViewModel(gamification)
+    private fun createVm(): GamificationViewModel = GamificationViewModel(gamification, competency)
 
     private fun lessonProgress(vararg slugs: String): List<LessonProgressEntity> =
         slugs.map { LessonProgressEntity(slug = it) }
@@ -243,5 +248,33 @@ class GamificationViewModelTest {
         assertThat(vm.state.value.badges).isEqualTo(badges)
         assertThat(vm.state.value.badges).hasSize(2)
         assertThat(vm.state.value.badges.first().second).isTrue()
+    }
+
+    // ── (9) KIKI-Snapshot (Radar) ────────────────────────────────────────
+
+    @Test
+    fun `neuester KIKI-Snapshot erscheint im UiState`() = runTest(dispatcher) {
+        val snapshot = CompetencySnapshotEntity(
+            weekKey = "2026-W36",
+            kiki = 61,
+            perDomainJson = "[76, 12, 40, 0, 0, 0, 0, 0, 0]",
+            createdAt = 1234L,
+        )
+        every { competency.observeLatest() } returns flowOf(snapshot)
+
+        val vm = createVm()
+        advanceUntilIdle()
+
+        val latest = vm.state.value.latestSnapshot
+        assertThat(latest).isNotNull()
+        assertThat(latest!!.kiki).isEqualTo(61)
+    }
+
+    @Test
+    fun `ohne Competency-Daten bleibt latestSnapshot null`() = runTest(dispatcher) {
+        val vm = createVm()
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.latestSnapshot).isNull()
     }
 }

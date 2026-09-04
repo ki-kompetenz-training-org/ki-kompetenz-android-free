@@ -396,4 +396,24 @@
 <string name="lessons_load_error">Lektionen konnten nicht geladen werden. Prüfe deine Verbindung.</string>
     <string name="srs_empty_lessons_cta">Zu den Lektionen</string>
     <string name="kibot_tips_title">KiBot-Tipps</string>
+
+    <!-- KIKI: KI-Kompetenz-Index (Radar + Sparkline) -->
+    <string name="kiki_title">Dein KI-Kompetenz-Index</string>
+    <string name="kiki_delta">%1$s → %2$s (%3$s)</string>
+    <string name="kiki_no_data">Nach deiner ersten Quiz-Session erscheint hier dein Lernfortschritt.</string>
+    <string name="kiki_label">KI-Kompetenz-Index: %1$s</string>
+    <string name="radar_title">KI-Kompetenz-Radar</string>
+    <string name="radar_weak_domain">Schwach: %1$s</string>
+    <string name="radar_strong_domain">Stark: %1$s</string>
+    <string-array name="radar_axes">
+        <item>Grundlagen</item>
+        <item>DSGVO</item>
+        <item>EU AI Act</item>
+        <item>Haftung</item>
+        <item>Governance</item>
+        <item>Tools</item>
+        <item>Transparenz</item>
+        <item>Nutzung</item>
+        <item>Kontext</item>
+    </string-array>
 </resources>

@@ -22,14 +22,26 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.KiKompetenzApp
+import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
 import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
+import ai.ki_kompetenz_training_org.ui.gamification.CompetencyRadarCard
+import ai.ki_kompetenz_training_org.ui.gamification.parseDomainScores
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GamificationScreen(onBack: () -> Unit) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: GamificationViewModel = viewModel {
-        GamificationViewModel(app.gamificationRepository)
+        val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+        val competencyRepo = CompetencyRepository(
+            snapshotDao = app.db.competencySnapshotDao(),
+            tracker = MasteryTracker(prefs),
+            prefs = prefs,
+            gamification = app.gamificationRepository,
+        )
+        GamificationViewModel(app.gamificationRepository, competencyRepo)
     }
     val state by vm.state.collectAsState()
 
@@ -123,6 +135,17 @@ fun GamificationScreen(onBack: () -> Unit) {
                             )
                         }
                     }
+                }
+            }
+
+            // KIKI-Radar (nur mit Daten — sonst keine leere Sektion)
+            item {
+                val snapshot = state.latestSnapshot
+                if (snapshot != null) {
+                    CompetencyRadarCard(
+                        kiki = snapshot.kiki,
+                        domainScores = parseDomainScores(snapshot.perDomainJson, LiteracyBank.DOMAINS.size),
+                    )
                 }
             }
 

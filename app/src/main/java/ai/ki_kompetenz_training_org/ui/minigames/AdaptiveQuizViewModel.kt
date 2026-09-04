@@ -6,9 +6,11 @@ import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import ai.ki_kompetenz_training_org.data.minigames3d.ClassifyLog
+import ai.ki_kompetenz_training_org.data.minigames3d.CompetencyMath
 import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank
 import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyStatement
 import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +38,15 @@ data class AdaptiveQuizUiState(
     val earnedXp: Int = 0,
     val dailyChallengeBonusXp: Int = 0,
     val weakDomains: List<String> = emptyList(),
+    val kiki: Int = 0,
+    val domainScores: List<DomainScore> = emptyList(),
+    val previousKiki: Int? = null,
+)
+
+/** Per-domain score (0..100) shown on the result screen. */
+data class DomainScore(
+    val domain: String,
+    val score: Int,
 )
 
 /**
@@ -50,6 +61,7 @@ class AdaptiveQuizViewModel(
     private val gamification: GamificationRepository,
     private val mastery: MasteryTracker,
     private val dailyChallengeRepository: DailyChallengeRepository? = null,
+    private val competencyRepository: CompetencyRepository? = null,
     private val rng: Random = Random.Default,
 ) : ViewModel() {
 
@@ -83,14 +95,15 @@ class AdaptiveQuizViewModel(
         _state.value = AdaptiveQuizUiState(rounds = rounds)
     }
 
-    private fun pickDomain(allowed: List<String>): String {
+    /**
+     * Weighted domain selection based on effective (decay-at-read) EWMA mastery:
+     * weight = clamp(2.6 - 2.3 * m, 0.3, 2.6). Unseen/forgotten domains (m ~ 0)
+     * get maximum weight, mastered domains (m ~ 1) minimum weight.
+     */
+    internal fun pickDomain(allowed: List<String>): String {
         val weights = allowed.associateWith { d ->
-            val m = mastery.getMastery(d)
-            when {
-                m.total == 0 -> 3.0
-                m.total < MIN_ATTEMPTS_FOR_ADAPTATION -> 2.0
-                else -> (2.0 - 1.7 * m.correct.toDouble() / m.total.toDouble()).coerceIn(0.3, 2.0)
-            }
+            val m = mastery.getMastery(d).m
+            (2.6 - 2.3 * m).coerceIn(0.3, 2.6)
         }
         var roll = rng.nextDouble() * weights.values.sum()
         for ((domain, weight) in weights) {
@@ -134,6 +147,10 @@ class AdaptiveQuizViewModel(
             ClassifyLog(domain = round.domain, correct = s.answers[i], statement = round.statement)
         }
         mastery.recordClassifications(logs)
+        val domainScores = LiteracyBank.DOMAINS.map { d ->
+            val m = mastery.getMastery(d)
+            DomainScore(d, CompetencyMath.domainScore(m.m, m.total))
+        }
         val xp = GamificationRules.miniGameXp(
             correctCount = correct,
             totalQuestions = total,
@@ -143,9 +160,22 @@ class AdaptiveQuizViewModel(
             phase = AdaptivePhase.RESULT,
             earnedXp = xp,
             weakDomains = mastery.weakDomains().map { it.domain },
+            kiki = CompetencyMath.kiki(domainScores.map { it.score }),
+            domainScores = domainScores,
         )
         viewModelScope.launch {
             gamification.onMiniGameFinished(correct, total, gameId = game.id)
+            // KIKI: weekly competency snapshot + XP trigger (fehlertolerant —
+            // darf den Lernfluss nie blockieren, Muster wie Missions-record).
+            try {
+                val prevKiki = competencyRepository?.latestSnapshot()?.kiki
+                competencyRepository?.recordFromTracker()
+                if (prevKiki != null) {
+                    _state.value = _state.value.copy(previousKiki = prevKiki)
+                }
+            } catch (_: Exception) {
+                // DB- oder Prefs-Fehler: Quiz-Erlebnis bleibt intakt.
+            }
             val dailyRepo = dailyChallengeRepository ?: return@launch
             val today = LocalDate.now()
             val todaysChallenge = dailyRepo.getTodayChallenge(today, MiniGames.ALL)
@@ -163,6 +193,5 @@ class AdaptiveQuizViewModel(
     companion object {
         const val SESSION_SIZE = 10
         private const val MAX_ATTEMPTS = 40
-        private const val MIN_ATTEMPTS_FOR_ADAPTATION = 3
     }
 }

@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Upsert
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,28 @@ data class LessonProgressEntity(
     @PrimaryKey val slug: String,
     val completedAt: Long = System.currentTimeMillis(),
 )
+
+// ── Competency (woechentliche KI-Kompetenz-Snapshots, KIKI) ────────────────
+
+@Entity(tableName = "competency_snapshots")
+data class CompetencySnapshotEntity(
+    @PrimaryKey val weekKey: String, // ISO-Week "2026-W36"
+    val kiki: Int, // 0..100
+    val perDomainJson: String, // "[score, score, ...]" ueber alle 9 Domaenen
+    val createdAt: Long,
+)
+
+@Dao
+interface CompetencySnapshotDao {
+    @Upsert
+    suspend fun upsert(s: CompetencySnapshotEntity)
+
+    @Query("SELECT * FROM competency_snapshots ORDER BY weekKey DESC LIMIT :limit")
+    fun observeRecent(limit: Int): Flow<List<CompetencySnapshotEntity>>
+
+    @Query("SELECT * FROM competency_snapshots ORDER BY weekKey DESC LIMIT :limit")
+    suspend fun getRecent(limit: Int): List<CompetencySnapshotEntity>
+}
 
 @Dao
 interface ContentDao {
@@ -112,14 +135,16 @@ interface GamificationDao {
         QuizResultEntity::class,
         GamificationEntity::class,
         LessonProgressEntity::class,
+        CompetencySnapshotEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun contentDao(): ContentDao
     abstract fun quizResultDao(): QuizResultDao
     abstract fun gamificationDao(): GamificationDao
+    abstract fun competencySnapshotDao(): CompetencySnapshotDao
 
     companion object {
         @Volatile
@@ -152,6 +177,21 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS competency_snapshots (
+                        weekKey TEXT NOT NULL PRIMARY KEY,
+                        kiki INTEGER NOT NULL,
+                        perDomainJson TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
         fun get(context: Context): AppDatabase =
             instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(
@@ -159,7 +199,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "kikompetenz.db",
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .fallbackToDestructiveMigration()  // Allow destructive migration
                     .build().also { instance = it }
             }

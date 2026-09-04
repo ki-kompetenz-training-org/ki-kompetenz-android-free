@@ -17,19 +17,28 @@ data class LiteracyStatement(
 }
 
 /**
- * Per-domain mastery tracking. Persists to SharedPreferences.
+ * Per-domain mastery tracking (v2: EWMA with decay-at-read). Persists to SharedPreferences.
  * Weights domain selection toward weak areas for individualized learning.
  *
- * A domain with 2/10 correct gets higher weight than 8/10.
- * Domains never seen get maximum weight.
+ * [m] is the STORED EWMA mastery (updated only on answer events); callers reading
+ * via [MasteryTracker.getMastery] receive the EFFECTIVE mastery, decayed at read
+ * time (14-day half-life, see [CompetencyMath]).
+ * [correct] is derived as round(m * total) to keep ratio-based callers compatible.
  */
 data class DomainMastery(
     val domain: String,
-    val correct: Int,
+    val m: Double,
     val total: Int,
-)
+    val lastEventMs: Long = 0L,
+) {
+    /** Derived correct count — keeps e.g. AdaptiveQuizViewModel's ratio logic compiling. */
+    val correct: Int get() = Math.round(m * total).toInt().coerceIn(0, total)
+}
 
-class MasteryTracker(private val prefs: android.content.SharedPreferences) {
+class MasteryTracker(
+    private val prefs: android.content.SharedPreferences,
+    private val nowMs: () -> Long = System::currentTimeMillis,
+) {
     companion object {
         private const val KEY_PREFIX = "mg3d_mastery_"
         private const val KEY_TOTAL_GAMES = "mg3d_total_games"
@@ -48,19 +57,43 @@ class MasteryTracker(private val prefs: android.content.SharedPreferences) {
         "KI im erweiterten Kontext",
     )
 
-    fun getMastery(domain: String): DomainMastery {
-        val key = KEY_PREFIX + domain
-        val data = prefs.getString(key, null) ?: return DomainMastery(domain, 0, 0)
-        val parts = data.split("/")
-        return if (parts.size == 2) DomainMastery(domain, parts[0].toIntOrNull() ?: 0, parts[1].toIntOrNull() ?: 0)
-        else DomainMastery(domain, 0, 0)
+    /**
+     * Reads the STORED (m, n, t) triple for a domain.
+     * - v2 JSON is parsed directly.
+     * - Legacy "correct/total" is backfilled (m = correct/total, n = total, t = now)
+     *   and immediately persisted as v2.
+     * - Corrupt or missing values default to (0.0, 0, 0L); corrupt values are
+     *   overwritten on the next write.
+     */
+    private fun readStored(domain: String): Triple<Double, Int, Long> {
+        val raw = prefs.getString(KEY_PREFIX + domain, null) ?: return Triple(0.0, 0, 0L)
+        CompetencyMath.decodeV2(raw)?.let { return it }
+        if (CompetencyMath.isLegacy(raw)) {
+            val legacy = CompetencyMath.parseLegacy(raw) ?: return Triple(0.0, 0, 0L)
+            val (correct, total) = legacy
+            val t = nowMs()
+            val m = if (total > 0) correct / total.toDouble() else 0.0
+            // Backfill: sofort als v2 persistieren.
+            prefs.edit().putString(KEY_PREFIX + domain, CompetencyMath.encodeV2(m, total, t)).apply()
+            return Triple(m, total, t)
+        }
+        return Triple(0.0, 0, 0L)
     }
 
+    /** Effective mastery with decay-at-read; does NOT write (except legacy backfill). */
+    fun getMastery(domain: String): DomainMastery {
+        val (m, n, t) = readStored(domain)
+        val deltaMs = (nowMs() - t).coerceAtLeast(0L)
+        return DomainMastery(domain, CompetencyMath.effectiveMastery(m, deltaMs), n, t)
+    }
+
+    /** Records one answer event: first decay the stored EWMA, then blend the answer in. */
     fun recordResult(domain: String, correct: Boolean) {
-        val current = getMastery(domain)
-        val newTotal = current.total + 1
-        val newCorrect = current.correct + if (correct) 1 else 0
-        prefs.edit().putString(KEY_PREFIX + domain, "$newCorrect/$newTotal").apply()
+        val (m, n, t) = readStored(domain)
+        val x = if (correct) 1 else 0
+        val now = nowMs()
+        val mNeu = if (n == 0) x.toDouble() else CompetencyMath.updateEwma(m, x, now - t)
+        prefs.edit().putString(KEY_PREFIX + domain, CompetencyMath.encodeV2(mNeu, n + 1, now)).apply()
     }
 
     /** Record multiple classifications from one game session. */
@@ -71,8 +104,8 @@ class MasteryTracker(private val prefs: android.content.SharedPreferences) {
     }
 
     /**
-     * Select a domain weighted by inverse mastery.
-     * Domains with fewer correct/total ratio get higher weight.
+     * Select a domain weighted by inverse (effective) mastery.
+     * Domains with low effective EWMA mastery get higher weight.
      * Domains with < MIN_ATTEMPTS get extra weight (never-seen = highest).
      */
     fun selectDomain(rng: () -> Double = { Math.random() }): String {
@@ -81,10 +114,7 @@ class MasteryTracker(private val prefs: android.content.SharedPreferences) {
             when {
                 m.total == 0 -> 3.0
                 m.total < MIN_ATTEMPTS_FOR_ADAPTATION -> 2.0
-                else -> {
-                    val ratio = m.correct.toDouble() / m.total.toDouble()
-                    (2.0 - 1.7 * ratio).coerceIn(0.3, 2.0)
-                }
+                else -> (2.0 - 1.7 * m.m).coerceIn(0.3, 2.0)
             }
         }
         val totalWeight = weights.values.sum()
@@ -96,11 +126,11 @@ class MasteryTracker(private val prefs: android.content.SharedPreferences) {
         return domains.last()
     }
 
-    /** Domains where the learner scored below threshold. */
+    /** Domains where the learner's effective mastery is below threshold. */
     fun weakDomains(threshold: Double = 0.6): List<DomainMastery> =
         domains.mapNotNull { d ->
             val m = getMastery(d)
-            if (m.total >= MIN_ATTEMPTS_FOR_ADAPTATION && m.correct.toDouble() / m.total.toDouble() < threshold) m else null
+            if (m.total >= MIN_ATTEMPTS_FOR_ADAPTATION && m.m < threshold) m else null
         }
 
     /** Summary of all domains for post-game screen. */

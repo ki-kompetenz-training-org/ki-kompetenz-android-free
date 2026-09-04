@@ -10,8 +10,10 @@ import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.Difficulty
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGameKind
+import ai.ki_kompetenz_training_org.data.minigames3d.CompetencyMath
 import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank
 import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import android.content.SharedPreferences
 import io.mockk.coEvery
@@ -35,6 +37,7 @@ class AdaptiveQuizViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private lateinit var gamification: GamificationRepository
     private lateinit var dailyRepo: DailyChallengeRepository
+    private lateinit var competencyRepo: CompetencyRepository
     private lateinit var prefs: FakePrefs
 
     private val game = MiniGame(
@@ -54,6 +57,7 @@ class AdaptiveQuizViewModelTest {
         coEvery { gamification.addXp(any()) } returns Unit
         dailyRepo = mockk(relaxed = true)
         every { dailyRepo.getTodayChallenge(any(), any()) } returns null
+        competencyRepo = mockk(relaxed = true)
         prefs = FakePrefs()
     }
 
@@ -62,6 +66,7 @@ class AdaptiveQuizViewModelTest {
         gamification = gamification,
         mastery = MasteryTracker(prefs),
         dailyChallengeRepository = dailyRepo,
+        competencyRepository = competencyRepo,
         rng = Random(seed),
     )
 
@@ -197,6 +202,92 @@ class AdaptiveQuizViewModelTest {
         assertEquals(0, vm.state.value.dailyChallengeBonusXp)
         coVerify(exactly = 0) { gamification.addXp(any()) }
         verify(exactly = 0) { dailyRepo.completeChallenge(any(), any()) }
+    }
+
+    @Test
+    fun pickDomain_weights_forgotten_over_mastered() {
+        val masteredDomain = LiteracyBank.DOMAINS[0]
+        val forgottenDomain = LiteracyBank.DOMAINS[1]
+        val now = 1_700_000_000_000L
+        prefs.store["mg3d_mastery_$masteredDomain"] = CompetencyMath.encodeV2(1.0, 20, now)
+        prefs.store["mg3d_mastery_$forgottenDomain"] =
+            CompetencyMath.encodeV2(1.0, 20, now - 28L * 24 * 3600 * 1000)
+        val vm = AdaptiveQuizViewModel(
+            game = game,
+            gamification = gamification,
+            mastery = MasteryTracker(prefs, nowMs = { now }),
+            dailyChallengeRepository = dailyRepo,
+            rng = Random(7),
+        )
+        var masteredCount = 0
+        var forgottenCount = 0
+        repeat(200) {
+            when (vm.pickDomain(listOf(masteredDomain, forgottenDomain))) {
+                forgottenDomain -> forgottenCount++
+                else -> masteredCount++
+            }
+        }
+        // m_eff(forgotten) = 1.0 * 2^(-28/14) = 0.25 -> weight = 2.6 - 2.3*0.25 = 2.025
+        // m_eff(mastered) = 1.0 -> weight = 2.6 - 2.3*1.0 = 0.3 (~6.75 : 1)
+        assertTrue("forgotten expected far more draws, got $forgottenCount", forgottenCount > 150)
+        assertTrue("mastered expected far fewer draws, got $masteredCount", masteredCount < 50)
+    }
+
+    @Test
+    fun kiki_in_result_state() {
+        val vm = vm()
+        answerAll(vm, correct = true)
+        val s = vm.state.value
+        assertEquals(AdaptivePhase.RESULT, s.phase)
+        assertTrue("kiki expected > 0, got ${s.kiki}", s.kiki > 0)
+        assertEquals(LiteracyBank.DOMAINS.size, s.domainScores.size)
+        assertTrue("at least one domain score expected > 0", s.domainScores.any { it.score > 0 })
+    }
+
+    @Test
+    fun kiki_zero_for_fresh_prefs() {
+        val vm = vm()
+        assertEquals(0, vm.state.value.kiki)
+        assertTrue(vm.state.value.domainScores.isEmpty())
+    }
+
+    @Test
+    fun `competency snapshot recorded on finish`() {
+        val vm = vm()
+        answerAll(vm, correct = true)
+        dispatcher.scheduler.advanceUntilIdle()
+        coVerify(exactly = 1) { competencyRepo.recordFromTracker() }
+    }
+
+    @Test
+    fun `kiki delta from previous snapshot reaches result state`() {
+        coEvery { competencyRepo.latestSnapshot() } returns
+            ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity("2026-W35", 54, "[]", 0L)
+        coEvery { competencyRepo.recordFromTracker() } returns
+            ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity("2026-W36", 61, "[]", 0L)
+        val vm = vm()
+        answerAll(vm, correct = true)
+        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(54, vm.state.value.previousKiki)
+    }
+
+    @Test
+    fun `no previous snapshot keeps previousKiki null`() {
+        coEvery { competencyRepo.latestSnapshot() } returns null
+        val vm = vm()
+        answerAll(vm, correct = true)
+        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(null, vm.state.value.previousKiki)
+    }
+
+    @Test
+    fun `competency repo failure does not block quiz`() {
+        coEvery { competencyRepo.recordFromTracker() } throws RuntimeException("DB error")
+        val vm = vm()
+        answerAll(vm, correct = true)
+        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(AdaptivePhase.RESULT, vm.state.value.phase)
+        coVerify(exactly = 1) { gamification.onMiniGameFinished(any(), any(), any()) }
     }
 }
 

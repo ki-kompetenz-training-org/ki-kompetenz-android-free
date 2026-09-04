@@ -30,6 +30,7 @@ import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.ui.common.Haptics
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 
@@ -46,7 +47,14 @@ fun AdaptiveQuizScreen(game: MiniGame, onBack: () -> Unit) {
     }
     val dailyRepo = remember { DailyChallengeRepository(prefs) }
     val vm: AdaptiveQuizViewModel = viewModel(key = game.id) {
-        AdaptiveQuizViewModel(game, app.gamificationRepository, MasteryTracker(prefs), dailyRepo)
+        val mastery = MasteryTracker(prefs)
+        val competencyRepo = CompetencyRepository(
+            snapshotDao = app.db.competencySnapshotDao(),
+            tracker = mastery,
+            prefs = prefs,
+            gamification = app.gamificationRepository,
+        )
+        AdaptiveQuizViewModel(game, app.gamificationRepository, mastery, dailyRepo, competencyRepository = competencyRepo)
     }
     val state by vm.state.collectAsState()
     val lang = currentLang()
@@ -385,6 +393,30 @@ private fun AdaptiveResultContent(
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF15803D),
                         )
+                    }
+                }
+                if (state.kiki > 0) {
+                    Spacer(Modifier.height(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            stringResource(R.string.kiki_label, state.kiki.toString()),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        val prev = state.previousKiki
+                        if (prev != null) {
+                            val delta = state.kiki - prev
+                            if (delta != 0) {
+                                Spacer(Modifier.width(6.dp))
+                                Text(
+                                    if (delta > 0) "+$delta" else "$delta",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (delta > 0) Color(0xFF15803D) else MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        }
                     }
                 }
             }
