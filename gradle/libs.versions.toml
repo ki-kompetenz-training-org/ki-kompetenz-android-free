@@ -65,8 +65,8 @@ kotest-assertions = { group = "io.kotest", name = "kotest-assertions-core", vers
 kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntime" }
 
-androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.3.0" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.7.0" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
