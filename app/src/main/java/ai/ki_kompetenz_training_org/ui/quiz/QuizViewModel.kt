@@ -57,6 +57,9 @@ class QuizViewModel(
     }
 
     fun load() {
+        // Sofort LOADING zeigen — sonst bleibt waehrend des Retry die alte
+        // Fehlermeldung stehen und der Button wirkt tot (BUG 2026-09-05).
+        _state.value = _state.value.copy(phase = QuizPhase.LOADING, error = null)
         viewModelScope.launch {
             contentRepository.fetchKiScoreData().onSuccess { data ->
                 // Fragepool: 10 zufällige Fragen aus dem Pool (analog zur Website)

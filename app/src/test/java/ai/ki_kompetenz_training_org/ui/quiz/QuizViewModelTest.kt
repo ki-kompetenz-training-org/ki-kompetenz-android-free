@@ -61,6 +61,27 @@ class QuizViewModelTest {
     }
 
     @Test
+    fun `retry shows LOADING while fetching (kein toter Button)`() = runTest {
+        val phasesDuringCall = mutableListOf<QuizPhase>()
+        var probe: QuizViewModel? = null
+        coEvery { contentRepository.fetchKiScoreData() } coAnswers {
+            probe?.let { phasesDuringCall += it.state.value.phase }
+            Result.failure(Exception("offline"))
+        }
+        val vm = viewModel()
+        probe = vm
+        assertEquals(QuizPhase.ERROR, vm.state.value.phase)
+
+        // Zweiter Aufruf: waehrend des API-Calls MUSS die UI auf LOADING stehen
+        // (BUG-Report 2026-09-05: "Erneut versuchen funktioiert nicht, es kommt
+        // keine Reaktion" — der alte Code liess die Fehlermeldung stehen).
+        vm.load()
+        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(QuizPhase.LOADING, phasesDuringCall.last())
+        assertEquals(QuizPhase.ERROR, vm.state.value.phase)
+    }
+
+    @Test
     fun `retry after failure resets error on success`() = runTest {
         coEvery { contentRepository.fetchKiScoreData() } returns
             Result.failure(Exception("offline")) andThen

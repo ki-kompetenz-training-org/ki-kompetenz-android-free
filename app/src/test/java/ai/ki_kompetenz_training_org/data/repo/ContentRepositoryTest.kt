@@ -114,6 +114,30 @@ class ContentRepositoryTest {
         }
 
     @Test
+    fun `fetchKiScoreData - HTTP 500 - fallt auf gebundelten Offline-Pool zuruck (KI-Score funktioniert immer)`() =
+        runBlocking {
+            server.enqueue(
+                MockResponse().setResponseCode(500).setBody("Internal Server Error")
+            )
+
+            val result = repository.fetchKiScoreData()
+
+            // Der KI-Score MUSS offline funktionieren (BUG-Report 2026-09-05:
+            // "Quiz konnte nicht geladen werden" trotz funktionierendem Internet).
+            assertThat(result.isSuccess).isTrue()
+            val data = result.getOrThrow()
+            assertThat(data.questions).hasSize(50) // 10 pro Runde, Pool ohne Wiederholung
+            assertThat(data.tiers).hasSize(5)
+            assertThat(data.share?.prefix).isNotEmpty()
+            data.questions.forEach { q ->
+                assertThat(q.options).hasSize(4)
+                assertThat(q.correct).isAtLeast(0)
+                assertThat(q.correct).isLessThan(q.options.size)
+                assertThat(q.explanation).isNotEmpty()
+            }
+        }
+
+    @Test
     fun `fetchLessons - HTTP 500 liefert Result_failure und schreibt keinen Cache`() =
         runBlocking {
             server.enqueue(

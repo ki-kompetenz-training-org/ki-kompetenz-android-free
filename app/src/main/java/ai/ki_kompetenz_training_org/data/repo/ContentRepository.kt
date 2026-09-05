@@ -2,6 +2,7 @@ package ai.ki_kompetenz_training_org.data.repo
 
 import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.KiScoreDataDto
+import ai.ki_kompetenz_training_org.data.api.KiScoreFallback
 import ai.ki_kompetenz_training_org.data.api.KiScoreQuestionDto
 import ai.ki_kompetenz_training_org.data.api.KiScoreTierDto
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
@@ -71,8 +72,15 @@ class ContentRepository(
         return null
     }
 
+    /**
+     * KI-Score-Quiz-Daten: primaer live aus der API, mit gebundeltem
+     * Offline-Pool als Fallback ([KiScoreFallback]) — der KI-Score muss
+     * immer funktionieren (BUG 2026-09-05: "Quiz konnte nicht geladen
+     * werden" bei nicht erreichbarer API, Retry wirkte wie tot).
+     */
     suspend fun fetchKiScoreData(): Result<KiScoreDataDto> =
         runCatching { api.getKiScoreData() }
+            .recoverCatching { KiScoreFallback.data }
 }
 
 /** Pure score calculation — unit-testable (mirrors the web KiScoreGame). */

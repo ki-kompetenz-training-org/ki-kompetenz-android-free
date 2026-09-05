@@ -37,6 +37,8 @@ fun AuthScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     var loggedIn by remember { mutableStateOf(false) }
     var progress by remember { mutableStateOf(false) }
+    var webError by remember { mutableStateOf(false) }
+    var webView by remember { mutableStateOf<WebView?>(null) }
 
     // Poll the CookieManager for the session cookie during the OAuth flow.
     LaunchedEffect(Unit) {
@@ -80,15 +82,29 @@ fun AuthScreen(onBack: () -> Unit) {
             AndroidView(
                 factory = { ctx ->
                     WebView(ctx).apply {
+                        webView = this
                         settings.javaScriptEnabled = true
                         settings.domStorageEnabled = true
                         webViewClient = object : WebViewClient() {
                             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                                 progress = true
+                                webError = false
                             }
 
                             override fun onPageFinished(view: WebView?, url: String?) {
                                 progress = false
+                            }
+
+                            override fun onReceivedError(
+                                view: WebView?,
+                                errorCode: Int,
+                                description: String?,
+                                failingUrl: String?,
+                            ) {
+                                progress = false
+                                // Ohne Netz blieb der Screen vorher einfach weiss
+                                // (BUG-Report 2026-09-05) — jetzt Fehlerzustand + Retry.
+                                webError = true
                             }
                         }
                         loadUrl("${BuildConfig.API_BASE_URL}/login")
@@ -96,6 +112,31 @@ fun AuthScreen(onBack: () -> Unit) {
                 },
                 modifier = Modifier.fillMaxSize(),
             )
+
+            if (webError) {
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.align(Alignment.Center).padding(24.dp),
+                    shape = MaterialTheme.shapes.medium,
+                    tonalElevation = 4.dp,
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(24.dp)) {
+                        Text(
+                            stringResource(R.string.common_error),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        Button(onClick = {
+                            webError = false
+                            progress = true
+                            webView?.loadUrl("${BuildConfig.API_BASE_URL}/login")
+                        }) {
+                            Text(stringResource(R.string.common_retry))
+                        }
+                    }
+                }
+            }
 
             if (progress) {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))

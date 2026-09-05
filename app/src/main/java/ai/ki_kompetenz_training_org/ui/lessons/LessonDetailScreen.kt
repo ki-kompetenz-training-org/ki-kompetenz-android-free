@@ -376,8 +376,10 @@ private fun LessonBody(
     onSubmitAnswer: (String, Int) -> Unit,
     onMarkCompleted: () -> Unit,
 ) {
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
     Column(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+        modifier.fillMaxSize().verticalScroll(scrollState).padding(16.dp),
     ) {
         // Lesson header
         Text(lesson.title, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
@@ -418,9 +420,19 @@ private fun LessonBody(
         }
 
         // Complete lesson button (only enabled if test passed)
+        // BUG-Report 2026-09-05: der deaktivierte Button wirkte wie eine Sackgasse.
+        // Jetzt klickbar: ohne bestandenen Test springt er zum Test-Bereich
+        // (Seitenanfang) und startet das Quiz direkt.
         Button(
-            onClick = onMarkCompleted,
-            enabled = isTestPassed,
+            onClick = {
+                if (isTestPassed) {
+                    onMarkCompleted()
+                } else {
+                    onStartQuiz()
+                    scope.launch { scrollState.animateScrollTo(0) }
+                }
+            },
+            enabled = isTestPassed || quizQuestions.isNotEmpty(),
             modifier = Modifier.fillMaxWidth().height(50.dp),
         ) {
             if (isTestPassed) {
