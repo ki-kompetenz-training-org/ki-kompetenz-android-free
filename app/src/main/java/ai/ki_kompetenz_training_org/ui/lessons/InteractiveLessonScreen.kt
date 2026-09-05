@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 
@@ -78,6 +79,8 @@ fun InteractiveLessonScreen(
     // Reward celebrations at result moments (completion summary) - not mid-round
     val rewardCenter = KiKompetenzApp.from(LocalContext.current).rewardCenter
     RewardDialogHost(rewardCenter = rewardCenter)
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     // Completion summary (terminal state after finishing the lesson)
     var showCompletion by remember { mutableStateOf(false) }
@@ -117,7 +120,7 @@ fun InteractiveLessonScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
         ) {
             // ── Header ─────────────────────────────────────────────────
             Column(modifier = Modifier.padding(16.dp)) {
@@ -183,13 +186,28 @@ fun InteractiveLessonScreen(
             }
 
             // ── Complete button ────────────────────────────────────────
+            // BUG-Report 2026-09-05: "Man kann aber nicht auf die Meldung klicken,
+            // um zum Anfang zurückzukommen." Jetzt klickbar: ohne bestandene
+            // Quizzes scrollt er zum ersten offenen Quiz.
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = {
-                    onMarkCompleted(lesson.id)
-                    showCompletion = true
+                    if (allQuizzesPassed) {
+                        onMarkCompleted(lesson.id)
+                        showCompletion = true
+                    } else {
+                        val openQuizIdx = lesson.sections.indices.firstOrNull { i ->
+                            val s = lesson.sections[i]
+                            s.blocks.any { it is ContentBlock.Quiz } &&
+                                quizScoresState.getOrDefault(i, 0) < 60
+                        }
+                        val target = if (openQuizIdx != null) {
+                            (openQuizIdx.toDouble() / lesson.sections.size * scrollState.maxValue).toInt()
+                        } else 0
+                        scope.launch { scrollState.animateScrollTo(target) }
+                    }
                 },
-                enabled = allQuizzesPassed,
+                enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
