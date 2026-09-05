@@ -37,7 +37,13 @@ data class QuizUiState(
     val scorePoints: Int = 0,
 ) {
     val score: Int get() = scorePoints
-    val tier: KiScoreTierDto? get() = QuizScoring.tierFor(scorePoints, tiers)
+
+    // Tier aus dem ANTWORT-PROZENTSATZ (Website-Paritaet) — nicht aus
+    // scorePoints: die enthaelt Combo-/Zeit-Bonuspunkte und uebersteigt
+    // nach wenigen richtigen Antworten die 100er-Tier-Skala, wodurch
+    // tierFor null lieferte und der Ergebnis-Screen ohne Tier blieb
+    // (BUG-Fund 2026-09-05).
+    val tier: KiScoreTierDto? get() = QuizScoring.tierFor(QuizScoring.scoreFor(answers), tiers)
 }
 
 class QuizViewModel(
