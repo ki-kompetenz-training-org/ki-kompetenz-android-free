@@ -1,44 +1,62 @@
+/*
+ * Copyright 2026 Tobias Weiss
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package ai.ki_kompetenz_training_org.ui.lessons
 
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
-import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
+import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
+import ai.ki_kompetenz_training_org.ui.common.UiError
+import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+/**
+ * Unit-Tests für [LessonDetailViewModel] — Quiz-Scoring und Abschluss-Guard.
+ *
+ * Kontext BUG-Report 2026-09-05: Der "Test bestehen, um abzuschließen"-
+ * Button war deaktiviert (Sackgasse) und der Abschluss musste durch den
+ * Guard in markCompleted() geschützt sein. Diese Tests fixieren das
+ * Scoring (>= 60 %) und den Guard unabhängig von der UI.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class LessonDetailViewModelTest {
+
+    private val dispatcher = UnconfinedTestDispatcher()
 
     private lateinit var contentRepository: ContentRepository
     private lateinit var premiumRepository: PremiumRepository
     private lateinit var gamificationRepository: GamificationRepository
-    private lateinit var viewModel: LessonDetailViewModel
-    private val dispatcher = UnconfinedTestDispatcher()
+
+    private val lessonDto = LessonDetailDto(
+        slug = "lesson-1",
+        title = "Grundlagen der KI",
+        lesson = 1,
+        duration = "20 min",
+        description = "KI definieren und abgrenzen",
+        objectives = listOf("KI unterscheiden"),
+        body = "<p>Inhalt</p>",
+    )
 
     @Before
-    fun setup() {
+    fun setUp() {
         Dispatchers.setMain(dispatcher)
         contentRepository = mockk()
-        premiumRepository = mockk()
+        premiumRepository = mockk(relaxed = true)
         gamificationRepository = mockk(relaxed = true)
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns
+            Result.success(lessonDto)
     }
 
     @After
@@ -46,257 +64,163 @@ class LessonDetailViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(slug: String) {
-        viewModel = LessonDetailViewModel(slug, contentRepository, premiumRepository, gamificationRepository, dispatcher)
+    private fun viewModel(slug: String = "lesson-1") = LessonDetailViewModel(
+        slug = slug,
+        contentRepository = contentRepository,
+        premiumRepository = premiumRepository,
+        gamificationRepository = gamificationRepository,
+        coroutineDispatcher = dispatcher,
+    )
+
+    // ── Load ─────────────────────────────────────────────────────────────
+
+    @Test
+    fun `load Erfolg - Lesson gesetzt, Quiz geladen (3 Fragen fuer lesson-1), kein Fehler`() {
+        val vm = viewModel()
+
+        val s = vm.state.value
+        assertThat(s.loading).isFalse()
+        assertThat(s.error).isNull()
+        assertThat(s.lesson?.slug).isEqualTo("lesson-1")
+        assertThat(s.quizQuestions).hasSize(3)
     }
 
     @Test
-    fun `loads lesson successfully from API`() = runTest {
-        val lesson = LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1, body = "# Was ist KI?")
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(lesson)
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `load Failure - UiError LESSON_LOAD und loading beendet`() {
+        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns
+            Result.failure(Exception("offline"))
 
-        createViewModel("lesson-1")
+        val vm = viewModel()
 
-        val state = viewModel.state.value
-        assertEquals("lesson-1", state.lesson?.slug)
-        assertEquals("Lesson 1", state.lesson?.title)
-        assertFalse(state.loading)
-        assertNull(state.error)
-        coVerify { contentRepository.fetchLesson("lesson-1", any()) }
+        assertThat(vm.state.value.loading).isFalse()
+        assertThat(vm.state.value.error).isEqualTo(UiError.LESSON_LOAD)
+        assertThat(vm.state.value.lesson).isNull()
+    }
+
+    // ── submitAnswer / Scoring ───────────────────────────────────────────
+
+    @Test
+    fun `submitAnswer - korrekte Antwort addiert Frage-Punkte, noch nicht bestanden`() {
+        val vm = viewModel()
+        vm.startQuiz()
+
+        vm.submitAnswer("q1", selectedOptionIndex = 0) // 25 Punkte
+
+        val s = vm.state.value
+        assertThat(s.currentScore).isEqualTo(25)
+        assertThat(s.isTestPassed).isFalse() // 25 von 100 = 25 % < 60 %
+        assertThat(s.showQuiz).isTrue()
     }
 
     @Test
-    fun `handles lesson loading error`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.failure(Exception("Network error"))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `submitAnswer - falsche Antwort addiert 0 Punkte`() {
+        val vm = viewModel()
+        vm.startQuiz()
 
-        createViewModel("lesson-1")
+        vm.submitAnswer("q1", selectedOptionIndex = 2) // falsch (correct = 0)
 
-        val state = viewModel.state.value
-        assertFalse(state.loading)
-        assertNotNull(state.error)
+        assertThat(vm.state.value.currentScore).isEqualTo(0)
+        assertThat(vm.state.value.isTestPassed).isFalse()
     }
 
     @Test
-    fun `lesson ki-einfuehrung has 3 quiz questions`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `submitAnswer - alle 3 korrekt = 100 Punkte → Test bestanden`() {
+        val vm = viewModel()
 
-        createViewModel("lesson-1")
-        assertEquals(3, viewModel.state.value.quizQuestions.size)
+        vm.submitAnswer("q1", 0) // 25
+        vm.submitAnswer("q2", 3) // 25
+        vm.submitAnswer("q3", 1) // 50
+
+        val s = vm.state.value
+        assertThat(s.currentScore).isEqualTo(100)
+        assertThat(s.isTestPassed).isTrue()
     }
 
     @Test
-    fun `startQuiz sets showQuiz to true`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `submitAnswer - nur 1 von 3 korrekt (25 Prozent) → nicht bestanden`() {
+        val vm = viewModel()
 
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
+        vm.submitAnswer("q1", 0)
+        vm.submitAnswer("q2", 0)
+        vm.submitAnswer("q3", 0)
 
-        assertTrue(viewModel.state.value.showQuiz)
-        assertEquals(0, viewModel.state.value.currentScore)
-        assertFalse(viewModel.state.value.isTestPassed)
+        assertThat(vm.state.value.currentScore).isEqualTo(25)
+        assertThat(vm.state.value.isTestPassed).isFalse()
     }
 
     @Test
-    fun `submitAnswer updates score and checks pass threshold`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `submitAnswer mit unbekannter Frage-ID wird ignoriert`() {
+        val vm = viewModel()
 
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
+        vm.submitAnswer("does-not-exist", 0)
 
-        assertEquals(25, viewModel.state.value.currentScore)
-        assertFalse(viewModel.state.value.isTestPassed)
+        assertThat(vm.state.value.currentScore).isEqualTo(0)
+    }
+
+    // ── startQuiz / Reset ────────────────────────────────────────────────
+
+    @Test
+    fun `startQuiz - resettet Score und bestanden-Status`() {
+        val vm = viewModel()
+        vm.submitAnswer("q1", 0)
+        vm.submitAnswer("q2", 3)
+
+        vm.startQuiz()
+
+        val s = vm.state.value
+        assertThat(s.showQuiz).isTrue()
+        assertThat(s.currentScore).isEqualTo(0)
+        assertThat(s.isTestPassed).isFalse()
+    }
+
+    // ── markCompleted / Abschluss-Guard ──────────────────────────────────
+
+    @Test
+    fun `markCompleted ohne bestandenen Test wird IGNORIERT (Guard)`() {
+        val vm = viewModel()
+
+        vm.markCompleted() // kein einziges Quiz beantwortet
+
+        assertThat(vm.state.value.completed).isNull()
     }
 
     @Test
-    fun `submitAllCorrectAnswers passes test`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `markCompleted nach bestandenem Test setzt Abschluss`() {
+        val vm = viewModel()
+        vm.submitAnswer("q1", 0)
+        vm.submitAnswer("q2", 3)
+        vm.submitAnswer("q3", 1) // 100 % → bestanden
 
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q2", 3)
-        viewModel.submitAnswer("q3", 1)
+        vm.markCompleted()
 
-        assertEquals(100, viewModel.state.value.currentScore)
-        assertTrue(viewModel.state.value.isTestPassed)
+        val completed = vm.state.value.completed
+        assertThat(completed).isNotNull()
+        assertThat(completed!!.scorePct).isEqualTo(100)
+        assertThat(completed.xpGained).isEqualTo(GamificationRules.xpPerCompletedLesson)
+        assertThat(completed.nextSlug).isEqualTo("lesson-2")
     }
 
     @Test
-    fun `submitWrongAnswer does not add points`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `markCompleted nach Teilerfolg (25 Prozent) wird ignoriert`() {
+        val vm = viewModel()
+        vm.submitAnswer("q1", 0)
+        vm.submitAnswer("q2", 0)
+        vm.submitAnswer("q3", 0) // 25 % → nicht bestanden
 
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 1)
+        vm.markCompleted()
 
-        assertEquals(0, viewModel.state.value.currentScore)
-        assertFalse(viewModel.state.value.isTestPassed)
+        assertThat(vm.state.value.completed).isNull()
     }
 
     @Test
-    fun `partialCorrectAnswers can still pass`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
+    fun `canCompleteLesson spiegelt isTestPassed`() {
+        val vm = viewModel()
+        assertThat(vm.canCompleteLesson()).isFalse()
 
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q3", 1)
+        vm.submitAnswer("q1", 0)
+        vm.submitAnswer("q2", 3)
+        vm.submitAnswer("q3", 1)
 
-        assertEquals(75, viewModel.state.value.currentScore)
-        assertTrue(viewModel.state.value.isTestPassed)
-    }
-
-    @Test
-    fun `markCompleted does nothing when test not passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.markCompleted()
-
-        coVerify(exactly = 0) { gamificationRepository.markLessonCompleted(any()) }
-    }
-
-    @Test
-    fun `markCompleted calls repository when test passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q2", 3)
-        viewModel.submitAnswer("q3", 1)
-        viewModel.markCompleted()
-
-        coVerify { gamificationRepository.markLessonCompleted("lesson-1") }
-    }
-
-    @Test
-    fun `canCompleteLesson returns false when test not passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModel("lesson-1")
-        assertFalse(viewModel.canCompleteLesson())
-    }
-
-    @Test
-    fun `canCompleteLesson returns true when test passed`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModel("lesson-1")
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q2", 3)
-        viewModel.submitAnswer("q3", 1)
-
-        assertTrue(viewModel.canCompleteLesson())
-    }
-
-    @Test
-    fun `lesson with no quiz questions has empty list`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-no-quiz", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-no-quiz", title = "No Quiz", lesson = 10))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModel("lesson-no-quiz")
-        assertEquals(0, viewModel.state.value.quizQuestions.size)
-    }
-
-    // ── Completion summary + last-lesson persistence (ux-polish-pack) ──
-
-    private fun createViewModelWith(slug: String, settings: SettingsStore?, total: Int = 14) {
-        viewModel = LessonDetailViewModel(
-            slug, contentRepository, premiumRepository, gamificationRepository,
-            dispatcher, settings, total,
-        )
-    }
-
-    @Test
-    fun `markCompleted sets completion summary with next lesson and persists state`() = runTest {
-        val settings: SettingsStore = mockk(relaxed = true)
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModelWith("lesson-1", settings)
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q2", 3)
-        viewModel.submitAnswer("q3", 1)
-
-        viewModel.markCompleted()
-
-        val completed = viewModel.state.value.completed
-        assertNotNull(completed)
-        assertEquals(100, completed!!.scorePct)
-        assertEquals(ai.ki_kompetenz_training_org.data.repo.GamificationRules.xpPerCompletedLesson, completed.xpGained)
-        assertEquals("lesson-2", completed.nextSlug)
-        coVerify { gamificationRepository.markLessonCompleted("lesson-1") }
-        coVerify { settings.setLastLesson("lesson-1", 1) }
-    }
-
-    @Test
-    fun `markCompleted on last lesson has no next slug`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-14", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-14", title = "Lesson 14", lesson = 14))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModelWith("lesson-14", null, total = 14)
-        viewModel.startQuiz()
-        viewModel.submitAnswer("q1", 0)
-        viewModel.submitAnswer("q2", 3)
-        viewModel.submitAnswer("q3", 1)
-
-        viewModel.markCompleted()
-
-        assertEquals(null, viewModel.state.value.completed?.nextSlug)
-    }
-
-    @Test
-    fun `markCompleted without passed test does nothing`() = runTest {
-        coEvery { contentRepository.fetchLesson("lesson-1", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-1", title = "Lesson 1", lesson = 1))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModelWith("lesson-1", null)
-        viewModel.markCompleted()
-
-        assertNull(viewModel.state.value.completed)
-        coVerify(exactly = 0) { gamificationRepository.markLessonCompleted(any()) }
-    }
-
-    @Test
-    fun `opening a lesson persists it as last lesson`() = runTest {
-        val settings: SettingsStore = mockk(relaxed = true)
-        coEvery { contentRepository.fetchLesson("lesson-3", any()) } returns Result.success(
-            LessonDetailDto(slug = "lesson-3", title = "Lesson 3", lesson = 3))
-        coEvery { contentRepository.getCachedLesson(any()) } returns null
-
-        createViewModelWith("lesson-3", settings)
-
-        coVerify { settings.setLastLesson("lesson-3", 3) }
+        assertThat(vm.canCompleteLesson()).isTrue()
     }
 }

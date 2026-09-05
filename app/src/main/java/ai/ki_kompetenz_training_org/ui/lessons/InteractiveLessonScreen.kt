@@ -67,11 +67,7 @@ fun InteractiveLessonScreen(
     var completedSectionsState by remember { mutableStateOf(completedSections.toMutableSet()) }
     var quizScoresState by remember { mutableStateOf(quizScores.toMutableMap()) }
     var allQuizzesPassed by remember {
-        mutableStateOf(lesson.sections.indices.all { idx ->
-            val sec = lesson.sections[idx]
-            val hasQuiz = sec.blocks.any { it is ContentBlock.Quiz }
-            !hasQuiz || (quizScoresState.getOrDefault(idx, 0) >= 60)
-        })
+        mutableStateOf(InteractiveLessonLogic.isLessonPassed(lesson, quizScoresState))
     }
     // Track which blocks have been interacted with per section
     val interactedBlocks = remember { mutableStateMapOf<Pair<Int, Int>, Boolean>() }
@@ -176,11 +172,7 @@ fun InteractiveLessonScreen(
                     onQuizScore = { score ->
                         quizScoresState[secIdx] = score
                         // Recalculate
-                        allQuizzesPassed = lesson.sections.indices.all { i ->
-                            val s = lesson.sections[i]
-                            val hasQuiz = s.blocks.any { it is ContentBlock.Quiz }
-                            !hasQuiz || (quizScoresState.getOrDefault(i, 0) >= 60)
-                        }
+                        allQuizzesPassed = InteractiveLessonLogic.isLessonPassed(lesson, quizScoresState)
                     },
                 )
             }
@@ -196,14 +188,8 @@ fun InteractiveLessonScreen(
                         onMarkCompleted(lesson.id)
                         showCompletion = true
                     } else {
-                        val openQuizIdx = lesson.sections.indices.firstOrNull { i ->
-                            val s = lesson.sections[i]
-                            s.blocks.any { it is ContentBlock.Quiz } &&
-                                quizScoresState.getOrDefault(i, 0) < 60
-                        }
-                        val target = if (openQuizIdx != null) {
-                            (openQuizIdx.toDouble() / lesson.sections.size * scrollState.maxValue).toInt()
-                        } else 0
+                        val target = InteractiveLessonLogic
+                            .scrollTargetForOpenQuiz(lesson, quizScoresState, scrollState.maxValue) ?: 0
                         scope.launch { scrollState.animateScrollTo(target) }
                     }
                 },
