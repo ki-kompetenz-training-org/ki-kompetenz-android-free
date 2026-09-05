@@ -5,6 +5,7 @@
 package ai.ki_kompetenz_training_org.ui.home
 
 import ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity
+import ai.ki_kompetenz_training_org.data.minigames3d.KikiGuidance
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -64,14 +66,36 @@ internal fun sparklinePoints(
 }
 
 /**
+ * Footer-Entscheidung der Sparkline-Karte (openspec add-kiki-guidance):
+ * - PRACTICE mit uebungsspiel → Ressourcen-ID der Empfehlungs-Zeile
+ * - DECAY → Ressourcen-ID des Verfalls-Hinweises
+ * - sonst/ohne Spiel → null (kein Footer)
+ * Reine Funktion (unit-testbar).
+ */
+internal fun guidanceFooterRes(
+    guidance: KikiGuidance.Guidance?,
+    hasPracticeGame: Boolean,
+): Int? = when {
+    guidance?.type == KikiGuidance.Type.PRACTICE && hasPracticeGame -> R.string.kiki_practice_now
+    guidance?.type == KikiGuidance.Type.DECAY -> R.string.kiki_decay_hint
+    else -> null
+}
+
+/**
  * Sparkline-Karte fuer den HomeScreen: KIKI-Trend ueber die letzten
  * <=8 Wochensnapshots mit Delta-Badge (gruen/rot) — z. B. "54 -> 61 (+7)".
  * Ohne Daten erscheint ein Empty-State-Hinweis.
+ * Mit [guidance] zeigt die Karte unter dem Verlauf hoechstens einen
+ * Handlungs-Hinweis: Uebungsempfehlung mit CTA (→ [onPractice]) oder
+ * Verfalls-Hinweis bei Inaktivitaet.
  */
 @Composable
 fun KikiSparklineCard(
     snapshots: List<CompetencySnapshotEntity>,
     modifier: Modifier = Modifier,
+    guidance: KikiGuidance.Guidance? = null,
+    practiceGameId: String? = null,
+    onPractice: (String) -> Unit = {},
 ) {
     val line = Color(0xFF1565C0)
     val fill = Color(0xFF1565C0).copy(alpha = 0.15f)
@@ -96,6 +120,37 @@ fun KikiSparklineCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 return@Column
+            }
+
+            // ── Guidance-Footer (hoechstens ein Hinweis) ──
+            val footerRes = guidanceFooterRes(guidance, practiceGameId != null)
+            if (footerRes != null) {
+                Spacer(Modifier.height(10.dp))
+                if (guidance?.type == KikiGuidance.Type.PRACTICE) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = stringResource(
+                                footerRes,
+                                guidance.domain ?: "",
+                                guidance.score,
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Button(onClick = { practiceGameId?.let(onPractice) }) {
+                            Text(stringResource(R.string.kiki_practice_cta))
+                        }
+                    }
+                } else {
+                    Text(
+                        text = stringResource(footerRes, guidance?.daysSince ?: 0),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Spacer(Modifier.height(10.dp))
             }
 
             val chronological = snapshots.sortedBy { it.weekKey }

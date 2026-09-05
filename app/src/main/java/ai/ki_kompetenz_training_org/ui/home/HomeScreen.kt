@@ -50,6 +50,10 @@ import ai.ki_kompetenz_training_org.ui.theme.LocalAudienceMode
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank
+import ai.ki_kompetenz_training_org.data.minigames3d.KikiGuidance
+import ai.ki_kompetenz_training_org.data.minigames.MiniGames
+import ai.ki_kompetenz_training_org.ui.gamification.parseDomainScores
 import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeCard
 import ai.ki_kompetenz_training_org.ui.daily.DailyChallengeViewModel
@@ -312,7 +316,29 @@ fun HomeScreen(
                 gamification = app.gamificationRepository,
             ).observeSnapshots()
         }.collectAsState(initial = emptyList())
-        KikiSparklineCard(snapshots = kikiSnapshots)
+
+        // ── KIKI-Guidance (openspec add-kiki-guidance): schwächste Domäne → Übung ──
+        val kikiGuidance = remember(kikiSnapshots) {
+            val latest = kikiSnapshots.maxByOrNull { it.weekKey }
+            if (latest == null) {
+                null
+            } else {
+                val scoreList = parseDomainScores(latest.perDomainJson, LiteracyBank.DOMAINS.size)
+                val scores = LiteracyBank.DOMAINS.indices.associate { i ->
+                    LiteracyBank.DOMAINS[i] to (scoreList.getOrNull(i) ?: 0)
+                }
+                KikiGuidance.guidanceFor(scores, System.currentTimeMillis(), latest.createdAt)
+            }
+        }
+        val guidanceGameId = kikiGuidance?.domain?.let { domain ->
+            KikiGuidance.matchingGame(domain, MiniGames.ALL)?.id
+        }
+        KikiSparklineCard(
+            snapshots = kikiSnapshots,
+            guidance = kikiGuidance,
+            practiceGameId = guidanceGameId,
+            onPractice = onOpenMiniGame,
+        )
 
         Spacer(Modifier.height(16.dp))
 

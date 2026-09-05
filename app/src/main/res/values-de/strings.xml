@@ -384,6 +384,9 @@
     <!-- KIKI: KI-Kompetenz-Index (Radar + Sparkline) -->
     <string name="kiki_title">Dein KI-Kompetenz-Index</string>
     <string name="kiki_delta">%1$s → %2$s (%3$s)</string>
+    <string name="kiki_practice_now">Übe jetzt: %1$s (%2$d)</string>
+    <string name="kiki_practice_cta">Üben</string>
+    <string name="kiki_decay_hint">Letzte Session vor %1$d Tagen — dein Index verblasst langsam. Zeit für eine Auffrischung.</string>
     <string name="kiki_no_data">Nach deiner ersten Quiz-Session erscheint hier dein Lernfortschritt.</string>
     <string name="kiki_label">KI-Kompetenz-Index: %1$s</string>
     <string name="radar_title">KI-Kompetenz-Radar</string>

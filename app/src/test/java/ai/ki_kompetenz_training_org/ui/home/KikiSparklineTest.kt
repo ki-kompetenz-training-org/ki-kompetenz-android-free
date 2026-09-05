@@ -5,6 +5,7 @@
 package ai.ki_kompetenz_training_org.ui.home
 
 import ai.ki_kompetenz_training_org.data.db.CompetencySnapshotEntity
+import ai.ki_kompetenz_training_org.data.minigames3d.KikiGuidance
 import androidx.compose.ui.geometry.Offset
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -111,5 +112,40 @@ class KikiSparklineTest {
         val points = sparklinePoints(listOf(-20, 150), width = 220f, height = 100f, padding = 10f)
         assertThat(points[0].y).isWithin(1e-3f).of(90f) // wie 0
         assertThat(points[1].y).isWithin(1e-3f).of(10f) // wie 100
+    }
+
+    // ── guidanceFooterRes (openspec add-kiki-guidance) ───────────────────
+
+    private val practice = KikiGuidance.Guidance(
+        type = KikiGuidance.Type.PRACTICE,
+        domain = "DSGVO",
+        score = 34,
+    )
+
+    private val decay = KikiGuidance.Guidance(
+        type = KikiGuidance.Type.DECAY,
+        daysSince = 10,
+    )
+
+    @Test
+    fun `footer practice mit Spiel zeigt Empfehlungs-Zeile`() {
+        assertThat(guidanceFooterRes(practice, hasPracticeGame = true))
+            .isEqualTo(ai.ki_kompetenz_training_org.R.string.kiki_practice_now)
+    }
+
+    @Test
+    fun `footer practice ohne Spiel zeigt keinen Footer`() {
+        assertThat(guidanceFooterRes(practice, hasPracticeGame = false)).isNull()
+    }
+
+    @Test
+    fun `footer decay zeigt Verfalls-Hinweis auch ohne Spiel`() {
+        assertThat(guidanceFooterRes(decay, hasPracticeGame = false))
+            .isEqualTo(ai.ki_kompetenz_training_org.R.string.kiki_decay_hint)
+    }
+
+    @Test
+    fun `footer null-Guidance zeigt keinen Footer`() {
+        assertThat(guidanceFooterRes(null, hasPracticeGame = true)).isNull()
     }
 }

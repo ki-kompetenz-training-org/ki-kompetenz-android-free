@@ -393,6 +393,9 @@
     <!-- KIKI: AI competency index (radar + sparkline) -->
     <string name="kiki_title">Your AI competency index</string>
     <string name="kiki_delta">%1$s → %2$s (%3$s)</string>
+    <string name="kiki_practice_now">Practice now: %1$s (%2$d)</string>
+    <string name="kiki_practice_cta">Practice</string>
+    <string name="kiki_decay_hint">Last session %1$d days ago — your index is slowly fading. Time for a refresher.</string>
     <string name="kiki_no_data">Your learning progress will appear here after your first quiz session.</string>
     <string name="kiki_label">AI competency index: %1$s</string>
     <string name="radar_title">AI competency radar</string>
