@@ -18,11 +18,11 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
@@ -34,11 +34,19 @@ import org.junit.Test
  * App 14 Lektionen bündelt. Der ViewModel muss bei fehlgeschlagenem
  * Netz-Fetch UND leerem Room-Cache auf `BundledLessons` zurückfallen und
  * `loadFailed` NICHT setzen, solange gebündelte Inhalte verfügbar sind.
+ *
+ * Determinismus-Vertrag (Flake-Fix 2026-09-06): Das VM sammelt den DAO-Flow
+ * via `flowOn(Dispatchers.IO)` — die State-Aktualisierung läuft also auf
+ * einem ECHTEN IO-Thread, den die virtuelle Test-Zeit NICHT steuert (CI:
+ * "Offline ohne Cache" verlor das Rennen auf dem Linux-Runner). Deshalb
+ * hier runBlocking (Echtzeit) + Echtzeit-Polling statt runTest +
+ * advanceUntilIdle.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class LessonsViewModelFallbackTest {
 
-    private val dispatcher = StandardTestDispatcher()
+    /** Eager — viewModelScope-Coroutinen laufen sofort bis zur ersten Suspension. */
+    private val dispatcher = UnconfinedTestDispatcher()
 
     private lateinit var contentRepository: ContentRepository
     private lateinit var premiumRepository: PremiumRepository
@@ -81,13 +89,29 @@ class LessonsViewModelFallbackTest {
         settingsStore = settingsStore,
     )
 
+    /**
+     * Wartet im ECHTZEIT-Raum bis der Load-Zustand beruhigt ist. Das VM
+     * wendet flowOn(Dispatchers.IO) an; das Polling lässt dem realen
+     * IO-Thread Zeit, den collectLatest-Pfad abzuschließen.
+     */
+    private suspend fun awaitSettled(vm: LessonsViewModel) {
+        val deadline = System.currentTimeMillis() + 5_000
+        while (vm.state.value.loading && System.currentTimeMillis() < deadline) {
+            delay(10)
+        }
+        check(!vm.state.value.loading) {
+            "State nicht innerhalb von 5s beruhigt (IO-Dispatcher-Race?) — " +
+                "lessons=${vm.state.value.lessons.size}, failed=${vm.state.value.loadFailed}"
+        }
+    }
+
     @Test
-    fun `Offline ohne Cache - fällt auf gebündelte Lektionen zurück statt Fehler`() = runTest(dispatcher) {
+    fun `Offline ohne Cache - fällt auf gebündelte Lektionen zurück statt Fehler`() = runBlocking {
         // API nicht erreichbar:
         coEvery { contentRepository.fetchLessons(any()) } returns Result.failure(java.io.IOException("offline"))
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         val state = vm.state.value
         // KEIN Fehler: gebündelte Lektionen sind vorhanden
@@ -98,11 +122,11 @@ class LessonsViewModelFallbackTest {
     }
 
     @Test
-    fun `Offline ohne Cache - gebündelte Fallback-Entity ist wohlgeformt`() = runTest(dispatcher) {
+    fun `Offline ohne Cache - gebündelte Fallback-Entity ist wohlgeformt`() = runBlocking {
         coEvery { contentRepository.fetchLessons(any()) } returns Result.failure(java.io.IOException("offline"))
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         val first = vm.state.value.lessons.first { it.slug == "lesson-1" }
         assertThat(first.title).isNotEmpty()
@@ -113,7 +137,7 @@ class LessonsViewModelFallbackTest {
     }
 
     @Test
-    fun `Online-Erfolg übersteuert den gebündelten Katalog`() = runTest(dispatcher) {
+    fun `Online-Erfolg übersteuert den gebündelten Katalog`() = runBlocking {
         val remote = listOf(
             ai.ki_kompetenz_training_org.data.api.LessonSummaryDto(
                 slug = "lesson-kids",
@@ -142,7 +166,7 @@ class LessonsViewModelFallbackTest {
         )
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         val state = vm.state.value
         assertThat(state.loadFailed).isFalse()
@@ -151,19 +175,19 @@ class LessonsViewModelFallbackTest {
     }
 
     @Test
-    fun `retry setzt loadFailed zurück und lädt erneut`() = runTest(dispatcher) {
+    fun `retry setzt loadFailed zurück und lädt erneut`() = runBlocking {
         coEvery { contentRepository.fetchLessons(any()) } returns
             Result.failure(java.io.IOException("offline")) andThen
             Result.failure(java.io.IOException("still offline"))
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         // Mit Fallback soll NICHT failed gemeldet werden:
         assertThat(vm.state.value.loadFailed).isFalse()
 
         vm.retry()
-        advanceUntilIdle()
+        awaitSettled(vm)
         assertThat(vm.state.value.loadFailed).isFalse()
         assertThat(vm.state.value.lessons).hasSize(14)
     }
@@ -171,13 +195,13 @@ class LessonsViewModelFallbackTest {
     // ── Weitere Szenarien (Nachtrag 2026-09-01) ──────────────────────────
 
     @Test
-    fun `Online-Erfolg aber DAO leer - keine Fallback-Liste keine Fehlermeldung`() = runTest(dispatcher) {
+    fun `Online-Erfolg aber DAO leer - keine Fallback-Liste keine Fehlermeldung`() = runBlocking {
         // Server erreichbar, liefert aber leere Liste; DB auch leer →
         // leerer Zustand ist korrekt (kein Fehler, kein Fallback, nicht loading):
         coEvery { contentRepository.fetchLessons(any()) } returns Result.success(emptyList())
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         val state = vm.state.value
         assertThat(state.loadFailed).isFalse()
@@ -186,7 +210,7 @@ class LessonsViewModelFallbackTest {
     }
 
     @Test
-    fun `Offline aber Room-Cache gefüllt - Cache gewinnt über Fallback`() = runTest(dispatcher) {
+    fun `Offline aber Room-Cache gefüllt - Cache gewinnt über Fallback`() = runBlocking {
         // Server offline, aber alter Cache vorhanden → Cache zeigen, kein Fallback:
         coEvery { contentRepository.fetchLessons(any()) } returns Result.failure(java.io.IOException("offline"))
         every { contentRepository.observeLessons() } returns flowOf(
@@ -204,7 +228,7 @@ class LessonsViewModelFallbackTest {
         )
 
         val vm = createVm()
-        advanceUntilIdle()
+        awaitSettled(vm)
 
         val state = vm.state.value
         assertThat(state.loadFailed).isFalse()
