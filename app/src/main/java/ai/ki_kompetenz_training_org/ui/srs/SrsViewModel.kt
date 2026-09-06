@@ -65,6 +65,11 @@ class SrsViewModel(
 
     fun rate(quality: Int) {
         val s = _state.value
+        // Phase-Guard (BUG-Härtung 2026-09-05): Nach FINISHED darf keine
+        // weitere Bewertung XP und Session-Bonus auslösen — im UI wäre der
+        // Pfad unerreichbar, aber reveal()+rate() konnte zuvor eine zweite
+        // Session simulieren. SrsViewModelDetailTest verriegelt den Guard.
+        if (s.phase != SrsPhase.REVIEW) return
         val card = s.currentCard ?: return
         if (!s.showAnswer) return
         viewModelScope.launch {
