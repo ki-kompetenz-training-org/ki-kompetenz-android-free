@@ -137,6 +137,27 @@ class TruthSnipeHandlerTest {
         assertThat(s.classifyStreak).isEqualTo(0)
     }
 
+    @Test
+    fun resolveKorrektAufFake_vergibtFakePunkteUndEntferntChip() {
+        // rng 0.4 → isRisk = (0.4 < 0.5) = true → alle Chips sind FAKEs
+        // Vertrag (GameConfig + TruthSnipeHandler-Doku): Fake-Zerstörung = +20
+        // (TRUTH_SNIPE_FAKE_POINTS), NICHT der Orbis-Standardwert CLASSIFY_POINTS.
+        val s = GameEngine.createState(GameMode.TRUTH_SNIPE, emptyContent, { 0.4 }, TouchTuning.STANDARD)
+        assertThat(s.collectibles.all { it.isRisk }).isTrue()
+        val sizeBefore = s.collectibles.size
+
+        TruthSnipeHandler.onTap(s, cfg, 0, emptyContent, { 0.4 })
+        assertThat(s.pendingDecision!!.isRisk).isTrue()
+        // FAKE als RISK klassifiziert = korrekt:
+        GameEngine.resolveDecision(s, ClassifyAction.RISK, emptyContent, { 0.4 }, cfg, TouchTuning.STANDARD)
+
+        assertThat(s.collectibles).hasSize(sizeBefore - 1) // Chip zerstört
+        assertThat(s.score).isEqualTo(GameConfig.TRUTH_SNIPE_FAKE_POINTS)
+        assertThat(s.health).isEqualTo(3)
+        assertThat(s.classifyStreak).isEqualTo(1)
+        assertThat(s.pendingDecision).isNull()
+    }
+
     // ========== topUp ==========
 
     @Test(timeout = 5000)

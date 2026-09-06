@@ -156,11 +156,16 @@ object GameEngine {
             val bonus = minOf(s.classifyStreak * GameConfig.CLASSIFY_STREAK_BONUS, 50)
             var points = if (pd.fromBonus) GameConfig.MAZE_BONUS_POINTS else GameConfig.CLASSIFY_POINTS
             
-            // snipe fact archive = half points
+            // snipe chips: Fake-Zerstoerung = volle 20, Fakt-Archiv = halbe 10
+            // (FIX 2026-09-06: Fake fiel vorher auf CLASSIFY_POINTS=25 zurueck -
+            // die "half points"-Beziehung 10 = 20/2 war dadurch nie erfuellt;
+            // Vertrag laut GameConfig + TruthSnipeHandler-Doku: +20/+10)
             if (s.mode == GameMode.TRUTH_SNIPE && pd.diskIndex >= 0) {
                 val disk = s.collectibles[pd.diskIndex]
-                if (!disk.isRisk) {
-                    points = GameConfig.TRUTH_SNIPE_FACT_POINTS
+                points = if (disk.isRisk) {
+                    GameConfig.TRUTH_SNIPE_FAKE_POINTS
+                } else {
+                    GameConfig.TRUTH_SNIPE_FACT_POINTS
                 }
             }
             
