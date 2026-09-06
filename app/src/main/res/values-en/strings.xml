@@ -321,6 +321,13 @@
     <string name="games_arena_review">Recommended for review</string>
     <string name="games_arena_xp">Score: %1$d / Target %2$d  |  XP +%3$d</string>
     <string name="games_arena_badge">Real-time arena</string>
+    <string name="games_adaptive_badge">Adaptive</string>
+    <string name="games_adaptive_fact">Fact</string>
+    <string name="games_adaptive_risk">Risk</string>
+    <string name="games_adaptive_wrong">Wrong</string>
+    <string name="games_adaptive_domain">Domain</string>
+    <string name="games_adaptive_weak">Recommended for review</string>
+    <string name="games_adaptive_no_statements">No statements available</string>
     <string name="lesson_quiz_intro">Answer %1$d questions to test your knowledge</string>
     <string name="lesson_quiz_tip">💡 Tip: Answer the quiz questions to complete this lesson!</string>
     <string name="lesson_question_n">Question %1$d: %2$s</string>
