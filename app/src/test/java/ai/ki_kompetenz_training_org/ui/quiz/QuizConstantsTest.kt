@@ -1,96 +1,99 @@
+/*
+ * Copyright 2026 Tobias Weiss
+ * SPDX-License-Identifier: Apache-2.0
+ */
 package ai.ki_kompetenz_training_org.ui.quiz
 
-import org.junit.Assert.*
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 /**
- * Tests for QuizConstants: combo multipliers, points calculation, max score.
+ * Unit-Tests für [QuizConstants] — die Punkte-Formel, die laut Doku die
+ * Website (components/KiScoreGame.tsx) spiegelt.
+ *
+ * Diese Werte bestimmen, was der Nutzer im KI-Score sieht — eine Formel-
+ * Änderung ohne Bewusstsein verschiebt alle Scores und Tiers.
  */
 class QuizConstantsTest {
 
+    // ── Konstanten-Vertrag ───────────────────────────────────────────────
+
     @Test
-    fun `combo multiplier is 1 for combo 0`() {
-        assertEquals(1.0, QuizConstants.comboMultiplier(0), 0.001)
+    fun `Runde dauert 20 Sekunden (Website-Paritaet)`() {
+        assertThat(QuizConstants.ROUND_SECONDS).isEqualTo(20)
     }
 
     @Test
-    fun `combo multiplier is 1 for combo 1`() {
-        assertEquals(1.0, QuizConstants.comboMultiplier(1), 0.001)
+    fun `3 Leben (Herzen)`() {
+        assertThat(QuizConstants.MAX_LIVES).isEqualTo(3)
     }
 
     @Test
-    fun `combo multiplier is 1_5 for combo 2`() {
-        assertEquals(1.5, QuizConstants.comboMultiplier(2), 0.001)
+    fun `Timer tickt sekündlich`() {
+        assertThat(QuizConstants.TIMER_TICK_MS).isEqualTo(1000L)
+    }
+
+    // ── comboMultiplier-Stufen ───────────────────────────────────────────
+
+    @Test
+    fun `comboMultiplier - keine Streak oder 1 richtig: 1x`() {
+        assertThat(QuizConstants.comboMultiplier(0)).isEqualTo(1.0)
+        assertThat(QuizConstants.comboMultiplier(1)).isEqualTo(1.0)
     }
 
     @Test
-    fun `combo multiplier is 1_5 for combo 3`() {
-        assertEquals(1.5, QuizConstants.comboMultiplier(3), 0.001)
+    fun `comboMultiplier - 2-3 richtige: 1_5x (Grenzen)`() {
+        assertThat(QuizConstants.comboMultiplier(2)).isEqualTo(1.5)
+        assertThat(QuizConstants.comboMultiplier(3)).isEqualTo(1.5)
     }
 
     @Test
-    fun `combo multiplier is 2 for combo 4`() {
-        assertEquals(2.0, QuizConstants.comboMultiplier(4), 0.001)
+    fun `comboMultiplier - ab 4 richtigen: 2x (Obergrenze)`() {
+        assertThat(QuizConstants.comboMultiplier(4)).isEqualTo(2.0)
+        assertThat(QuizConstants.comboMultiplier(9)).isEqualTo(2.0)
+    }
+
+    // ── pointsForCorrectAnswer: (100 + timeLeft * 10) * multiplier ───────
+
+    @Test
+    fun `Punkte bei voller Zeit ohne Combo: 300`() {
+        assertThat(QuizConstants.pointsForCorrectAnswer(20, 0)).isEqualTo(300)
     }
 
     @Test
-    fun `combo multiplier is 2 for combo 10`() {
-        assertEquals(2.0, QuizConstants.comboMultiplier(10), 0.001)
+    fun `Punkte bei abgelaufener Zeit: Basis 100`() {
+        assertThat(QuizConstants.pointsForCorrectAnswer(0, 0)).isEqualTo(100)
     }
 
     @Test
-    fun `points for correct answer with no combo and no time`() {
-        assertEquals(100, QuizConstants.pointsForCorrectAnswer(0, 0))
+    fun `Punkte steigen mit verbleibender Zeit (Geschwindigkeit belohnt)`() {
+        val fast = QuizConstants.pointsForCorrectAnswer(20, 0)
+        val slow = QuizConstants.pointsForCorrectAnswer(5, 0)
+        assertThat(fast).isGreaterThan(slow)
     }
 
     @Test
-    fun `points for correct answer with full time and no combo`() {
-        assertEquals(300, QuizConstants.pointsForCorrectAnswer(20, 0))
+    fun `Punkte steigen mit Combo (Streak belohnt) - gleiche Zeit`() {
+        val noCombo = QuizConstants.pointsForCorrectAnswer(20, 1)
+        val midCombo = QuizConstants.pointsForCorrectAnswer(20, 3)
+        val maxCombo = QuizConstants.pointsForCorrectAnswer(20, 5)
+        assertThat(midCombo).isGreaterThan(noCombo)
+        assertThat(maxCombo).isGreaterThan(midCombo)
     }
 
     @Test
-    fun `points for correct answer with full time and combo 2`() {
-        assertEquals(450, QuizConstants.pointsForCorrectAnswer(20, 2))
+    fun `Punkte sind immer positiv (auch bei timeLeft 0 und ohne Combo)`() {
+        assertThat(QuizConstants.pointsForCorrectAnswer(0, 0)).isGreaterThan(0)
     }
 
-    @Test
-    fun `points for correct answer with full time and combo 4`() {
-        assertEquals(600, QuizConstants.pointsForCorrectAnswer(20, 4))
-    }
+    // ── MAX_SCORE ────────────────────────────────────────────────────────
 
     @Test
-    fun `max score is 6000`() {
-        assertEquals(6000, QuizConstants.MAX_SCORE)
-    }
-
-    @Test
-    fun `round seconds is 20`() {
-        assertEquals(20, QuizConstants.ROUND_SECONDS)
-    }
-
-    @Test
-    fun `max lives is 3`() {
-        assertEquals(3, QuizConstants.MAX_LIVES)
-    }
-
-    @Test
-    fun `timer tick is 1000ms`() {
-        assertEquals(1000L, QuizConstants.TIMER_TICK_MS)
-    }
-
-    @Test
-    fun `points increase with time left`() {
-        val p0 = QuizConstants.pointsForCorrectAnswer(0, 0)
-        val p10 = QuizConstants.pointsForCorrectAnswer(10, 0)
-        val p20 = QuizConstants.pointsForCorrectAnswer(20, 0)
-        assertTrue("More time should give more points", p20 > p10 && p10 > p0)
-    }
-
-    @Test
-    fun `points increase with combo`() {
-        val p0 = QuizConstants.pointsForCorrectAnswer(20, 0)
-        val p2 = QuizConstants.pointsForCorrectAnswer(20, 2)
-        val p4 = QuizConstants.pointsForCorrectAnswer(20, 4)
-        assertTrue("Higher combo should give more points", p4 > p2 && p2 > p0)
+    fun `MAX_SCORE = 10 perfekte Antworten mit Max-Combo und Max-Zeit (6000)`() {
+        // (100 + 20*10) * 2.0 = 600 pro Frage, × 10 Fragen
+        assertThat(QuizConstants.MAX_SCORE).isEqualTo(6000)
+        assertThat(QuizConstants.MAX_SCORE).isEqualTo(
+            QuizConstants.pointsForCorrectAnswer(QuizConstants.ROUND_SECONDS, 4) * 10
+        )
     }
 }
