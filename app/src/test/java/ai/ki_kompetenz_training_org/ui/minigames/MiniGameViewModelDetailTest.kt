@@ -169,7 +169,7 @@ class MiniGameViewModelDetailTest {
     // ── Daily-Challenge-Bonus ────────────────────────────────────────────
 
     @Test
-    fun `Bonus: heutige Challenge ist das Spiel und noch nicht abgeschlossen - 30 XP werden gutgeschrieben`() = runTest {
+    fun `Bonus bei heutiger Challenge als dieses Spiel und noch nicht abgeschlossen - 30 XP werden gutgeschrieben`() = runTest {
         every { dailyChallenge.getTodayChallenge(any(), any()) } returns fakeGame
         every { dailyChallenge.isCompletedToday(any()) } returns false
         every { dailyChallenge.completeChallenge(any(), any()) } returns 30
@@ -183,7 +183,7 @@ class MiniGameViewModelDetailTest {
     }
 
     @Test
-    fun `kein Bonus: heutige Challenge ist ein anderes Spiel`() = runTest {
+    fun `kein Bonus bei anderer heutiger Challenge`() = runTest {
         every { dailyChallenge.getTodayChallenge(any(), any()) } returns otherGame
         val vm = viewModel(daily = dailyChallenge)
 
@@ -195,7 +195,7 @@ class MiniGameViewModelDetailTest {
     }
 
     @Test
-    fun `kein zweiter Bonus: Challenge heute schon abgeschlossen`() = runTest {
+    fun `kein zweiter Bonus bei schon abgeschlossener Challenge`() = runTest {
         every { dailyChallenge.getTodayChallenge(any(), any()) } returns fakeGame
         every { dailyChallenge.isCompletedToday(any()) } returns true
         val vm = viewModel(daily = dailyChallenge)

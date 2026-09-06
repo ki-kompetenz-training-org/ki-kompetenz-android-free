@@ -10,6 +10,7 @@ import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -96,7 +97,7 @@ class QuizGameplayTest {
     }
 
     @Test
-    fun `Combo-Streak: 3 richtige in Folge nutzen die 1_5x-Stufe (300+300+450)`() = runTest {
+    fun `Combo-Streak - 3 richtige in Folge nutzen die 1_5x-Stufe (300+300+450)`() = runTest {
         val vm = startedViewModel()
 
         // 1. richtig (combo 0 → 1x): 300 — kein Auto-Next bei korrekt
@@ -175,7 +176,7 @@ class QuizGameplayTest {
         assertThat(s.phase).isEqualTo(QuizPhase.RESULT)
         assertThat(s.answers.count { it }).isEqualTo(10)
 
-        verify {
+        coVerify {
             db.quizResultDao().insert(
                 match { entity ->
                     entity.correctCount == 10 &&
@@ -184,7 +185,7 @@ class QuizGameplayTest {
                 }
             )
         }
-        verify {
+        coVerify {
             gamificationRepository.onQuizFinished(
                 correctCount = 10,
                 totalQuestions = 10,
@@ -213,7 +214,7 @@ class QuizGameplayTest {
         assertThat(s.lives).isEqualTo(0) // coerceAtLeast
         assertThat(s.answers.count { it }).isEqualTo(0)
 
-        verify {
+        coVerify {
             db.quizResultDao().insert(
                 match { entity ->
                     entity.correctCount == 0 && entity.tierTitle == tiers[0].title

@@ -106,7 +106,7 @@ class SrsViewModelDetailTest {
     // ── Session-Ende ─────────────────────────────────────────────────────
 
     @Test
-    fun `letzte Karte (6 von 6) - FINISHED, 50 XP inkl. Session-Bonus, onSrsReview(true, 6)`() = runTest {
+    fun `letzte Karte (6 von 6) - FINISHED, 50 XP inklusive Session-Bonus, onSrsReview(true, 6)`() = runTest {
         val vm = viewModelN(6)
 
         repeat(6) {

@@ -59,7 +59,7 @@ class GameTypesTest {
     }
 
     @Test
-    fun `MAZE_RUN - KEINE Chips (Labyrinthmodus: Chip-Parameter alle 0)`() {
+    fun `MAZE_RUN - KEINE Chips (Labyrinthmodus ohne Chip-Parameter)`() {
         val cfg = ModeConfig.mazeRun()
         assertThat(cfg.chipRadius).isEqualTo(0.0)
         assertThat(cfg.chipSpeed).isEqualTo(0.0)
@@ -97,7 +97,7 @@ class GameTypesTest {
     }
 
     @Test
-    fun `KIDS-Tuning - schneller, kuerzere Entscheidungen, mehr Spawns (Grenze 8s)`() {
+    fun `KIDS-Tuning - schneller, mehr Entscheidungszeit (8s statt Standard 5s) und mehr Spawns`() {
         val t = TouchTuning.KIDS
         assertThat(t.speedMultiplier).isGreaterThan(TouchTuning.STANDARD.speedMultiplier)
         assertThat(t.decisionSeconds).isEqualTo(8.0)
@@ -114,12 +114,12 @@ class GameTypesTest {
     }
 
     @Test
-    fun `Entscheidungszeit-Ordnung: KIDS kuerzer als STANDARD-Implicite, SENIOREN am laengsten`() {
-        // STANDARD hat null (Entscheidung bleibt auf cfg.decisionSeconds = 5s);
-        // die Ordnung KIDS < (implizit 5) < SENIORS ist der Ergonomie-Vertrag.
+    fun `Entscheidungszeit-Ordnung - KIDS mehr als Standard, SENIOREN am laengsten`() {
+        // Standard (Striktur) bleibt auf cfg.decisionSeconds = 5s;
+        // KIDS bekommen 8s (mehr Bedenkzeit!), SENIOREN 18s.
         val implicitStandard = 5.0
-        assertThat(TouchTuning.KIDS.decisionSeconds!!).isLessThan(implicitStandard)
-        assertThat(TouchTuning.SENIORS.decisionSeconds!!).isGreaterThan(implicitStandard)
+        assertThat(TouchTuning.KIDS.decisionSeconds!!).isGreaterThan(implicitStandard)
+        assertThat(TouchTuning.SENIORS.decisionSeconds!!).isGreaterThan(TouchTuning.KIDS.decisionSeconds!!)
     }
 
     // ── MazeConfig ───────────────────────────────────────────────────────
@@ -134,7 +134,7 @@ class GameTypesTest {
     }
 
     @Test
-    fun `MazeConfig - layoutIndex bleibt immer im gueltigen Bereich fuer Level >= 0`() {
+    fun `MazeConfig - layoutIndex bleibt immer im gueltigen Bereich fuer Level ab 0`() {
         val size = MazeLayouts.LAYOUTS.size
         for (level in 0 until size * 2) {
             val idx = MazeConfig(level).layoutIndex

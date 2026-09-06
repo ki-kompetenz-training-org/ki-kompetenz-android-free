@@ -26,7 +26,7 @@ class SrsRepository(private val api: ApiService) {
 
     suspend fun postReview(cardId: String, quality: Int): Result<Unit> =
         runCatching { api.postReview(SrsReviewRequestDto(cardId = cardId, quality = quality)) }
-            .map { if (it.success) Unit else throw IllegalStateException("Review failed") }
+            .mapCatching { if (it.success) Unit else throw IllegalStateException("Review failed") }
 }
 
 /**

@@ -151,7 +151,9 @@ class InteractiveLessonLogicTest {
         )
         val t0 = InteractiveLessonLogic.scrollTargetForOpenQuiz(l, mapOf(0 to 60, 1 to 100), 3000)!!
         val t1 = InteractiveLessonLogic.scrollTargetForOpenQuiz(l, mapOf(0 to 60), 3000)!!
-        assertThat(t1).isGreaterThan(t0)
+        // je weiter rechts das offene Quiz liegt (mehr bestandene Sections davor),
+        // desto weiter muss gescrollt werden: idx 2 -> 2/3*3000=2000; idx 1 -> 1/3*3000=1000
+        assertThat(t0).isGreaterThan(t1)
     }
 
     @Test

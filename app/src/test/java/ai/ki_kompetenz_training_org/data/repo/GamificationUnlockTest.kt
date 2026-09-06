@@ -13,7 +13,6 @@ import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coAnswers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -83,7 +82,7 @@ class GamificationUnlockTest {
     // ── onQuizFinished ───────────────────────────────────────────────────
 
     @Test
-    fun `onQuizFinished - XP entspricht quizXp (10 von 10 = 150: 10x10 + 50 Bonus)`() = runTest {
+    fun `onQuizFinished - XP entspricht quizXp (10 von 10 = 150 bei 10x10 + 50 Bonus)`() = runTest {
         repository.onQuizFinished(correctCount = 10, totalQuestions = 10, score = 90)
 
         assertThat(upserted.last().xp).isEqualTo(150)
@@ -141,7 +140,7 @@ class GamificationUnlockTest {
     }
 
     @Test
-    fun `gespielte Games werden lokal persistiert (DSGVO: nur auf dem Geraet)`() = runTest {
+    fun `gespielte Games werden lokal persistiert (DSGVO - nur auf dem Geraet)`() = runTest {
         repository.onMiniGameFinished(correctCount = 5, totalQuestions = 10, gameId = "orb_hunt")
 
         verify {
@@ -150,18 +149,18 @@ class GamificationUnlockTest {
     }
 
     @Test
-    fun `mini_game_all - Badge erst wenn ALLE Mini-Games gespielt wurden`() = runTest {
+    fun `mini_game_all - Badge beim Spiel, das den Katalog vervollstaendigt`() = runTest {
         val allIds = MiniGames.ALL.map { it.id }
-        val allButLast = allIds.dropLast(1).toMutableSet()
-        every { prefs.getStringSet("played_games", any()) } returns allButLast
+        // fast komplett: nur allIds.last() fehlt im Katalog
+        val almostComplete = allIds.dropLast(1).toMutableSet()
+        every { prefs.getStringSet("played_games", any()) } returns almostComplete
 
-        // vorletztes Spiel: Katalog noch nicht voll
-        repository.onMiniGameFinished(correctCount = 5, totalQuestions = 10, gameId = allIds.last())
+        // ein BEREITS gespieltes Spiel erneut spielen -> Katalog bleibt unvollstaendig
+        repository.onMiniGameFinished(correctCount = 5, totalQuestions = 10, gameId = allIds.first())
         assertThat("mini_game_all" in badgeIds()).isFalse()
 
-        // Katalog voll: alle Spiele inklusive dem letzten sind gespielt
-        every { prefs.getStringSet("played_games", any()) } returns allIds.toMutableSet()
-        repository.onMiniGameFinished(correctCount = 5, totalQuestions = 10, gameId = allIds.first())
+        // das letzte fehlende Spiel -> Katalog voll -> Badge sofort
+        repository.onMiniGameFinished(correctCount = 5, totalQuestions = 10, gameId = allIds.last())
         assertThat("mini_game_all" in badgeIds()).isTrue()
     }
 

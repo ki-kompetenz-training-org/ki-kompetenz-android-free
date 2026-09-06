@@ -23,7 +23,7 @@ class KiScoreFallbackTest {
     // ── Umfang ───────────────────────────────────────────────────────────
 
     @Test
-    fun `Pool reicht fuer mind 2 Runden ohne Wiederholung (>= 20 Fragen)`() {
+    fun `Pool reicht fuer mind 2 Runden ohne Wiederholung (ab 20 Fragen)`() {
         // Pro Runde werden 10 Fragen gezogen — der Pool muss deutlich
         // größer sein, damit aufsteigende Schwierigkeit (ids) erhalten bleibt.
         assertThat(data.questions.size).isAtLeast(20)

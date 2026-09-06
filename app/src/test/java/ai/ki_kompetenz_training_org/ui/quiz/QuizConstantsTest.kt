@@ -36,19 +36,19 @@ class QuizConstantsTest {
     // ── comboMultiplier-Stufen ───────────────────────────────────────────
 
     @Test
-    fun `comboMultiplier - keine Streak oder 1 richtig: 1x`() {
+    fun `comboMultiplier - keine Streak oder 1 richtig - 1x`() {
         assertThat(QuizConstants.comboMultiplier(0)).isEqualTo(1.0)
         assertThat(QuizConstants.comboMultiplier(1)).isEqualTo(1.0)
     }
 
     @Test
-    fun `comboMultiplier - 2-3 richtige: 1_5x (Grenzen)`() {
+    fun `comboMultiplier - 2-3 richtige - 1_5x (Grenzen)`() {
         assertThat(QuizConstants.comboMultiplier(2)).isEqualTo(1.5)
         assertThat(QuizConstants.comboMultiplier(3)).isEqualTo(1.5)
     }
 
     @Test
-    fun `comboMultiplier - ab 4 richtigen: 2x (Obergrenze)`() {
+    fun `comboMultiplier - ab 4 richtigen - 2x (Obergrenze)`() {
         assertThat(QuizConstants.comboMultiplier(4)).isEqualTo(2.0)
         assertThat(QuizConstants.comboMultiplier(9)).isEqualTo(2.0)
     }
@@ -56,12 +56,12 @@ class QuizConstantsTest {
     // ── pointsForCorrectAnswer: (100 + timeLeft * 10) * multiplier ───────
 
     @Test
-    fun `Punkte bei voller Zeit ohne Combo: 300`() {
+    fun `Punkte bei voller Zeit ohne Combo - 300`() {
         assertThat(QuizConstants.pointsForCorrectAnswer(20, 0)).isEqualTo(300)
     }
 
     @Test
-    fun `Punkte bei abgelaufener Zeit: Basis 100`() {
+    fun `Punkte bei abgelaufener Zeit - Basis 100`() {
         assertThat(QuizConstants.pointsForCorrectAnswer(0, 0)).isEqualTo(100)
     }
 

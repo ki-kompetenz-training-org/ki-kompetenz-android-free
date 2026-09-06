@@ -12,7 +12,6 @@ import ai.ki_kompetenz_training_org.data.missions.WeeklyMissionsRepository
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.common.truth.Truth.assertThat
-import io.mockk.coAnswers
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -91,7 +90,7 @@ class GamificationRewardsTest {
     }
 
     @Test
-    fun `Session-Bonus exakt an der Grenze: 5 Karten reicht, 4 nicht`() = runTest {
+    fun `Session-Bonus exakt an der Grenze - 5 Karten reicht, 4 nicht`() = runTest {
         val xpBefore4 = 0
         repository.onSrsReview(sessionFinished = true, sessionSize = 4)
         val xpAfter4 = upserted.last().xp
