@@ -6,6 +6,7 @@ import ai.ki_kompetenz_training_org.data.minigames.MiniGameKind
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import ai.ki_kompetenz_training_org.data.minigames.TextGameBank
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -27,13 +28,19 @@ class MiniGameViewModelFakeOrRealTest {
 
     private val gamification = mockk<GamificationRepository>(relaxed = true)
 
+    private val dispatcher = UnconfinedTestDispatcher()
+
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(dispatcher)
+        // Determinismus (CI-Fund 09-08, gleiche Klasse wie DetailTest):
+        // onMiniGameFinished stubben statt relaxed, Main-Queue leeren.
+        coEvery { gamification.onMiniGameFinished(any(), any(), any()) } returns Unit
     }
 
     @After
     fun tearDown() {
+        dispatcher.scheduler.advanceUntilIdle()
         Dispatchers.resetMain()
     }
 

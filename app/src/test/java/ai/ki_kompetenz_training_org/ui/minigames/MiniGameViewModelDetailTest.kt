@@ -9,6 +9,7 @@ import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -39,13 +40,24 @@ class MiniGameViewModelDetailTest {
     private val fakeGame = MiniGames.ALL.first { it.isFakeOrReal }
     private val otherGame = MiniGames.ALL.first { it.id != fakeGame.id }
 
+    private val dispatcher = UnconfinedTestDispatcher()
+
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(dispatcher)
+        // finish()-Launch deterministisch: onMiniGameFinished gestubbt statt
+        // relaxed — ein Suspend-Mock kann unter Last auf ECHTEM Thread NACH
+        // dem runTest weitertackten; wirft er dann, stuft kotlinx-coroutines-test
+        // das dem naechsten Test als 'UncaughtExceptionsBeforeTest' zu
+        // (CI-Fund 2026-09-08 am restart-Test).
+        coEvery { gamification.onMiniGameFinished(any(), any(), any()) } returns Unit
     }
 
     @After
     fun tearDown() {
+        // Main-Queue leeren, damit keine Coroutine den naechsten runTest
+        // kontaminiert (kotlinx.coroutines-Test-Empfehlung).
+        dispatcher.scheduler.advanceUntilIdle()
         Dispatchers.resetMain()
     }
 
