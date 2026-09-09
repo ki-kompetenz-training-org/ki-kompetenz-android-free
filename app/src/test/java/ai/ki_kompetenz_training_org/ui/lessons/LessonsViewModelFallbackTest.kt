@@ -16,8 +16,10 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
@@ -79,15 +81,28 @@ class LessonsViewModelFallbackTest {
 
     @After
     fun tearDown() {
+        // viewModelScope canceln: Das VM sammelt den DAO-Flow auf ECHTEM
+        // IO-Thread (flowOn(IO)). Ohne Cancel laeuft der Collector NACH dem
+        // Test weiter und kann fatal werfen — solche verwaisten Real-Thread-
+        // Exceptions vergiften den globalen Test-Scheduler und "killen" den
+        // NAECHSTEN runTest (auch in ANDEREN Klassen) mit
+        // 'UncaughtExceptionsBeforeTest'. CI-Beweis (2026-09-08/09): dieses
+        // XML hinterlaesst 'CoroutinesInternalError ... Dispatchers.IO', der
+        // MiniGame-DetailTest fiel als erstes Opfer. (ViewModel.clear() ist
+        // internal — darum viewModelScope.cancel()).
+        vm?.viewModelScope?.cancel()
+        vm = null
         Dispatchers.resetMain()
     }
+
+    private var vm: LessonsViewModel? = null
 
     private fun createVm() = LessonsViewModel(
         contentRepository = contentRepository,
         premiumRepository = premiumRepository,
         gamificationRepository = gamificationRepository,
         settingsStore = settingsStore,
-    )
+    ).also { vm = it }
 
     /**
      * Wartet im ECHTZEIT-Raum bis der Load-Zustand beruhigt ist. Das VM
