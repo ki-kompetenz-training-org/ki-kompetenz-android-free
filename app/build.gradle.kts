@@ -7,7 +7,21 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    id("org.owasp.dependencycheck")
     id("jacoco")
+}
+
+// OWASP Dependency-Check (CVE-Scan). Warn-only: meldet Findings, blockiert
+// den Build nicht (failBuildOnCVSS=11). Manuell: ./gradlew dependencyCheckAnalyze
+// Bericht: app/build/reports/dependency-check. Optionaler NVD-API-Key via Env
+// NVD_API_KEY (sonst gedrosselter Public-Endpoint).
+dependencyCheck {
+    format = "HTML"
+    formats = listOf("HTML", "JSON", "SARIF")
+    failBuildOnCVSS = 11f
+    outputDirectory = "$buildDir/reports/dependency-check"
+    val nvdKey = providers.environmentVariable("NVD_API_KEY").orNull
+    if (nvdKey != null) nvd.apiKey = nvdKey
 }
 
 android {
