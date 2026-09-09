@@ -29,9 +29,10 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Set up Gradle cache
-        uses: gradle/actions/setup-gradle@v6
-
+      # Set up Gradle cache ENTFERNT (09-08): ~/.gradle = persist. Volume
+      # (gha-gradle-home) auf dem Self-hosted-Runner — GitHub-Cache (save
+      # ~1m49s + restore) war reiner Overhead. Gradle-File-Locks handeln
+      # geteilte Homes sicher.
       - name: Verify gradle wrapper
         run: |
           test -f gradlew || { echo "gradlew not found — run 'gradle wrapper' locally"; exit 1; }
