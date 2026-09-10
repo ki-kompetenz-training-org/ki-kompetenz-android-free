@@ -68,6 +68,7 @@ fun BottomNavScreen(
                     BOTTOM_TABS.forEach { tab ->
                         val selected = currentDestination?.hierarchy?.any { it.route == tab.route } == true
                         NavigationBarItem(
+                            // a11y: Label unter dem Icon trägt den Tab-Text — null korrekt
                             icon = { Icon(tab.icon, contentDescription = null) },
                             label = { Text(stringResource(tab.labelRes)) },
                             selected = selected,

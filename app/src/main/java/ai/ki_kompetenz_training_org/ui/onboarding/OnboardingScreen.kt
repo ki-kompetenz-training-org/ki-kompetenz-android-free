@@ -298,6 +298,7 @@ private fun OnboardingSteps(onCompleted: (startLesson1: Boolean) -> Unit) {
                 )
                 Spacer(Modifier.width(6.dp))
                 Icon(
+                    // a11y: dekorativ — der Text daneben beschreibt den nächsten Schritt
                     Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = null,
                     modifier = Modifier.size(18.dp),
@@ -324,6 +325,7 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
+                    // a11y: dekorative Illustration — der Seitentitel beschreibt die Seite
                     page.icon,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),
