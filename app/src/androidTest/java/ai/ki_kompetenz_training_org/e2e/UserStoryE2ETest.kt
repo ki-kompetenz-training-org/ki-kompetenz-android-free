@@ -22,7 +22,7 @@ import org.junit.runners.MethodSorters
  * with Android 16 (API 36) — InputManager.getInstance() was removed.
  *
  * User Stories covered:
- * - US-01: Onboarding flow (first launch)
+ * - US-01: Post-Onboarding-Home (Runner preseedet Onboarding+Locale de)
  * - US-02: Home navigation
  * - US-03: Interactive lessons
  * - US-04: KI-Score Quiz
@@ -30,21 +30,18 @@ import org.junit.runners.MethodSorters
  * - US-06: ForKids (COPPA)
  * - US-07: ForSeniors
  * - US-08: Gamification / Profile
+ * - US-09/US-11: Daily Check-in / Mini-Game-Start
  * - US-10: Premium overview
  *
  * Run: ./gradlew :app:connectedDebugAndroidTest
  *      -Pandroid.testInstrumentationRunnerArguments.class=ai.ki_kompetenz_training_org.e2e.UserStoryE2ETest
  *
- * For fresh onboarding tests, clear app data first:
- *   adb shell pm clear ai.ki_kompetenz_training_org
- *
  * Prerequisites:
- *   - Device connected via `adb devices`
- *   - Debug APK installed
- *   - Device locale: German (de-DE)
+ *   - Device/Emulator connected via `adb devices`
+ *   - Debug APK installiert
  *
- * Tests run in alphabetical order (FixMethodOrder.NAME_ASCENDING) to ensure
- * onboarding tests run before navigation tests.
+ * Onboarding/Locale werden vom OnboardingResettingRunner sichergestellt
+ * (fresh install jedes Mal → kein manuelles Preseed nötig).
  */
 @RunWith(AndroidJUnit4::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -191,8 +188,53 @@ class UserStoryE2ETest {
     private fun scrollDown() {
         val w = device.displayWidth
         val h = device.displayHeight
-        // Swipe from right edge (9/10 width) to avoid clicking on lesson cards
-        device.swipe(w * 9 / 10, h * 3 / 4, w * 9 / 10, h / 4, 20)
+        // Swipe from right edge (9/10 width) to avoid clicking on lesson cards.
+        // Langer Stroke: Home-Höhe variiert (async Content), ein kurzer Swipe
+        // rutscht je nach Lauf unterschiedlich weit.
+        device.swipe(w * 9 / 10, h * 5 / 6, w * 9 / 10, h / 6, 20)
+    }
+
+    /** Scroll in Schleife bis Text sichtbar ist (Home ist ein langer ScrollView —
+     *  eine einzelne Swipe rutscht je nach Content-Höhe unterschiedlich weit). */
+    private fun scrollUntilVisible(text: String, maxSwipes: Int = 12): Boolean {
+        repeat(maxSwipes) {
+            if (textExists(text)) return true
+            scrollDown()
+            device.waitForIdle()
+        }
+        return textExists(text)
+    }
+
+    /** Wie scrollUntilVisible, aber mit 2-3 Durchläufen und Pausen: direkt nach
+     *  App-Start lädt der Home-Content (API) asynchron nach und ändert die
+     *  Seitenhöhe — ein einzelner Durchlauf kann sonst ins Leere greifen. */
+    private fun findByScroll(text: String): Boolean {
+        repeat(2) {
+            if (scrollUntilVisible(text, 15)) return true
+            Thread.sleep(1_000)
+        }
+        return scrollUntilVisible(text, 15)
+    }
+
+    /** Home-Sektion öffnen: scrollt bis der Eintrag KOMPLETT sichtbar ist
+     *  (nicht nur als Sliver an der Kante — sonst geht der Klick daneben),
+     *  klickt und wartet auf die erwartete Ziel-Schlagzeile. Nach Fehlklick
+     *  BACK→Home→Clean-Retry (kein Scrollen auf dem falschen Screen). */
+    private fun openHomeSection(entry: String, expected: String): Boolean {
+        repeat(3) {
+            if (scrollUntilVisible(entry, 6)) {
+                val obj = device.findObject(By.text(entry))
+                if (obj != null && obj.visibleBounds.height() >= 40) {
+                    val b = obj.visibleBounds
+                    device.click(b.centerX(), b.centerY())
+                    device.waitForIdle()
+                    if (waitForText(expected, 5_000)) return true
+                }
+            }
+            goHome() // Zustand sauber zurücksetzen, dann von vorn
+            device.waitForIdle()
+        }
+        return waitForText(expected, 3_000)
     }
 
     /** Check if onboarding is currently visible. */
@@ -212,57 +254,16 @@ class UserStoryE2ETest {
         }
     }
 
-    // ─── US-01: Onboarding (runs first, alphabetical order) ─────────
-    // Note: These tests require fresh app data. Run: adb shell pm clear ai.ki_kompetenz_training_org
+    // ─── US-01: Home nach Onboarding (Runner setzt Onboarding+Locale) ──
 
     @Test
-    fun us01_a_onboarding_showsWelcomeOnFirstLaunch() {
-        // This test only passes with fresh app data (onboarding not yet completed)
-        if (!isOnboardingVisible()) {
-            // Onboarding already completed — skip this test
-            return
-        }
-        assert(waitForText("Willkommen")) {
-            "Onboarding welcome not shown on first launch"
-        }
-    }
-
-    @Test
-    fun us01_b_onboarding_hasSkipButton() {
-        if (!isOnboardingVisible()) {
-            return
-        }
-        assert(textExists("Überspringen") || textExists("Skip")) {
-            "Skip button not found on onboarding"
-        }
-    }
-
-    @Test
-    fun us01_c_onboarding_canNavigateToNextPage() {
-        if (!isOnboardingVisible()) {
-            return
-        }
-        val nextDe = device.findObject(By.text("Weiter"))
-        if (nextDe != null) {
-            nextDe.click()
-        } else {
-            device.findObject(By.text("Next"))?.click()
-        }
-        assert(waitForText("KiBot")) {
-            "KiBot intro page not shown after clicking Next"
-        }
-    }
-
-    @Test
-    fun us01_d_onboarding_canCompleteFlow() {
-        if (!isOnboardingVisible()) {
-            return
-        }
-        // Skip onboarding
+    fun us01_postOnboarding_homeVisible() {
         ensureHomeScreen()
-        // Should now be on home screen
         assert(waitForText("Lektionen")) {
-            "Home screen not shown after completing onboarding"
+            "Home screen not shown after onboarding"
+        }
+        assert(waitForText("KI-Score")) {
+            "Home content not shown after onboarding"
         }
     }
 
@@ -280,11 +281,8 @@ class UserStoryE2ETest {
     fun us02_b_home_showsForKidsAndForSeniors() {
         ensureHomeScreen()
         waitForText("Lektionen")
-        if (!textExists("Für Kinder")) {
-            scrollDown()
-        }
-        assert(textExists("Für Kinder")) { "ForKids not shown on home" }
-        assert(textExists("Für Senioren")) { "ForSeniors not shown on home" }
+        assert(findByScroll("Für Kinder")) { "ForKids not shown on home" }
+        assert(findByScroll("Für Senioren")) { "ForSeniors not shown on home" }
     }
 
     @Test
@@ -359,12 +357,7 @@ class UserStoryE2ETest {
     fun us06_a_forKids_accessibleWithoutLogin() {
         ensureHomeScreen()
         waitForText("Lektionen")
-        if (!textExists("Für Kinder")) {
-            scrollDown()
-        }
-        clickByText("Für Kinder")
-        // Kids screen title is "ForKids"
-        assert(waitForText("ForKids")) {
+        assert(openHomeSection("Für Kinder", "ForKids")) {
             "ForKids content not shown"
         }
     }
@@ -373,12 +366,7 @@ class UserStoryE2ETest {
     fun us06_b_forKids_showsCoppaNotice() {
         ensureHomeScreen()
         waitForText("Lektionen")
-        if (!textExists("Für Kinder")) {
-            scrollDown()
-        }
-        clickByText("Für Kinder")
-        // COPPA notice title: "Für Eltern — Datenschutz-Info"
-        assert(waitForText("Eltern")) {
+        assert(openHomeSection("Für Kinder", "Eltern")) {
             "COPPA/parental notice not shown"
         }
     }
@@ -389,12 +377,7 @@ class UserStoryE2ETest {
     fun us07_forSeniors_accessibleWithoutLogin() {
         ensureHomeScreen()
         waitForText("Lektionen")
-        if (!textExists("Für Senioren")) {
-            scrollDown()
-        }
-        clickByText("Für Senioren")
-        // Seniors screen shows "Passwörter" in content
-        assert(waitForText("Passw")) {
+        assert(openHomeSection("Für Senioren", "Passw")) {
             "ForSeniors content not shown"
         }
     }
@@ -423,10 +406,7 @@ class UserStoryE2ETest {
             "Profile not loaded"
         }
         // DSGVO note is at the bottom of the profile — scroll to find it
-        for (i in 1..3) {
-            if (textExists("DSGVO")) break
-            scrollDown()
-        }
+        findByScroll("DSGVO")
         assert(textExists("DSGVO")) {
             "DSGVO note not shown in profile"
         }
@@ -518,7 +498,8 @@ class UserStoryE2ETest {
     fun us11_dailyChallenge_navigatesToMiniGame() {
         ensureHomeScreen()
         waitForText("Lektionen")
-        val startBtn = device.findObject(By.text("Start"))
+        // Home-Card-Button hei�t "Starten" (Top rechts auf der Daily-Check-in-Karte)
+        val startBtn = device.findObject(By.textContains("Starten"))
         if (startBtn != null) {
             startBtn.click()
             device.wait(Until.hasObject(By.pkg(packageName)), timeout)
