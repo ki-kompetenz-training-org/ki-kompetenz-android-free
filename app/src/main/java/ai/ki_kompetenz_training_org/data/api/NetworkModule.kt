@@ -6,6 +6,7 @@ import ai.ki_kompetenz_training_org.data.prefs.TokenStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.BuildConfig
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
@@ -16,6 +17,7 @@ import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 /**
@@ -41,10 +43,29 @@ object NetworkModule {
         val tokenStore = TokenStore(context)
         val authRepository = AuthRepository(tokenStore)
 
-        val client = OkHttpClient.Builder()
+        val client = buildClient(tokenStore, authRepository, context.cacheDir)
+
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.API_BASE_URL.ensureTrailingSlash())
+            .client(client)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(ApiService::class.java)
+    }
+
+    /**
+     * Builds the shared OkHttp client. Internal for MockWebServer tests.
+     * 10 MB disk cache (cacheDir/http_cache) + GET max-stale interceptor give
+     * offline replay of Content-Responses within the server's max-age window
+     * (server: Cache-Control public max-age=600 + stale-while-revalidate).
+     */
+    internal fun buildClient(tokenStore: TokenStore, authRepository: AuthRepository, cacheDir: File): OkHttpClient {
+        return OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+            .cache(Cache(cacheDir.resolve("http_cache"), 10L * 1024 * 1024))
             .cookieJar(object : CookieJar {
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                     cookies.forEach { c ->
@@ -80,14 +101,6 @@ object NetworkModule {
                 }
             }
             .build()
-
-        val contentType = "application/json".toMediaType()
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL.ensureTrailingSlash())
-            .client(client)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .build()
-            .create(ApiService::class.java)
     }
 
     /** Attaches session cookies as Cookie header on every request. */
@@ -118,6 +131,25 @@ object NetworkModule {
                 authRepository.signalReAuth()
             }
             response
+        }
+
+    /**
+     * Adds max-stale to GETs so stale cached responses replay offline / on
+     * server errors (up to 7 days past the server's max-age). POST/PUT are
+     * never cached and never get the header.
+     */
+    internal fun createCacheInterceptor(): Interceptor =
+        Interceptor { chain ->
+            val request = chain.request()
+            if (request.method == "GET") {
+                chain.proceed(
+                    request.newBuilder()
+                        .header("Cache-Control", "max-stale=604800")
+                        .build()
+                )
+            } else {
+                chain.proceed(request)
+            }
         }
 
     /** Retries transient failures (5xx, timeouts, connection reset). */
