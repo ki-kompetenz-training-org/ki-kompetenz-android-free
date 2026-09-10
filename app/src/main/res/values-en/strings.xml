@@ -120,6 +120,9 @@
     <string name="profile_lessons_progress">%1$s of %2$s completed</string>
     <string name="profile_badges">Badges (%1$d/%2$d unlocked)</string>
     <string name="profile_dsgvo">GDPR: XP, level, streak and badges are stored exclusively on your device — no data is sent to servers.</string>
+    <string name="reminder_title">Study reminder</string>
+    <string name="reminder_desc">Daily reminder for due review cards</string>
+    <string name="reminder_permission_hint">Notifications are disabled in system settings</string>
 
     <!-- Lessons -->
     <string name="lessons_title">Lessons</string>
@@ -289,6 +292,7 @@
     <string name="notif_channel_general_desc">General app notifications</string>
     <string name="notif_srs_title">Review cards ready</string>
     <string name="notif_srs_body">You have %1$d cards ready for spaced repetition. Review now!</string>
+    <string name="notif_srs_body_zero">Keep going — start a short AI session today!</string>
     <string name="notif_permission_title">Enable notifications</string>
     <string name="notif_permission_body">Get reminded about due review cards so nothing is forgotten.</string>
     <string name="notif_permission_grant">Allow notifications</string>

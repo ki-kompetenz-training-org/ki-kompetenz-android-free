@@ -67,7 +67,11 @@ object NotificationHelper {
         )
 
         val title = context.getString(R.string.notif_srs_title)
-        val text = context.getString(R.string.notif_srs_body, dueCount)
+        val text = if (dueCount > 0) {
+            context.getString(R.string.notif_srs_body, dueCount)
+        } else {
+            context.getString(R.string.notif_srs_body_zero)
+        }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_SRS_REMINDERS)
             .setSmallIcon(R.mipmap.ic_launcher)

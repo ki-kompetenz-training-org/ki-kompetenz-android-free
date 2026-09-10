@@ -29,9 +29,7 @@ class SrsReminderWorker(
         return try {
             val result = app.srsRepository.getDueCards()
             result.onSuccess { cards ->
-                if (cards.isNotEmpty()) {
-                    NotificationHelper.showSrsReminder(applicationContext, cards.size)
-                }
+                NotificationHelper.showSrsReminder(applicationContext, cards.size)
             }
             Result.success()
         } catch (e: Exception) {

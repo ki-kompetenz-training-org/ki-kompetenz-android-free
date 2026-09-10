@@ -4,11 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.os.StrictMode
 import android.util.Log
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.NetworkModule
 import ai.ki_kompetenz_training_org.data.connectivity.ConnectivityObserver
@@ -25,8 +20,8 @@ import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
 import ai.ki_kompetenz_training_org.data.repo.RewardCenter
 import ai.ki_kompetenz_training_org.data.repo.SrsRepository
 import ai.ki_kompetenz_training_org.data.repo.TeamRepository
+import ai.ki_kompetenz_training_org.data.reminder.ReminderScheduler
 import ai.ki_kompetenz_training_org.notification.NotificationHelper
-import ai.ki_kompetenz_training_org.notification.SrsReminderWorker
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -35,7 +30,9 @@ import java.io.StringWriter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Application class with service locator.
@@ -109,8 +106,10 @@ class KiKompetenzApp : Application() {
         // Create notification channels early
         NotificationHelper.createChannels(this)
 
-        // Schedule daily SRS reminder check (only when network is available)
-        scheduleSrsReminders()
+        // Schedule daily SRS reminder (respects the user toggle in SettingsStore)
+        CoroutineScope(Dispatchers.Default).launch {
+            ReminderScheduler.apply(this@KiKompetenzApp)
+        }
     }
 
     private fun enableStrictMode() {
@@ -125,25 +124,6 @@ class KiKompetenzApp : Application() {
                 .detectAll()
                 .penaltyLog()
                 .build()
-        )
-    }
-
-    private fun scheduleSrsReminders() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val workRequest = PeriodicWorkRequestBuilder<SrsReminderWorker>(
-            24, TimeUnit.HOURS,
-        )
-            .setConstraints(constraints)
-            .setInitialDelay(6, TimeUnit.HOURS) // First check after 6h
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "srs_reminders",
-            ExistingPeriodicWorkPolicy.KEEP,
-            workRequest,
         )
     }
 

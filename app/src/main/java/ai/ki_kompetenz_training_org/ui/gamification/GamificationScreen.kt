@@ -19,6 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import ai.ki_kompetenz_training_org.data.reminder.ReminderScheduler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.KiKompetenzApp
@@ -28,11 +35,14 @@ import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
 import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.ui.gamification.CompetencyRadarCard
 import ai.ki_kompetenz_training_org.ui.gamification.parseDomainScores
+import ai.ki_kompetenz_training_org.util.ReviewHelper
+import ai.ki_kompetenz_training_org.util.findActivity
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun GamificationScreen(onBack: () -> Unit) {
-    val app = KiKompetenzApp.from(LocalContext.current)
+    val context = LocalContext.current
+    val app = KiKompetenzApp.from(context)
     val vm: GamificationViewModel = viewModel {
         val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
         val competencyRepo = CompetencyRepository(
@@ -44,6 +54,45 @@ fun GamificationScreen(onBack: () -> Unit) {
         GamificationViewModel(app.gamificationRepository, competencyRepo)
     }
     val state by vm.state.collectAsState()
+
+    // Daily SRS reminder settings (opt-out toggle + time-of-day preset)
+    val scope = rememberCoroutineScope()
+    val reminderEnabled by app.settingsStore.reminderEnabled.collectAsState(initial = true)
+    val reminderTime by app.settingsStore.reminderTime.collectAsState(initial = Pair(19, 0))
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        // Revert on denial (Spec Muss 3): nothing persisted unless granted
+        scope.launch {
+            app.settingsStore.setReminderEnabled(granted)
+            if (granted) ReminderScheduler.apply(context)
+        }
+    }
+
+    fun requestReminderPermission() {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            scope.launch {
+                app.settingsStore.setReminderEnabled(true)
+                ReminderScheduler.apply(context)
+            }
+        }
+    }
+
+    // In-App Review: prompt the user once after 3 completed lessons.
+    // The Play Review API supplies its own UI (no custom text, DSGVO-safe).
+    LaunchedEffect(state.lessonProgress) {
+        val completed = state.lessonProgress
+        if (completed >= ReviewHelper.LESSON_THRESHOLD) {
+            context.findActivity()?.let { activity ->
+                ReviewHelper.maybeRequestReview(activity, completed)
+            }
+        }
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -75,6 +124,69 @@ fun GamificationScreen(onBack: () -> Unit) {
                             stringResource(R.string.profile_xp_to_next, state.xpIntoLevel, state.xpNeeded, state.level + 1),
                             style = MaterialTheme.typography.labelSmall,
                         )
+                    }
+                }
+            }
+
+            // Daily SRS reminder (toggle + time-of-day preset)
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(R.string.reminder_title), fontWeight = FontWeight.Bold)
+                                Text(
+                                    stringResource(R.string.reminder_desc),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Switch(
+                                checked = reminderEnabled,
+                                onCheckedChange = { checked ->
+                                    if (checked) requestReminderPermission()
+                                    else scope.launch {
+                                        app.settingsStore.setReminderEnabled(false)
+                                        ReminderScheduler.apply(context)
+                                    }
+                                },
+                            )
+                        }
+                        if (reminderEnabled) {
+                            Spacer(Modifier.height(8.dp))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                FilterChip(
+                                    selected = reminderTime == Pair(9, 0),
+                                    onClick = {
+                                        scope.launch {
+                                            app.settingsStore.setReminderTime(9, 0)
+                                            ReminderScheduler.apply(context)
+                                        }
+                                    },
+                                    label = { Text("9:00") },
+                                )
+                                FilterChip(
+                                    selected = reminderTime == Pair(13, 0),
+                                    onClick = {
+                                        scope.launch {
+                                            app.settingsStore.setReminderTime(13, 0)
+                                            ReminderScheduler.apply(context)
+                                        }
+                                    },
+                                    label = { Text("13:00") },
+                                )
+                                FilterChip(
+                                    selected = reminderTime == Pair(19, 0),
+                                    onClick = {
+                                        scope.launch {
+                                            app.settingsStore.setReminderTime(19, 0)
+                                            ReminderScheduler.apply(context)
+                                        }
+                                    },
+                                    label = { Text("19:00") },
+                                )
+                            }
+                        }
                     }
                 }
             }

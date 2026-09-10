@@ -30,6 +30,9 @@ class SettingsStore(
         private val AUDIENCE_MODE_KEY = stringPreferencesKey("audience_mode")
         private val LAST_LESSON_SLUG = stringPreferencesKey("last_lesson_slug")
         private val LAST_LESSON_INDEX = intPreferencesKey("last_lesson_index")
+        private val REMINDER_ENABLED_KEY = booleanPreferencesKey("reminder_enabled")
+        private val REMINDER_HOUR_KEY = intPreferencesKey("reminder_hour")
+        private val REMINDER_MINUTE_KEY = intPreferencesKey("reminder_minute")
         const val LANG_SYSTEM = "system"
         const val LANG_DE = "de"
         const val LANG_EN = "en"
@@ -102,6 +105,29 @@ class SettingsStore(
         dataStore.edit { it[LANGUAGE_KEY] = lang }
         context.getSharedPreferences("kikompetenz_settings", Context.MODE_PRIVATE)
             .edit().putString("language", lang).apply()
+    }
+
+    /** Daily SRS reminder toggle. Default ON — matches the existing always-on scheduling. */
+    val reminderEnabled: Flow<Boolean> = dataStore.data.map { prefs ->
+        prefs[REMINDER_ENABLED_KEY] ?: true
+    }
+
+    /** Reminder time-of-day (hour, minute). Default 19:00 (Abend). */
+    val reminderTime: Flow<Pair<Int, Int>> = dataStore.data.map { prefs ->
+        Pair(prefs[REMINDER_HOUR_KEY] ?: 19, prefs[REMINDER_MINUTE_KEY] ?: 0)
+    }
+
+    /** Enable/disable the daily SRS reminder. */
+    suspend fun setReminderEnabled(enabled: Boolean) {
+        dataStore.edit { it[REMINDER_ENABLED_KEY] = enabled }
+    }
+
+    /** Set the reminder time-of-day preset (hour 0-23, minute 0-59). */
+    suspend fun setReminderTime(hour: Int, minute: Int) {
+        dataStore.edit {
+            it[REMINDER_HOUR_KEY] = hour
+            it[REMINDER_MINUTE_KEY] = minute
+        }
     }
 
     /** Resolve effective language code from preference. */

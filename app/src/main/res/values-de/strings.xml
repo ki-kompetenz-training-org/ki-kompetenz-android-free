@@ -120,6 +120,9 @@
     <string name="profile_lessons_progress">%1$s von %2$s abgeschlossen</string>
     <string name="profile_badges">Abzeichen (%1$d/%2$d freigeschaltet)</string>
     <string name="profile_dsgvo">DSGVO: XP, Level, Serie und Abzeichen werden ausschließlich lokal auf deinem Gerät gespeichert — keine Übermittlung an Server.</string>
+    <string name="reminder_title">Lern-Erinnerung</string>
+    <string name="reminder_desc">Tägliche Erinnerung an fällige Wiederholungskarten</string>
+    <string name="reminder_permission_hint">Benachrichtigungen sind in den Systemeinstellungen deaktiviert</string>
 
     <!-- Lessons -->
     <string name="lessons_title">Lektionen</string>
@@ -273,6 +276,7 @@
     <string name="notif_channel_general_desc">Allgemeine App-Benachrichtigungen</string>
     <string name="notif_srs_title">Karten zur Wiederholung bereit</string>
     <string name="notif_srs_body">Du hast %1$d Karten zur Intervall-Wiederholung bereit. Jetzt üben!</string>
+    <string name="notif_srs_body_zero">Bleib dran — starte heute eine kurze KI-Einheit!</string>
     <string name="notif_permission_title">Benachrichtigungen aktivieren</string>
     <string name="notif_permission_body">Lass dich an fällige Wiederholungskarten erinnern, damit nichts vergessen wird.</string>
     <string name="notif_permission_grant">Benachrichtigungen erlauben</string>
