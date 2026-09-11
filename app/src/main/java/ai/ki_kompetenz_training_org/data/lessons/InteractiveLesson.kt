@@ -109,6 +109,19 @@ data class QuizOption(
     val isCorrect: Boolean,
 )
 
+// ── Cognitive level (Bloom's taxonomy, simplified to 3 tiers) ────────────────
+
+/**
+ * Kognitive Anforderung einer Lektion (vereinfachte Bloom-Taxonomie).
+ * Foundation = Remember/Understand, Application = Apply/Analyze, Mastery = Evaluate/Create.
+ */
+@Serializable
+enum class CognitiveLevel(val labelDe: String, val labelEn: String, val emoji: String) {
+    FOUNDATION("Grundlagen", "Foundation", "📘"),
+    APPLICATION("Anwendung", "Application", "📗"),
+    MASTERY("Expertise", "Mastery", "📕"),
+}
+
 // ── Lesson section (grouped content blocks) ─────────────────────────────────
 
 @Serializable
@@ -133,4 +146,5 @@ data class InteractiveLesson(
     val objectivesEn: List<String>,
     val sections: List<LessonSection>,
     val isPremium: Boolean = false,
+    val cognitiveLevel: CognitiveLevel = CognitiveLevel.FOUNDATION,
 )

@@ -131,6 +131,21 @@ fun InteractiveLessonScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Spacer(Modifier.height(8.dp))
+
+                // Cognitive level (Bloom's taxonomy)
+                val cogLevel = lesson.cognitiveLevel
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                ) {
+                    Text(
+                        "${cogLevel.emoji} ${if (locale == "en") cogLevel.labelEn else cogLevel.labelDe}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    )
+                }
                 Spacer(Modifier.height(12.dp))
 
                 // Objectives

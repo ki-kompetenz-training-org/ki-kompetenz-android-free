@@ -6,12 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -150,10 +150,13 @@ fun RiskThermometerBlock(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Thermometer bar (left)
+            // FIX: Thermometer-Röhre — eine durchgehende Rundung (RoundedCornerShape)
+            // statt 4 einzeln mit CircleShape geclippten Ellipsen.
             BoxWithConstraints(
                 modifier = Modifier
                     .width(48.dp)
-                    .heightIn(min = 260.dp),
+                    .heightIn(min = 260.dp)
+                    .clip(RoundedCornerShape(24.dp)),
             ) {
                 val barHeightPx = maxHeight
                 EuAiActRiskLevels.levels.forEachIndexed { index, level ->
@@ -165,11 +168,6 @@ fun RiskThermometerBlock(
                             .height(barHeightPx / EuAiActRiskLevels.levels.size)
                             .align(Alignment.TopStart)
                             .offset(y = barHeightPx / EuAiActRiskLevels.levels.size * index)
-                            .shadow(
-                                elevation = if (isSelected) 8.dp else 0.dp,
-                                shape = CircleShape,
-                            )
-                            .clip(CircleShape)
                             .clickable {
                                 selectedLevel = index
                                 onInteracted()
@@ -177,8 +175,7 @@ fun RiskThermometerBlock(
                     ) {
                         Surface(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape),
+                                .fillMaxSize(),
                             color = level.color,
                         ) {
                             Box(
@@ -210,17 +207,18 @@ fun RiskThermometerBlock(
                         totalLevels = EuAiActRiskLevels.levels.size,
                     )
 
+                    // FIX: Glow als pulsierender weißer Ring (48dp = Bar-Breite).
+                    // Vorher: same-color fill (unsichtbar) + shadow (vom Tube-Clip abgeschnitten).
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopStart)
-                            .offset(y = barHeightPx * glowFraction - 28.dp)
-                            .size(56.dp)
-                            .shadow(12.dp, CircleShape)
+                            .offset(y = barHeightPx * glowFraction - 24.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                     ) {
                         Surface(
                             modifier = Modifier.fillMaxSize(),
-                            color = EuAiActRiskLevels.levels[selectedLevel].color.copy(alpha = glowAlpha),
+                            color = Color.White.copy(alpha = glowAlpha * 0.25f),
                             shape = CircleShape,
                         ) {}
                     }

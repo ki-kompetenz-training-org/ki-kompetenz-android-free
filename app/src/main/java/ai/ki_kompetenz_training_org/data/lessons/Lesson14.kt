@@ -90,5 +90,6 @@ object Lesson14 {
                 ),
             ),
         ),
+        cognitiveLevel = CognitiveLevel.APPLICATION,
     )
 }

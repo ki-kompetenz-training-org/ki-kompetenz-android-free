@@ -113,4 +113,48 @@ class BundledLessonsTest {
             assertThat(decoded).isEqualTo(BundledLessons.all[index].objectivesDe)
         }
     }
+
+    // ── Cognitive Level (Bloom-Taxonomie) ────────────────────────────────
+
+    @Test
+    fun `CognitiveLevel hat 3 Tier mit lokalen Labels`() {
+        assertThat(CognitiveLevel.entries).hasSize(3)
+        assertThat(CognitiveLevel.FOUNDATION.labelDe).isEqualTo("Grundlagen")
+        assertThat(CognitiveLevel.FOUNDATION.labelEn).isEqualTo("Foundation")
+        assertThat(CognitiveLevel.APPLICATION.labelDe).isEqualTo("Anwendung")
+        assertThat(CognitiveLevel.APPLICATION.labelEn).isEqualTo("Application")
+        assertThat(CognitiveLevel.MASTERY.labelDe).isEqualTo("Expertise")
+        assertThat(CognitiveLevel.MASTERY.labelEn).isEqualTo("Mastery")
+    }
+
+    @Test
+    fun `jede Lektion hat einen CognitiveLevel`() {
+        BundledLessons.all.forEach { lesson ->
+            assertThat(lesson.cognitiveLevel).isNotNull()
+        }
+    }
+
+    @Test
+    fun `Grundlagen-Lektionen sind FOUNDATION`() {
+        val foundationLessons = BundledLessons.all.filter {
+            it.cognitiveLevel == CognitiveLevel.FOUNDATION
+        }.map { it.lessonNumber }
+        // L1-L8 (Grundlagen) + L13 (LLM-Konzepte, verstehen-basiert)
+        assertThat(foundationLessons).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 13)
+    }
+
+    @Test
+    fun `Anwendungs-Lektionen sind APPLICATION`() {
+        val applicationLessons = BundledLessons.all.filter {
+            it.cognitiveLevel == CognitiveLevel.APPLICATION
+        }.map { it.lessonNumber }
+        // L9 (Strategie/ROI), L10 (Prompt Engineering), L11 (Audit), L14 (Green AI)
+        assertThat(applicationLessons).containsExactly(9, 10, 11, 14)
+    }
+
+    @Test
+    fun `Lektion 12 Change Management ist MASTERY`() {
+        val lesson12 = BundledLessons.byId("lesson-12")!!
+        assertThat(lesson12.cognitiveLevel).isEqualTo(CognitiveLevel.MASTERY)
+    }
 }

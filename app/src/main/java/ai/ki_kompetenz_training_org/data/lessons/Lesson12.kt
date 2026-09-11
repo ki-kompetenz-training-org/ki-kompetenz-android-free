@@ -81,5 +81,6 @@ object Lesson12 {
                 ),
             ),
         ),
+        cognitiveLevel = CognitiveLevel.MASTERY,
     )
 }
