@@ -75,8 +75,12 @@ class LessonDetailViewModel(
     // Minimum score to pass the test (60%)
     private val passThreshold = 60
 
-    // Map of lesson slugs to quiz questions (could be moved to API/database later)
-    private val lessonQuizzes: Map<String, List<QuizQuestionDto>> = mapOf(
+    // Fallback quizzes for lessons without a server-provided quiz, per locale.
+    // ponytail: two maps + one-line selector instead of per-string branches.
+    private fun lessonQuizzesFor(slug: String, lang: String): List<QuizQuestionDto> =
+        (if (lang == "en") lessonQuizzesEn else lessonQuizzesDe)[slug] ?: emptyList()
+
+    private val lessonQuizzesDe: Map<String, List<QuizQuestionDto>> = mapOf(
         "lesson-1" to listOf(
             QuizQuestionDto(
                 id = "q1",
@@ -109,7 +113,7 @@ class LessonDetailViewModel(
                 question = "Welche Art von Daten wird für maschinelles Lernen typischerweise verwendet?",
                 options = listOf(
                     "Unstrukturierte Rohdaten",
-                    "Structureierte Daten mit Mustern",
+                    "Strukturierte Daten mit Mustern",
                     "Zufällige Zahlen",
                     "Leere Tabellen"
                 ),
@@ -204,10 +208,138 @@ class LessonDetailViewModel(
         )
     )
 
+    private val lessonQuizzesEn: Map<String, List<QuizQuestionDto>> = mapOf(
+        "lesson-1" to listOf(
+            QuizQuestionDto(
+                id = "q1",
+                question = "What is the main difference between classical software and AI?",
+                options = listOf(
+                    "AI can learn autonomously from data",
+                    "AI is always faster",
+                    "AI does not need the internet",
+                    "AI is only for large enterprises"
+                ),
+                correctAnswerIndex = 0,
+                explanation = "AI systems improve through experience with data, while classical software follows static rules.",
+                points = 25
+            ),
+            QuizQuestionDto(
+                id = "q2",
+                question = "Which of the following is NOT a use case of AI?",
+                options = listOf(
+                    "Spam detection in emails",
+                    "Personalized product recommendations",
+                    "Automatic language translation",
+                    "Manual document sorting"
+                ),
+                correctAnswerIndex = 3,
+                explanation = "Manual sorting requires human intelligence, while the other options can all be automated by AI.",
+                points = 25
+            ),
+            QuizQuestionDto(
+                id = "q3",
+                question = "What type of data is typically used for machine learning?",
+                options = listOf(
+                    "Unstructured raw data",
+                    "Structured data with patterns",
+                    "Random numbers",
+                    "Empty tables"
+                ),
+                correctAnswerIndex = 1,
+                explanation = "Machine learning works best with structured data that shows clear patterns and relationships.",
+                points = 50
+            )
+        ),
+        "lesson-2" to listOf(
+            QuizQuestionDto(
+                id = "q1",
+                question = "Which of the following is NOT a main type of AI?",
+                options = listOf(
+                    "Narrow AI",
+                    "General AI",
+                    "Superintelligent AI",
+                    "Passive AI"
+                ),
+                correctAnswerIndex = 3,
+                explanation = "Passive AI is not a standard term. The three main categories are Narrow AI, General AI, and Superintelligent AI.",
+                points = 33
+            ),
+            QuizQuestionDto(
+                id = "q2",
+                question = "Which type of AI is most commonly used in businesses today?",
+                options = listOf(
+                    "Narrow AI",
+                    "General AI",
+                    "Superintelligent AI",
+                    "All equally common"
+                ),
+                correctAnswerIndex = 0,
+                explanation = "Narrow AI is the most widespread form, as it is optimized for specific tasks.",
+                points = 33
+            ),
+            QuizQuestionDto(
+                id = "q3",
+                question = "What can General AI do that Narrow AI cannot?",
+                options = listOf(
+                    "Perform one specific task",
+                    "Perform any intellectual task a human can",
+                    "Only perform mathematical calculations",
+                    "Only recognize images"
+                ),
+                correctAnswerIndex = 1,
+                explanation = "General AI can handle any intellectual task a human is capable of.",
+                points = 34
+            )
+        ),
+        // Lesson 13: Economic AI usage
+        "lesson-13" to listOf(
+            QuizQuestionDto(
+                id = "q1",
+                question = "What is the most economical strategy for using AI?",
+                options = listOf(
+                    "Use only LLMs for all tasks",
+                    "Use only workflows for all tasks",
+                    "Hybrid: LLM generates, workflow scales",
+                    "Do not use AI at all"
+                ),
+                correctAnswerIndex = 2,
+                explanation = "The most economical strategy is hybrid: the LLM generates creative solutions, the workflow validates and scales them reliably.",
+                points = 34
+            ),
+            QuizQuestionDto(
+                id = "q2",
+                question = "What does the 80/20 rule for AI automation say?",
+                options = listOf(
+                    "80% of costs come from 20% of API calls",
+                    "80% of efficiency comes from 20% of automation",
+                    "80% of errors come from 20% of the code",
+                    "80% of users only use 20% of features"
+                ),
+                correctAnswerIndex = 1,
+                explanation = "The Pareto principle: 80% of efficiency gains come from 20% of automation - the most frequent, repetitive tasks.",
+                points = 33
+            ),
+            QuizQuestionDto(
+                id = "q3",
+                question = "Which is NOT an anti-pattern in AI usage?",
+                options = listOf(
+                    "Solving everything with LLMs, even deterministic tasks",
+                    "Releasing unchecked LLM output to production",
+                    "Workflow without scaling (manual)",
+                    "Hybrid: LLM generates, workflow validates"
+                ),
+                correctAnswerIndex = 3,
+                explanation = "Hybrid (LLM generates, workflow validates) is the BEST practice, not an anti-pattern. The other three are anti-patterns.",
+                points = 33
+            )
+        )
+    )
+
     init {
         viewModelScope.launch(coroutineDispatcher) {
-            contentRepository.fetchLesson(slug, currentLang()).onSuccess { lesson ->
-                val quizQuestions = lessonQuizzes[slug] ?: emptyList()
+            val lang = currentLang()
+            contentRepository.fetchLesson(slug, lang).onSuccess { lesson ->
+                val quizQuestions = lessonQuizzesFor(slug, lang)
                 _state.value = LessonDetailUiState(
                     lesson = lesson,
                     loading = false,
@@ -313,7 +445,7 @@ fun LessonDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.lesson?.title ?: "Lektion") },
+                title = { Text(state.lesson?.title ?: stringResource(R.string.lesson_fallback_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.lessons_back))
@@ -480,7 +612,7 @@ private fun QuizSection(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "📝 Mini-Test",
+                    stringResource(R.string.lesson_quiz_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )

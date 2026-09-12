@@ -425,4 +425,6 @@
     </string-array>
     <string name="learn_more">Mehr erfahren</string>
     <string name="lesson_start_quiz">Test starten</string>
+    <string name="lesson_quiz_title">📝 Mini-Test</string>
+    <string name="lesson_fallback_title">Lektion</string>
 </resources>
