@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -162,12 +164,14 @@ fun RiskThermometerBlock(
                 EuAiActRiskLevels.levels.forEachIndexed { index, level ->
                     val isSelected = selectedLevel == index
 
+                    val levelLabel = if (locale == "en") level.labelEn else level.labelDe
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(barHeightPx / EuAiActRiskLevels.levels.size)
                             .align(Alignment.TopStart)
                             .offset(y = barHeightPx / EuAiActRiskLevels.levels.size * index)
+                            .semantics { contentDescription = levelLabel }
                             .clickable {
                                 selectedLevel = index
                                 onInteracted()
@@ -304,7 +308,13 @@ private fun RiskLevelDetail(
                     color = level.color,
                     modifier = Modifier.weight(1f),
                 )
-                TextButton(onClick = onDismiss, contentPadding = PaddingValues(0.dp)) {
+                TextButton(
+                    onClick = onDismiss,
+                    contentPadding = PaddingValues(0.dp),
+                    modifier = Modifier.semantics {
+                        contentDescription = if (locale == "en") "Close" else "Schließen"
+                    },
+                ) {
                     Text("✕", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
