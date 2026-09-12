@@ -101,7 +101,6 @@ fun InteractiveLessonScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                locale = locale,
                 title = localized(locale, lesson.titleDe, lesson.titleEn),
                 scorePct = avgScore,
                 xpGained = GamificationRules.xpPerCompletedLesson,
@@ -155,7 +154,7 @@ fun InteractiveLessonScreen(
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         Text(
-                            if (locale == "en") "🎯 Learning objectives" else "🎯 Lernziele",
+                            stringResource(R.string.lesson_objectives),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                         )
@@ -233,7 +232,6 @@ fun InteractiveLessonScreen(
 @Composable
 private fun CompletionSummaryContent(
     modifier: Modifier,
-    locale: String,
     title: String,
     scorePct: Int,
     xpGained: Int,
@@ -250,7 +248,7 @@ private fun CompletionSummaryContent(
         Text("🎉", style = MaterialTheme.typography.displayMedium)
         Spacer(Modifier.height(8.dp))
         Text(
-            localized(locale, "Lektion geschafft!", "Lesson complete!"),
+            stringResource(R.string.lesson_completed_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -265,7 +263,7 @@ private fun CompletionSummaryContent(
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                localized(locale, "Ergebnis: ", "Score: ") + "$scorePct%",
+                stringResource(R.string.lesson_completed_score, scorePct),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -284,14 +282,14 @@ private fun CompletionSummaryContent(
                 modifier = Modifier.fillMaxWidth().height(52.dp),
             ) {
                 Text(
-                    localized(locale, "Nächste Lektion", "Next lesson"),
+                    stringResource(R.string.lesson_completed_next),
                     fontWeight = FontWeight.Bold,
                 )
             }
             Spacer(Modifier.height(8.dp))
         } else {
             Text(
-                localized(locale, "Alle Lektionen geschafft! 🏆", "All lessons completed! 🏆"),
+                stringResource(R.string.lesson_completed_all_done),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -303,13 +301,13 @@ private fun CompletionSummaryContent(
             modifier = Modifier.fillMaxWidth().height(48.dp),
         ) {
             Text(
-                localized(locale, "Karten wiederholen", "Review cards"),
+                stringResource(R.string.lesson_completed_srs),
                 fontWeight = FontWeight.SemiBold,
             )
         }
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = onBackToList) {
-            Text(localized(locale, "Zurück zur Übersicht", "Back to overview"))
+            Text(stringResource(R.string.lesson_completed_back))
         }
     }
 }
@@ -558,8 +556,7 @@ private fun ClassificationBlock(
 
     if (!allAssigned) {
         Text(
-            if (locale == "en") "Tap an item, then tap its category"
-            else "Tippe ein Element an, dann seine Kategorie",
+            stringResource(R.string.lesson_classification_instruction),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 6.dp),
@@ -603,7 +600,7 @@ private fun ClassificationBlock(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         ) {
             Text(
-                if (locale == "en") "✅ All items assigned!" else "✅ Alles richtig zugeordnet!",
+                stringResource(R.string.lesson_classification_complete),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(12.dp),
@@ -683,8 +680,7 @@ private fun ClassificationBlock(
     if (wrongFlash != null) {
         Spacer(Modifier.height(4.dp))
         Text(
-            if (locale == "en") "❌ Not there — try again!"
-            else "❌ Nicht dort — versuche es nochmal!",
+            stringResource(R.string.lesson_classification_wrong),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.error,
         )
@@ -695,7 +691,7 @@ private fun ClassificationBlock(
         Spacer(Modifier.height(8.dp))
         TextButton(onClick = onInteracted) {
             Text(
-                if (locale == "en") "✓ Got it" else "✓ Verstanden",
+                stringResource(R.string.lesson_got_it),
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -804,7 +800,7 @@ private fun QuizBlock(
                     val correctAnswer = block.options.indexOfFirst { it.isCorrect }
                     if (correctAnswer >= 0) {
                         Text(
-                            localized(locale, "Richtig: ${block.options[correctAnswer].textDe}", "Correct: ${block.options[correctAnswer].textEn}"),
+                            stringResource(R.string.lesson_correct_prefix, localized(locale, block.options[correctAnswer].textDe, block.options[correctAnswer].textEn)),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                         )
@@ -929,7 +925,7 @@ private fun TrueFalseBlock(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(containerColor = trueColor),
                 ) {
-                    Text(if (locale == "en") "✅ True" else "✅ Wahr")
+                    Text(stringResource(R.string.lesson_true))
                 }
 
                 // False button
@@ -949,7 +945,7 @@ private fun TrueFalseBlock(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.outlinedButtonColors(containerColor = falseColor),
                 ) {
-                    Text(if (locale == "en") "❌ False" else "❌ Falsch")
+                    Text(stringResource(R.string.lesson_false))
                 }
             }
 

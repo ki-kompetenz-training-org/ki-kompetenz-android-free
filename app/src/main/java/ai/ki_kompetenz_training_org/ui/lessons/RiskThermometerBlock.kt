@@ -126,14 +126,12 @@ fun RiskThermometerBlock(
     Column(modifier = Modifier.fillMaxWidth()) {
         // Title
         Text(
-            if (locale == "en") "🌡️ EU AI Act Risk Thermometer"
-            else "🌡️ EU AI Act Risiko-Thermometer",
+            stringResource(R.string.risk_thermometer_title),
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
         )
         Text(
-            if (locale == "en") "Tap a risk level to explore"
-            else "Tippe auf eine Risikostufe zum Erkunden",
+            stringResource(R.string.risk_thermometer_subtitle),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -262,8 +260,7 @@ fun RiskThermometerBlock(
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        if (locale == "en") "Tap a level\nto see details"
-                        else stringResource(R.string.risk_tap_hint),
+                        stringResource(R.string.risk_tap_hint),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -285,6 +282,7 @@ private fun RiskLevelDetail(
     val desc = if (locale == "en") level.descriptionEn else level.descriptionDe
     val examples = if (locale == "en") level.examplesEn else level.examplesDe
     val obligations = if (locale == "en") level.obligationsEn else level.obligationsDe
+    val closeLabel = stringResource(R.string.nav_close)
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -312,7 +310,7 @@ private fun RiskLevelDetail(
                     onClick = onDismiss,
                     contentPadding = PaddingValues(0.dp),
                     modifier = Modifier.semantics {
-                        contentDescription = if (locale == "en") "Close" else "Schließen"
+                        contentDescription = closeLabel
                     },
                 ) {
                     Text("✕", color = MaterialTheme.colorScheme.onSurfaceVariant)

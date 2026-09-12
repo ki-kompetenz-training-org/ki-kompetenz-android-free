@@ -350,6 +350,9 @@
     <string name="seniors_tip_deepfakes">🖼️ Check deepfakes against trusted sources</string>
     <string name="seniors_tip_shopping">🛒 Buy online only with buyer protection</string>
     <string name="risk_tap_hint">Tap a level\nfor details</string>
+    <string name="risk_thermometer_title">🌡️ EU AI Act Risk Thermometer</string>
+    <string name="risk_thermometer_subtitle">Tap a risk level to explore</string>
+    <string name="nav_close">Close</string>
     <string name="error_quiz_load">Could not load the quiz. Check your internet connection.</string>
     <string name="error_srs_load">Could not load due cards</string>
     <string name="error_srs_save">Could not save your rating</string>
@@ -385,6 +388,14 @@
     <string name="lesson_completed_all_done">All lessons completed! 🏆</string>
     <string name="lesson_completed_srs">Review cards</string>
     <string name="lesson_completed_back">Back to overview</string>
+    <string name="lesson_objectives">🎯 Learning objectives</string>
+    <string name="lesson_classification_instruction">Tap an item, then tap its category</string>
+    <string name="lesson_classification_complete">✅ All items assigned!</string>
+    <string name="lesson_classification_wrong">❌ Not there — try again!</string>
+    <string name="lesson_got_it">✓ Got it</string>
+    <string name="lesson_correct_prefix">Correct: %1$s</string>
+    <string name="lesson_true">✅ True</string>
+    <string name="lesson_false">❌ False</string>
     <string name="reward_levelup_title">Level up!</string>
     <string name="reward_badge_title">Badge unlocked!</string>
     <string name="reward_dialog_ok">Awesome!</string>
