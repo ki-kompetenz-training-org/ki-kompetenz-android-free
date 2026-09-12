@@ -497,7 +497,7 @@ private fun QuizSection(
                         onClick = onStartQuiz,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Test starten", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.lesson_start_quiz), fontWeight = FontWeight.Bold)
                     }
                 } else {
                     // Show quiz progress

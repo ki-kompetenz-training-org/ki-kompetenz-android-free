@@ -220,7 +220,7 @@ fun InteractiveLessonScreen(
                         fontWeight = FontWeight.Bold,
                     )
                 } else {
-                    Text("✅ Quizzes bestehen, um abzuschließen", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.lesson_test_to_complete), fontWeight = FontWeight.Bold)
                 }
             }
             Spacer(Modifier.height(32.dp))

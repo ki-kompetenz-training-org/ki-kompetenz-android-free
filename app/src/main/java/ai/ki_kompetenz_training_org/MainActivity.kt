@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import ai.ki_kompetenz_training_org.data.prefs.SettingsStore
@@ -41,8 +40,8 @@ class MainActivity : ComponentActivity() {
         val prefs = newBase.getSharedPreferences("kikompetenz_settings", Context.MODE_PRIVATE)
         val lang = prefs.getString("language", SettingsStore.LANG_SYSTEM) ?: SettingsStore.LANG_SYSTEM
         val locale = when (lang) {
-            SettingsStore.LANG_DE -> Locale("de")
-            SettingsStore.LANG_EN -> Locale("en")
+            SettingsStore.LANG_DE -> Locale.forLanguageTag("de")
+            SettingsStore.LANG_EN -> Locale.forLanguageTag("en")
             else -> Locale.getDefault()
         }
         // Keep the JVM default in sync so Locale.getDefault()-based content

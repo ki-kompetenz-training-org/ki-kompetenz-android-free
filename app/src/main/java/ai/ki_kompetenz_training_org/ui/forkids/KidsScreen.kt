@@ -34,7 +34,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.nav_back),
                         )
                     }
                 },
@@ -76,7 +76,7 @@ fun KidsMenuScreen(onBack: () -> Unit, onOpenLesson: (KidsLesson) -> Unit) {
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        "Mehr erfahren \u2192",
+                        "${stringResource(R.string.learn_more)} \u2192",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium,
                     )
@@ -174,7 +174,7 @@ fun KidsLessonScreen(lesson: KidsLesson, onBack: () -> Unit) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.nav_back),
                         )
                     }
                 },

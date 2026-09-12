@@ -176,7 +176,7 @@ class KiKompetenzApp : Application() {
                     writer.write("Android: ${android.os.Build.VERSION.SDK_INT} (${android.os.Build.VERSION.RELEASE})\n")
                     writer.write("Device: ${android.os.Build.MODEL} (${android.os.Build.MANUFACTURER})\n")
                     writer.write("Version: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})\n")
-                    writer.write("Thread: ${thread.name} (id=${thread.id}, priority=${thread.priority})\n")
+                    writer.write("Thread: ${thread.name} (id=${thread.threadId()}, priority=${thread.priority})\n")
                     writer.write("\n")
 
                     // Write stack trace

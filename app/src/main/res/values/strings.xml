@@ -423,4 +423,6 @@
         <item>Nutzung</item>
         <item>Kontext</item>
     </string-array>
+    <string name="learn_more">Mehr erfahren</string>
+    <string name="lesson_start_quiz">Test starten</string>
 </resources>

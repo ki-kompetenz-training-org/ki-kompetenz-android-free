@@ -17,12 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlin.math.sin
+import ai.ki_kompetenz_training_org.R
 
 /**
  * KiBot scene orchestrator.
@@ -85,11 +87,13 @@ fun KiBotScene(
         state.xpIntoLevel.toFloat() / state.xpNeeded
     } else 1f
 
+    val kibotDesc = stringResource(R.string.kibot_level, state.level)
+
     // ── Compose layers ──
     BoxWithConstraints(
         modifier = modifier
             .semantics {
-                contentDescription = "Dein KI-Begleiter, Level ${state.level}"
+                contentDescription = kibotDesc
             }
             .clip(RoundedCornerShape(20.dp)),
         contentAlignment = Alignment.Center,

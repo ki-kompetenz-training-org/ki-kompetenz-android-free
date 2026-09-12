@@ -31,7 +31,7 @@ fun SeniorsMenuScreen(onBack: () -> Unit, onOpenLesson: (SeniorsLesson) -> Unit)
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.nav_back),
                         )
                     }
                 },
@@ -142,7 +142,7 @@ fun SeniorsLessonScreen(lesson: SeniorsLesson, onBack: () -> Unit) {
                     IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.nav_back),
                         )
                     }
                 },
