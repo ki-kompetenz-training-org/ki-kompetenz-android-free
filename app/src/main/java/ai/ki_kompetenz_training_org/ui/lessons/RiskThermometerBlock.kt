@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.ui.lessons
 import androidx.compose.animation.core.*
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.shape.CircleShape
@@ -12,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -209,6 +209,7 @@ fun RiskThermometerBlock(
 
                     // FIX: Glow als pulsierender weißer Ring (48dp = Bar-Breite).
                     // Vorher: same-color fill (unsichtbar) + shadow (vom Tube-Clip abgeschnitten).
+                    // Ring statt Fill, damit das Emoji nicht überdeckt wird.
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopStart)
@@ -218,7 +219,11 @@ fun RiskThermometerBlock(
                     ) {
                         Surface(
                             modifier = Modifier.fillMaxSize(),
-                            color = Color.White.copy(alpha = glowAlpha * 0.25f),
+                            color = Color.Transparent,
+                            border = BorderStroke(
+                                3.dp,
+                                Color.White.copy(alpha = glowAlpha),
+                            ),
                             shape = CircleShape,
                         ) {}
                     }
@@ -282,7 +287,7 @@ private fun RiskLevelDetail(
         colors = CardDefaults.cardColors(
             containerColor = level.color.copy(alpha = 0.1f),
         ),
-        border = androidx.compose.foundation.BorderStroke(
+        border = BorderStroke(
             1.dp,
             level.color.copy(alpha = 0.3f),
         ),
