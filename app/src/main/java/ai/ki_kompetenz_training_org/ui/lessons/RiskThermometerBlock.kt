@@ -325,7 +325,7 @@ private fun RiskLevelDetail(
 
             // Examples — FIX (BUG 2026-09-01): war vorher in beiden Locales deutsch
             Text(
-                ThermometerMath.examplesLabel(locale),
+                stringResource(R.string.risk_examples_label),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )
@@ -337,7 +337,7 @@ private fun RiskLevelDetail(
 
             // Obligations — FIX (BUG 2026-09-01): sprachabhängig via ThermometerMath
             Text(
-                ThermometerMath.obligationsLabel(locale),
+                stringResource(R.string.risk_obligations_label),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
             )

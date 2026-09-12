@@ -61,24 +61,4 @@ class ThermometerMathTest {
             ThermometerMath.glowCenterFraction(selectedLevel = 0, totalLevels = 0)
         }
     }
-
-    // ── BUG-1: Locale-Strings ────────────────────────────────────────────
-
-    @Test
-    fun `Beispiele-Label ist sprachabhängig`() {
-        assertThat(ThermometerMath.examplesLabel("de")).isEqualTo("Beispiele:")
-        assertThat(ThermometerMath.examplesLabel("en")).isEqualTo("Examples:")
-    }
-
-    @Test
-    fun `Pflichten-Label ist sprachabhängig`() {
-        assertThat(ThermometerMath.obligationsLabel("de")).isEqualTo("Pflichten:")
-        assertThat(ThermometerMath.obligationsLabel("en")).isEqualTo("Obligations:")
-    }
-
-    @Test
-    fun `unbekannte Locale fällt auf Deutsch zurück`() {
-        assertThat(ThermometerMath.examplesLabel("fr")).isEqualTo("Beispiele:")
-        assertThat(ThermometerMath.obligationsLabel("es")).isEqualTo("Pflichten:")
-    }
 }

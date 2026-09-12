@@ -353,6 +353,8 @@
     <string name="risk_thermometer_title">🌡️ EU AI Act Risiko-Thermometer</string>
     <string name="risk_thermometer_subtitle">Tippe auf eine Risikostufe zum Erkunden</string>
     <string name="nav_close">Schließen</string>
+    <string name="risk_examples_label">Beispiele:</string>
+    <string name="risk_obligations_label">Pflichten:</string>
     <string name="error_quiz_load">Quiz konnte nicht geladen werden. Prüfe deine Internetverbindung.</string>
     <string name="error_srs_load">Fällige Karten konnten nicht geladen werden</string>
     <string name="error_srs_save">Bewertung konnte nicht gespeichert werden</string>

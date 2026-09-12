@@ -14,8 +14,6 @@ package ai.ki_kompetenz_training_org.ui.lessons
  *   Column-Unterseite → falsche Position + Layout-Verschiebung.
  *   Fix: [glowCenterFraction] liefert den relativen Segmentmittelpunkt
  *   (0f..1f), das Composable multipliziert mit der REAL gemessenen Höhe.
- * - "Beispiele:"/"Pflichten:" waren in beiden Locales deutsch.
- *   Fix: [examplesLabel]/[obligationsLabel].
  */
 object ThermometerMath {
 
@@ -35,12 +33,4 @@ object ThermometerMath {
         }
         return (selectedLevel + 0.5f) / totalLevels
     }
-
-    /** Label über der Beispielliste, sprachabhängig. */
-    fun examplesLabel(locale: String): String =
-        if (locale == "en") "Examples:" else "Beispiele:"
-
-    /** Label über der Pflichtenliste, sprachabhängig. */
-    fun obligationsLabel(locale: String): String =
-        if (locale == "en") "Obligations:" else "Pflichten:"
 }
