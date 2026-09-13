@@ -20,20 +20,20 @@ import kotlinx.serialization.json.Json
 object BundledLessons {
 
     val all: List<InteractiveLesson> = listOf(
-        Lesson1.lesson,
-        Lesson2.lesson,
-        Lesson3.lesson,
-        Lesson4.lesson,
-        Lesson5.lesson,
-        Lesson6.lesson,
-        Lesson7.lesson,
-        Lesson8.lesson,
-        Lesson9.lesson,
-        Lesson10.lesson,
-        Lesson11.lesson,
-        Lesson12.lesson,
-        Lesson13.lesson,
-        Lesson14.lesson,
+        Lesson1.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson2.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson3.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson4.lesson.copy(primaryDomain = "Datenschutz & DSGVO"),
+        Lesson5.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson6.lesson.copy(primaryDomain = "KI-Tools im Arbeitsalltag"),
+        Lesson7.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson8.lesson.copy(primaryDomain = "Erlaubte & verbotene Nutzung"),
+        Lesson9.lesson.copy(primaryDomain = "EU AI Act & Risikoklassen"),
+        Lesson10.lesson.copy(primaryDomain = "KI-Tools im Arbeitsalltag"),
+        Lesson11.lesson.copy(primaryDomain = "KI-Governance im Unternehmen"),
+        Lesson12.lesson.copy(primaryDomain = "Transparenzpflichten"),
+        Lesson13.lesson.copy(primaryDomain = "Grundlagen der KI"),
+        Lesson14.lesson.copy(primaryDomain = "KI-Tools im Arbeitsalltag"),
     )
 
     private val json = Json { ignoreUnknownKeys = true }

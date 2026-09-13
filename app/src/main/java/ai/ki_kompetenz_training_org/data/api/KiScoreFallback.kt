@@ -29,6 +29,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Art. 4 gilt seit Inkrafttreten der Verordnung im Februar 2025. Unternehmen, die KI einsetzen, müssen die KI-Kompetenz ihrer Mitarbeiter jetzt sicherstellen.",
                     emoji = "📅",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 2,
@@ -37,6 +38,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Halluzinationen sind überzeugend klingende, aber sachlich falsche Aussagen — ein großes Risiko bei LLMs wie ChatGPT.",
                     emoji = "🤥",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 3,
@@ -45,6 +47,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Shadow AI ist die nicht autorisierte Nutzung von KI-Tools durch Mitarbeiter — ein Compliance-Risiko!",
                     emoji = "🕵️",
+                    domain = "KI-Governance im Unternehmen",
                 ),
                 KiScoreQuestionDto(
                     id = 4,
@@ -53,6 +56,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Der Arbeitgeber muss sicherstellen, dass Mitarbeiter, die KI einsetzen, ausreichende Kompetenz haben.",
                     emoji = "🏢",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 5,
@@ -61,6 +65,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Social Scoring durch öffentliche Stellen ist verboten. Auch manipulative Deepfakes und Emotionserkennung am Arbeitsplatz sind untersagt.",
                     emoji = "🚫",
+                    domain = "Erlaubte & verbotene Nutzung",
                 ),
                 KiScoreQuestionDto(
                     id = 6,
@@ -69,6 +74,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Generative KI-Inhalte müssen nach dem EU AI Act als solches gekennzeichnet werden — Transparenz ist Pflicht!",
                     emoji = "🏷️",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 7,
@@ -77,6 +83,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "ML-Modelle erkennen Muster in Trainingsdaten. Die Qualität der Daten bestimmt die Qualität der Ergebnisse — „Garbage in, Garbage out“.",
                     emoji = "🧠",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 8,
@@ -85,6 +92,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "KI-Systeme zur Bewertung der Kreditwürdigkeit sind Hochrisiko-Anwendungen (Art. 6, Anhang III) mit strengen Anforderungen an Datenschutz und Explainability.",
                     emoji = "⚠️",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 9,
@@ -93,6 +101,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Nach EU AI Act müssen Hochrisiko-Systeme ein Risikomanagement-System, Qualitätsmanagement-System, technische Dokumentation und Konformitätsbewertung haben (Art. 9-15).",
                     emoji = "📋",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 10,
@@ -101,6 +110,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "MiC (Minimal Internal Control) ist ein schlanker interner Steuerungsrahmen: menschliche Aufsicht, Transparenz und klare Verantwortung für jede KI-Anwendung im Unternehmen — ohne überbordendes Bürokratie-Setup.",
                     emoji = "🎛️",
+                    domain = "KI-Governance im Unternehmen",
                 ),
                 KiScoreQuestionDto(
                     id = 11,
@@ -109,6 +119,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "LLMs (wie GPT, Claude, Llama) sind neuronale Netze, die Muster in riesigen Textmengen lernen und darauf basierend Sprache verstehen und erzeugen.",
                     emoji = "🧠",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 12,
@@ -117,6 +128,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Ein Prompt ist die Formulierung, mit der du ein KI-System steuerst. Klare Prompts mit Kontext und Beispielen liefern deutlich bessere Ergebnisse.",
                     emoji = "⌨️",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 13,
@@ -125,6 +137,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Art. 4 verpflichtet Arbeitgeber, die KI einsetzen, ausreichende KI-Kompetenz bei den betroffenen Mitarbeitern sicherzustellen — unabhängig von der Unternehmensgröße.",
                     emoji = "🏢",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 14,
@@ -133,6 +146,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "Generative KI (z. B. ChatGPT, Midjourney) erstellt neue Inhalte auf Basis von Trainingsdaten. Die Kennzeichnungspflicht solcher Inhalte ist ein Kernpunkt des EU AI Act.",
                     emoji = "✨",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 15,
@@ -141,6 +155,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Wer KI-Inhalte nutzt, bleibt verantwortlich: Urheberrecht, Lizenzen und Korrektheit müssen geprüft werden. KI-Output ist kein Freibrief.",
                     emoji = "⚖️",
+                    domain = "Haftung & Compliance",
                 ),
                 KiScoreQuestionDto(
                     id = 16,
@@ -149,6 +164,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Bias entsteht, wenn Trainingsdaten Vorurteile enthalten — z. B. bei Bewerbungs- oder Kreditentscheidungen. Deshalb sind solche Systeme im EU AI Act als Hochrisiko eingestuft.",
                     emoji = "⚖️",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 17,
@@ -157,6 +173,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Öffentliche KI-Tools können Eingaben zum Training nutzen. Vertrauliche oder personenbezogene Daten gehören nur nach Prüfung hinein (DSGVO, Betriebsgeheimnisse).",
                     emoji = "🔒",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 18,
@@ -165,6 +182,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Generative KI-Inhalte müssen laut EU AI Act als KI-generiert gekennzeichnet werden — Transparenz ist Pflicht.",
                     emoji = "🏷️",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 19,
@@ -173,6 +191,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Human Oversight heißt: Menschen behalten die Kontrolle über KI-Entscheidungen und können eingreifen — ein Kernprinzip des EU AI Act.",
                     emoji = "👁️",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 20,
@@ -181,6 +200,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "KI-Texte sind oft stark strukturiert, formelhaft und ohne persönliche Note. Deshalb: kritisch prüfen — gerade bei Fakten und Zahlen.",
                     emoji = "🔍",
+                    domain = "KI-Tools im Arbeitsalltag",
                 ),
                 KiScoreQuestionDto(
                     id = 21,
@@ -189,6 +209,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Der EU AI Act verlangt Human Oversight je nach Risikoklasse: je folgenreicher die Agenten-Entscheidung, desto mehr menschliche Kontrolle.",
                     emoji = "🤖",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 22,
@@ -197,6 +218,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Der Einsatz von KI-Agenten ist dem Betreiber zurechenbar: Haftung und Art. 4-Kompetenzpflicht liegen beim einsetzenden Unternehmen.",
                     emoji = "⚖️",
+                    domain = "Haftung & Compliance",
                 ),
                 KiScoreQuestionDto(
                     id = 23,
@@ -205,6 +227,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "Wer KI-generierte Inhalte verwendet und weitergibt, ist verantwortlich.",
                     emoji = "📧",
+                    domain = "Haftung & Compliance",
                 ),
                 KiScoreQuestionDto(
                     id = 24,
@@ -213,6 +236,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "Eine DSFA (Art. 35 DSGVO) ist nur bei hohem Risiko nötig — etwa bei Gesundheitsdaten oder Profilbildung.",
                     emoji = "🔒",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 25,
@@ -221,6 +245,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "KI-Code muss wie jeder fremde Code geprüft werden — nicht blind, aber auch nicht grundsätzlich ablehnen.",
                     emoji = "💻",
+                    domain = "Haftung & Compliance",
                 ),
                 KiScoreQuestionDto(
                     id = 26,
@@ -229,6 +254,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Bias entsteht aus gesellschaftlichen Verzerrungen in Trainingsdaten. Bewerbungs-Tools sind Hochrisiko-KI (Art. 6).",
                     emoji = "⚠️",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 27,
@@ -237,6 +263,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Dokumentenklassifikation ohne Personenrechte fällt unter minimales Risiko.",
                     emoji = "📂",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 28,
@@ -245,6 +272,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "KI-Chatbots fallen unter begrenztes Risiko (Art. 52): Nutzer müssen über die KI-Beteiligung informiert werden.",
                     emoji = "💬",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 29,
@@ -253,6 +281,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Firmendokumente über externe Tools: Vertraulichkeit, DSGVO und Geschäftsgeheimnisse sind gefährdet.",
                     emoji = "📤",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 30,
@@ -261,6 +290,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Training: Muster aus Daten lernen. Inference: Gelerntes auf neue Daten anwenden.",
                     emoji = "🏋️",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 31,
@@ -269,6 +299,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "KI kann bei Dokumentation und Mustererkennung helfen, ersetzt den DSB aber nicht. Endgültige Bewertung durch Menschen.",
                     emoji = "🧑‍⚖️",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 32,
@@ -277,6 +308,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Ein KI-Inventar ist der erste Schritt: Wer nutzt welche KI wofür? Ohne Übersicht keine Governance.",
                     emoji = "📋",
+                    domain = "KI-Governance im Unternehmen",
                 ),
                 KiScoreQuestionDto(
                     id = 33,
@@ -285,6 +317,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "KI-gesteuerte Qualitätskontrolle ist Hochrisiko-KI (Anhang I) — erlaubt mit Risikomanagement und Human Oversight.",
                     emoji = "🏭",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 34,
@@ -293,6 +326,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Always verify: Jede KI-Aussage gegen verifizierbare Quellen prüfen. Halluzinationen sind häufig.",
                     emoji = "✅",
+                    domain = "KI-Tools im Arbeitsalltag",
                 ),
                 KiScoreQuestionDto(
                     id = 35,
@@ -301,6 +335,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Generalisierung: KI funktioniert auf Daten, die sie im Training nie gesehen hat.",
                     emoji = "🎯",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 36,
@@ -309,6 +344,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Art. 14: Bei Hochrisiko-KI haben Betroffene das Recht auf Erklärung der Entscheidungen.",
                     emoji = "📋",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 37,
@@ -317,6 +353,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Prompt Injection ist ein reales Sicherheitsrisiko: Eingaben können KI dazu bringen, System-Overrides zu ignorieren.",
                     emoji = "💉",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 38,
@@ -325,6 +362,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Anhang I Nr. 1: KI für medizinische Diagnostik ist explizit Hochrisiko.",
                     emoji = "🏥",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 39,
@@ -333,6 +371,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "Profiling erfordert DSGVO-Einwilligung. Art. 22 schützt gegen ausschließlich automatisierte Entscheidungen.",
                     emoji = "📣",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 40,
@@ -341,6 +380,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "DSGVO seit 2018: Art. 22 (automatisierte Entscheidungen), Art. 35 (DSFA) gelten auch für KI.",
                     emoji = "📜",
+                    domain = "Datenschutz & DSGVO",
                 ),
                 KiScoreQuestionDto(
                     id = 41,
@@ -349,6 +389,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Art. 5 Abs. 1 lit. h: Emotionserkennung am Arbeitsplatz ist ausdrücklich verboten.",
                     emoji = "😀",
+                    domain = "Erlaubte & verbotene Nutzung",
                 ),
                 KiScoreQuestionDto(
                     id = 42,
@@ -357,6 +398,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "RAG: KI holt Dokumente aus einer Datenbank und antwortet auf Basis dieser verifizierten Quellen.",
                     emoji = "📚",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 43,
@@ -365,6 +407,7 @@ object KiScoreFallback {
                     correct = 3,
                     explanation = "KI für juristische Entscheidungen ist Hochrisiko. Kostenlose Apps können Daten speichern und halluzinieren.",
                     emoji = "⚖️",
+                    domain = "EU AI Act & Risikoklassen",
                 ),
                 KiScoreQuestionDto(
                     id = 44,
@@ -373,6 +416,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Explainability ist gesetzlich gefordert und hilft Mitarbeitern, KI-Vorschläge fundiert zu bewerten.",
                     emoji = "🔍",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 45,
@@ -381,6 +425,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "Art. 4 fordert ausreichende KI-Kompetenz — die Umsetzung ist dem Unternehmen überlassen.",
                     emoji = "🏢",
+                    domain = "KI-Governance im Unternehmen",
                 ),
                 KiScoreQuestionDto(
                     id = 46,
@@ -389,6 +434,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Bei KI-Fehlern: Kunden informieren, Ursache beheben, Vorfall dokumentieren — alle gleichzeitig.",
                     emoji = "🔧",
+                    domain = "Haftung & Compliance",
                 ),
                 KiScoreQuestionDto(
                     id = 47,
@@ -397,6 +443,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Overfitting: Modell hat auswendig gelernt statt Muster verstanden.",
                     emoji = "📐",
+                    domain = "Grundlagen der KI",
                 ),
                 KiScoreQuestionDto(
                     id = 48,
@@ -405,6 +452,7 @@ object KiScoreFallback {
                     correct = 2,
                     explanation = "Art. 52: KI-generierte Inhalte kennzeichnen. Urheberrechte und Persönlichkeitsrechte beachten.",
                     emoji = "🖼️",
+                    domain = "Transparenzpflichten",
                 ),
                 KiScoreQuestionDto(
                     id = 49,
@@ -413,6 +461,7 @@ object KiScoreFallback {
                     correct = 1,
                     explanation = "AI Policy: Regeln für die Nutzung. KI-Strategie: Übergeordnete Ziele.",
                     emoji = "📋",
+                    domain = "KI-Governance im Unternehmen",
                 ),
                 KiScoreQuestionDto(
                     id = 50,
@@ -421,6 +470,7 @@ object KiScoreFallback {
                     correct = 0,
                     explanation = "Firmeninhalte über private KI: Vertraulichkeit, DSGVO-Compliance und Geschäftsgeheimnisse gefährdet.",
                     emoji = "🚨",
+                    domain = "Datenschutz & DSGVO",
                 ),
             ),
             tiers = listOf(

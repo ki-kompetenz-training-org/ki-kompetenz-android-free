@@ -139,8 +139,8 @@ class BundledLessonsTest {
         val foundationLessons = BundledLessons.all.filter {
             it.cognitiveLevel == CognitiveLevel.FOUNDATION
         }.map { it.lessonNumber }
-        // L1-L8 (Grundlagen) + L13 (LLM-Konzepte, verstehen-basiert)
-        assertThat(foundationLessons).containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 13)
+        // L1-L8 (Grundlagen)
+        assertThat(foundationLessons).containsExactly(1, 2, 3, 4, 5, 6, 7, 8)
     }
 
     @Test
@@ -148,8 +148,8 @@ class BundledLessonsTest {
         val applicationLessons = BundledLessons.all.filter {
             it.cognitiveLevel == CognitiveLevel.APPLICATION
         }.map { it.lessonNumber }
-        // L9 (Strategie/ROI), L10 (Prompt Engineering), L11 (Audit), L14 (Green AI)
-        assertThat(applicationLessons).containsExactly(9, 10, 11, 14)
+        // L9 (Strategie/ROI), L10 (Prompt Engineering), L11 (Audit), L13 (LLM/RAG-Anwendung), L14 (Green AI)
+        assertThat(applicationLessons).containsExactly(9, 10, 11, 13, 14)
     }
 
     @Test

@@ -77,6 +77,15 @@ sealed class ContentBlock {
         val titleDe: String = "EU AI Act Risiko-Thermometer",
         val titleEn: String = "EU AI Act Risk Thermometer",
     ) : ContentBlock()
+
+    /** Übung: Prompt schreiben, Modelllösung aufdecken. Kein Quiz — keine Wertung. */
+    @Serializable
+    data class PromptExercise(
+        val promptDe: String,
+        val promptEn: String,
+        val modelAnswerDe: String,
+        val modelAnswerEn: String,
+    ) : ContentBlock()
 }
 
 @Serializable
@@ -147,4 +156,7 @@ data class InteractiveLesson(
     val sections: List<LessonSection>,
     val isPremium: Boolean = false,
     val cognitiveLevel: CognitiveLevel = CognitiveLevel.FOUNDATION,
+
+    /** Zuständiges Kompetenz-Domain aus [ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank.DOMAINS]; leer = kein Tracking. */
+    val primaryDomain: String = "",
 )

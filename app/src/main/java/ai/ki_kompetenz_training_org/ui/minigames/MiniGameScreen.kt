@@ -33,6 +33,7 @@ import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
 import ai.ki_kompetenz_training_org.data.minigames.MiniGameRound
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
@@ -50,7 +51,8 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
         )
     }
     val vm: MiniGameViewModel = viewModel(key = game.id) {
-        MiniGameViewModel(game, app.gamificationRepository, dailyRepo)
+        val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+        MiniGameViewModel(game, app.gamificationRepository, dailyRepo, masteryTracker = MasteryTracker(prefs))
     }
     val state by vm.state.collectAsState()
     RewardDialogHost(rewardCenter = app.rewardCenter)

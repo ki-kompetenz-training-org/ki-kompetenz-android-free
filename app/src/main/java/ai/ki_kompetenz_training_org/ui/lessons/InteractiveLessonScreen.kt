@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
+import android.content.Context
 
 // ── Locale helper ──────────────────────────────────────────────────────────
 
@@ -69,6 +71,11 @@ fun InteractiveLessonScreen(
 
     // Reward celebrations at result moments (completion summary) - not mid-round
     val rewardCenter = KiKompetenzApp.from(LocalContext.current).rewardCenter
+    // GAP-1: Quiz-Ergebnisse speisen den KIKI-Kompetenz-Index pro Domain
+    val context = LocalContext.current
+    val masteryTracker = remember {
+        MasteryTracker(context.getSharedPreferences("kikompetenz_gamification", Context.MODE_PRIVATE))
+    }
     RewardDialogHost(rewardCenter = rewardCenter)
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -179,6 +186,9 @@ fun InteractiveLessonScreen(
                     onSectionComplete = { completedSectionsState.add(secIdx) },
                     onQuizScore = { score ->
                         quizScoresState[secIdx] = score
+                        if (lesson.primaryDomain.isNotEmpty()) {
+                            masteryTracker.recordResult(lesson.primaryDomain, score >= 70)
+                        }
                         // Recalculate
                         allQuizzesPassed = InteractiveLessonLogic.isLessonPassed(lesson, quizScoresState)
                     },
@@ -394,6 +404,7 @@ private fun ContentBlockRenderer(
         is ContentBlock.Quiz -> QuizBlock(block, locale, onQuizScore, onInteracted)
         is ContentBlock.FillBlank -> FillBlankBlock(block, locale, onInteracted)
         is ContentBlock.TrueFalse -> TrueFalseBlock(block, locale, onInteracted)
+        is ContentBlock.PromptExercise -> PromptExerciseBlock(block, locale)
         is ContentBlock.RiskThermometer -> RiskThermometerBlock(
             locale = locale,
             onInteracted = onInteracted,
@@ -490,6 +501,57 @@ private fun KnowledgeCheckBlock(block: ContentBlock.KnowledgeCheck, locale: Stri
                 TextButton(onClick = { revealed = true }) {
                     Text(
                         stringResource(R.string.lesson_reveal_answer),
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ── Prompt exercise block (no scoring, pure practice) ──────────────────────
+
+@Composable
+private fun PromptExerciseBlock(block: ContentBlock.PromptExercise, locale: String) {
+    var answer by remember { mutableStateOf("") }
+    var revealed by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.tertiary),
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                localized(locale, block.promptDe, block.promptEn),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(
+                value = answer,
+                onValueChange = { answer = it },
+                modifier = Modifier.fillMaxWidth(),
+                minLines = 3,
+                // ponytail: Label hartkodiert — strings.xml ist außerhalb des Task-Scopes
+                label = { Text(localized(locale, "Dein Prompt", "Your prompt")) },
+            )
+            if (revealed) {
+                Spacer(Modifier.height(8.dp))
+                HorizontalDivider()
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    localized(locale, block.modelAnswerDe, block.modelAnswerEn),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            } else {
+                Spacer(Modifier.height(8.dp))
+                TextButton(
+                    onClick = { revealed = true },
+                    enabled = answer.isNotBlank(),
+                ) {
+                    Text(
+                        localized(locale, "Modellloesung anzeigen", "Show model answer"),
                         fontWeight = FontWeight.Bold,
                     )
                 }

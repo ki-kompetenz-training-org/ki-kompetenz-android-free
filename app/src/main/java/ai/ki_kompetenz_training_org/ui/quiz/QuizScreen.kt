@@ -20,6 +20,7 @@ import ai.ki_kompetenz_training_org.ui.common.Haptics
 import ai.ki_kompetenz_training_org.data.repo.GamificationRules
 import ai.ki_kompetenz_training_org.data.repo.RewardFormat
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -38,8 +39,11 @@ import androidx.compose.ui.graphics.Color as ComposeColor
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 fun QuizScreen(onBack: () -> Unit) {
     val app = KiKompetenzApp.from(LocalContext.current)
+    val prefs = remember {
+        app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+    }
     val vm: QuizViewModel = viewModel {
-        QuizViewModel(app.contentRepository, app.db, app.gamificationRepository)
+        QuizViewModel(app.contentRepository, app.db, app.gamificationRepository, masteryTracker = MasteryTracker(prefs))
     }
     val state by vm.state.collectAsState()
     val context = LocalContext.current

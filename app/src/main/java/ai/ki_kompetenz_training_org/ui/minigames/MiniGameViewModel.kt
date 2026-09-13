@@ -7,6 +7,7 @@ import ai.ki_kompetenz_training_org.data.daily.DailyChallengeSelector
 import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGameRound
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,7 @@ class MiniGameViewModel(
     private val gamification: GamificationRepository,
     private val dailyChallengeRepository: DailyChallengeRepository? = null,
     private val rng: Random = Random.Default,
+    private val masteryTracker: MasteryTracker? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MiniGameUiState())
@@ -48,9 +50,13 @@ class MiniGameViewModel(
         val s = _state.value
         if (s.phase != GamePhase.PLAYING || s.selectedOption != null) return
         val round = sessionRounds.getOrNull(s.currentIndex) ?: return
+        val isCorrect = optionIndex == round.correctIndex
+        if (masteryTracker != null && game.primaryDomain.isNotEmpty()) {
+            masteryTracker.recordResult(game.primaryDomain, isCorrect)
+        }
         _state.value = s.copy(
             selectedOption = optionIndex,
-            answers = s.answers + (optionIndex == round.correctIndex),
+            answers = s.answers + isCorrect,
         )
     }
 

@@ -67,6 +67,18 @@ object SeniorsLessons {
                     "Beim Einloggen kommt zusätzlich ein Code per\nSMS oder per App auf Ihr Handy.\n\n" +
                     "Selbst wenn jemand Ihr Passwort stiehlt, kommt\ner nicht hinein — ihm fehlt der zweite Code.",
                 keyTakeaway = "Merksatz: Passwort plus Code — doppelt sicher.\nSchalten Sie 2FA überall ein, wo es angeboten wird (Bank, E-Mail, Online-Konten).",
+            ),
+            SeniorsSection(
+                title = "KI und Passwörter",
+                emoji = "🤖",
+                content = "KI-gestützte Angriffe können Passwörter schneller\nknacken. Nutzen Sie lange Passphrasen statt kurzer\nPasswörter. Ein Passwort-Manager schützt vor\nKI-gestützten Brute-Force-Angriffen.",
+                keyTakeaway = "KI macht kurze Passwörter noch unsicherer — nutzen Sie lange Passphrasen.",
+                quiz = SeniorsQuiz(
+                    question = "Was schützt besser vor KI-gestützten Passwort-Angriffen?",
+                    options = listOf("Ein kurzes komplexes Passwort", "Eine lange Passphrase", "Das gleiche Passwort überall", "Kein Passwort"),
+                    correctIndex = 1,
+                    explanation = "Lange Passphrasen sind auch für KI schwerer zu knacken.",
+                )
             )
         )
     )
@@ -96,6 +108,18 @@ object SeniorsLessons {
                     correctIndex = 1,
                     explanation = "Keine Bank fordert je Zugangsdaten per E-Mail an. Löschen Sie die E-Mail und rufen Sie selbst bei der Bank an!",
                 )
+            ),
+            SeniorsSection(
+                title = "KI-verstärktes Phishing",
+                emoji = "🤖",
+                content = "KI kann überzeugende Phishing-E-Mails und Stimmen\ngenerieren. Prüfen Sie immer den Absender, seien Sie\nmisstrauisch bei Dringlichkeit, und rufen Sie nicht bei\nangegebenen Nummern zurück.",
+                keyTakeaway = "KI macht Phishing personalisierter — immer den Absender prüfen.",
+                quiz = SeniorsQuiz(
+                    question = "Was ist ein Zeichen für KI-verstärktes Phishing?",
+                    options = listOf("Persönliche Anrede mit korrektem Namen", "Fehlerfreie Grammatik", "Beides — KI macht Phishing überzeugender", "Komische Rechtschreibung"),
+                    correctIndex = 2,
+                    explanation = "KI-generierte Phishing-E-Mails sind oft grammatikalisch perfekt und personalisiert.",
+                )
             )
         )
     )
@@ -123,6 +147,18 @@ object SeniorsLessons {
                     options = listOf("Große Rabatte (70% auf alles)", "Vorhandenes Impressum mit Name und Adresse", "Nur Überweisung als Zahlungsmethode", "Keine AGB"),
                     correctIndex = 1,
                     explanation = "Ein seriöser Händler hat immer ein Impressum mit vollständigen Angaben!",
+                )
+            ),
+            SeniorsSection(
+                title = "KI-Shopping-Assistenten",
+                emoji = "🤖",
+                content = "KI-Shopping-Assistenten können Preise vergleichen und\nEmpfehlungen geben. Aber sie können auch geteilt anzeigen\nund versteckte Kriterien nutzen. Prüfen Sie\nEmpfehlungen kritisch.",
+                keyTakeaway = "KI-Empfehlungen sind nicht neutral — prüfen Sie die Quelle.",
+                quiz = SeniorsQuiz(
+                    question = "Worauf sollten Sie bei KI-Shopping-Empfehlungen achten?",
+                    options = listOf("Sie sind immer objektiv", "Sie können geteilt sein", "Sie sind immer günstiger", "Sie ersetzen den Kauf"),
+                    correctIndex = 1,
+                    explanation = "KI-Empfehlungen können durch Werbung oder Sponsoring beeinflusst sein.",
                 )
             )
         )

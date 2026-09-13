@@ -40,6 +40,8 @@ data class MiniGame(
     val kind: MiniGameKind = MiniGameKind.QUIZ,
     /** For ADAPTIVE_QUIZ: restrict statement selection to these LiteracyBank domains (null = all). */
     val domainFilter: List<String>? = null,
+    /** KIKI competency domain recorded into MasteryTracker per answer for QUIZ/FAKE_OR_REAL games ("" = no tracking; adaptive games track via AdaptiveQuizViewModel). */
+    val primaryDomain: String = "",
 ) {
     fun title(lang: String): String = if (lang == "de") titleDe else titleEn
     fun description(lang: String): String = if (lang == "de") descriptionDe else descriptionEn
@@ -67,6 +69,7 @@ object MiniGames {
     // FREE GAME: KI oder Mensch?
     private val human_or_ai = MiniGame(
         id = "human_or_ai", emoji = "🤖", 
+        primaryDomain = "Grundlagen der KI",
         titleDe = "KI oder Mensch?", titleEn = "Human or AI?",
         descriptionDe = "Erkenne, ob ein Text von einer KI oder einem Menschen geschrieben wurde.", descriptionEn = "Recognize whether a text was written by an AI or a human.",
         rounds = listOf(
@@ -168,6 +171,7 @@ object MiniGames {
     // FREE GAME: Fakt oder Halluzination?
     private val fact_or_hallucination = MiniGame(
         id = "fact_or_hallucination", emoji = "🤥", 
+        primaryDomain = "Grundlagen der KI",
         titleDe = "Fakt oder Halluzination?", titleEn = "Fact or Hallucination?",
         descriptionDe = "Trenne wahre KI-Fakten von typischen KI-Halluzinationen.", descriptionEn = "Separate true AI facts from typical AI hallucinations.",
         rounds = listOf(
@@ -269,6 +273,7 @@ object MiniGames {
     // FREE GAME: Hochrisiko-Blitz
     private val high_risk_blitz = MiniGame(
         id = "high_risk_blitz", emoji = "⚠️", 
+        primaryDomain = "EU AI Act & Risikoklassen",
         titleDe = "Hochrisiko-Blitz", titleEn = "High-Risk Blitz",
         descriptionDe = "Erkenne, welche KI-Anwendungen nach dem EU AI Act eingeschränkt sind (Hochrisiko oder verboten).", descriptionEn = "Recognize which AI applications are restricted under the EU AI Act (high-risk or prohibited).",
         rounds = listOf(
@@ -370,6 +375,7 @@ object MiniGames {
     // FREE GAME: Agenten-Ampel
     private val agent_ampel = MiniGame(
         id = "agent_ampel", emoji = "🤖", 
+        primaryDomain = "KI-Governance im Unternehmen",
         titleDe = "Agenten-Ampel", titleEn = "Agent Traffic Light",
         descriptionDe = "Schätze ein, wie viel Autonomie ein KI-Agent haben darf — und wann menschliche Aufsicht Pflicht ist.", descriptionEn = "Assess how much autonomy an AI agent may have — and when human oversight is mandatory.",
         rounds = listOf(
@@ -471,6 +477,7 @@ object MiniGames {
     // FREE GAME: Shadow-AI-Check
     private val shadow_ai_check = MiniGame(
         id = "shadow_ai_check", emoji = "🕵️", 
+        primaryDomain = "KI-Governance im Unternehmen",
         titleDe = "Shadow-AI-Check", titleEn = "Shadow-AI Check",
         descriptionDe = "Erkenne Shadow AI — die unerlaubte Nutzung von KI und Agenten ohne Wissen des Unternehmens.", descriptionEn = "Recognize shadow AI — the unauthorized use of AI and agents without the company's knowledge.",
         rounds = listOf(
@@ -572,6 +579,7 @@ object MiniGames {
     // FREE GAME: Prompt-Profis
     private val prompt_profis = MiniGame(
         id = "prompt_profis", emoji = "⌨️", 
+        primaryDomain = "KI-Tools im Arbeitsalltag",
         titleDe = "Prompt-Profis", titleEn = "Prompt Pros",
         descriptionDe = "Wähle den besseren Prompt — klare Anweisungen liefern deutlich bessere KI-Ergebnisse.", descriptionEn = "Choose the better prompt — clear instructions deliver significantly better AI results.",
         rounds = listOf(
@@ -673,6 +681,7 @@ object MiniGames {
     // FREE GAME: Bias-Spotter
     private val bias_spotter = MiniGame(
         id = "bias_spotter", emoji = "⚖️", 
+        primaryDomain = "Transparenzpflichten",
         titleDe = "Bias-Spotter", titleEn = "Bias Spotter",
         descriptionDe = "Erkenne, welcher Bias (Vorurteil) in der KI-Ausgabe steckt — Grundlage für faire KI.", descriptionEn = "Recognize which bias (prejudice) is hidden in the AI output — the foundation of fair AI.",
         rounds = listOf(
@@ -774,6 +783,7 @@ object MiniGames {
     // FREE GAME: DSGVO-Check
     private val dsgvo_check = MiniGame(
         id = "dsgvo_check", emoji = "🔐", 
+        primaryDomain = "Datenschutz & DSGVO",
         titleDe = "DSGVO-Check", titleEn = "GDPR Check",
         descriptionDe = "Ist die KI-Nutzung datenschutzkonform? Erkenne die Fallstricke im Umgang mit personenbezogenen Daten.", descriptionEn = "Is the AI usage data-protection compliant? Spot the pitfalls in handling personal data.",
         rounds = listOf(
@@ -916,6 +926,7 @@ object MiniGames {
     /** Fake or Echt: is this text written by a human or by AI? 10 random rounds per session. */
     private val fake_or_real = MiniGame(
         id = "fake_or_real", emoji = "🤖",
+        primaryDomain = "Grundlagen der KI",
         titleDe = "Fake oder Echt?", titleEn = "Fake or Real?",
         descriptionDe = "Ist der Text von einem Menschen oder von einer KI geschrieben? Zehn Texte, ein Gefühl, jede Runde eine klare Antwort.",
         descriptionEn = "Was this text written by a human or by AI? Ten texts, each round a clear verdict.",

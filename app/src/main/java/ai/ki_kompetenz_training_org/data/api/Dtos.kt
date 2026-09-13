@@ -49,6 +49,8 @@ data class KiScoreQuestionDto(
     val correct: Int = 0,
     val explanation: String = "",
     val emoji: String = "",
+    // Domäne aus LiteracyBank.DOMAINS; "" = nicht getrackt (alte API-Antworten)
+    val domain: String = "",
 )
 
 @Serializable

@@ -23,7 +23,7 @@ import org.junit.Test
  * "Karten wiederholen" (BUG-Report 2026-09-05: SRS-Login-Flow).
  *
  * Vertrag:
- * - getDueCards: extrahiert .cards und kapselt Netzwerkfehler als Result.failure
+ * - getDueCards: extrahiert .cards; bei Netzwerkfehler lokaler SM-2-Fallback
  * - postReview: success=true → Unit; success=false → Result.failure
  *   (das ist der einzige Ort, der eine "Review failed"-Semantik erzeugt)
  */
@@ -66,8 +66,20 @@ class SrsRepositoryTest {
     }
 
     @Test
-    fun `getDueCards - Netzwerkfehler wird zu Result_failure (kein Crash)`() = runTest {
+    fun `getDueCards - Netzwerkfehler mit lokalem Fallback liefert lokale Karten`() = runTest {
         coEvery { api.getDueCards() } throws java.io.IOException("offline")
+
+        val result = repository.getDueCards()
+
+        // GAP-5: Bei Netzwerkfehler fallen wir auf lokale SM-2-Karten zurueck
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrThrow()).isNotEmpty()
+    }
+
+    @Test
+    fun `getDueCards - Netzwerkfehler ohne lokalen Fallback liefert Result_failure`() = runTest {
+        coEvery { api.getDueCards() } throws java.io.IOException("offline")
+        repository.localSrsEnabled = false
 
         val result = repository.getDueCards()
 

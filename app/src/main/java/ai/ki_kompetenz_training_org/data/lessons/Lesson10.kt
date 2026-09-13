@@ -48,6 +48,12 @@ object Lesson10 {
                             ),
                         ),
                     ),
+                    ContentBlock.PromptExercise(
+                        promptDe = "Schreibe einen Prompt, der eine KI bittet, einen professionellen Email-Betreff fuer eine Bewerbung zu generieren.",
+                        promptEn = "Write a prompt that asks an AI to generate a professional email subject line for a job application.",
+                        modelAnswerDe = "Du bist ein Experte fuer berufliche Kommunikation. Generiere drei professionelle Betreffzeilen fuer eine Bewerbung als [Position] bei [Unternehmen]. Die Betreffzeilen sollen praegnant, hoeflich und aufmerksamkeitsstark sein.",
+                        modelAnswerEn = "You are an expert in professional communication. Generate three professional subject lines for a job application as [Position] at [Company]. The subject lines should be concise, polite, and attention-grabbing.",
+                    ),
                 ),
             ),
             LessonSection(

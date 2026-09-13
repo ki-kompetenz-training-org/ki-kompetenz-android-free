@@ -134,4 +134,59 @@ class SeniorsLessonsTest {
         assertFalse("ForSeniors content should not contain clickable server URLs",
             allText.contains(".com/") || allText.contains(".org/") || allText.contains(".de/"))
     }
+
+    // ── AI literacy coverage (GAP-8) ──
+
+    @Test
+    fun `all 6 lessons have at least one AI-related section`() {
+        SeniorsLessons.all.forEach { lesson ->
+            val hasAi = lesson.sections.any { s ->
+                listOf(s.title, s.content).any { it.contains("KI") || it.contains("AI") || it.contains("künstliche Intelligenz") }
+            }
+            assertTrue("Lesson ${lesson.id} should have at least one AI-related section", hasAi)
+        }
+    }
+
+    @Test
+    fun `AI sections in lessons 1-3 have a quiz with 4 options`() {
+        listOf("seniors_01", "seniors_02", "seniors_03").forEach { id ->
+            val lesson = SeniorsLessons.all.first { it.id == id }
+            val aiSection = lesson.sections.first { s ->
+                listOf(s.title, s.content).any { it.contains("KI") || it.contains("AI") || it.contains("künstliche Intelligenz") }
+            }
+            val quiz = aiSection.quiz
+            assertNotNull("AI section in $id should have a quiz", quiz)
+            assertEquals("AI section quiz in $id should have 4 options", 4, quiz!!.options.size)
+        }
+    }
+
+    @Test
+    fun `AI sections in lessons 1-3 have non-empty content and keyTakeaway`() {
+        listOf("seniors_01", "seniors_02", "seniors_03").forEach { id ->
+            val lesson = SeniorsLessons.all.first { it.id == id }
+            val aiSection = lesson.sections.first { s ->
+                listOf(s.title, s.content).any { it.contains("KI") || it.contains("AI") || it.contains("künstliche Intelligenz") }
+            }
+            assertTrue("AI section in $id has empty content", aiSection.content.isNotBlank())
+            assertTrue("AI section in $id has empty keyTakeaway", aiSection.keyTakeaway.isNotBlank())
+        }
+    }
+
+    @Test
+    fun `original sections in lessons 1-3 remain intact after adding AI sections`() {
+        val originals = mapOf(
+            "seniors_01" to listOf("Ein gutes Passwort ist wie ein gutes Türschloss", "Zwei-Faktor-Authentifizierung (2FA)"),
+            "seniors_02" to listOf("Was ist Phishing?"),
+            "seniors_03" to listOf("Sicher einkaufen im Internet"),
+        )
+        originals.forEach { (id, titles) ->
+            val lesson = SeniorsLessons.all.first { it.id == id }
+            val titles1 = lesson.sections.map { it.title }
+            titles.forEach { t ->
+                assertTrue("Original section '$t' missing in $id", titles1.contains(t))
+            }
+            assertEquals("AI section should be appended after originals in $id",
+                titles.size, titles1.indexOfFirst { it !in titles })
+        }
+    }
 }

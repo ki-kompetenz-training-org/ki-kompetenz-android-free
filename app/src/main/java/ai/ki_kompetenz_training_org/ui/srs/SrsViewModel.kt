@@ -7,6 +7,10 @@ import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsSession
+import ai.ki_kompetenz_training_org.data.repo.SrsQuality
+import ai.ki_kompetenz_training_org.data.srs.LocalSrsCard
+import ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck
+import ai.ki_kompetenz_training_org.data.repo.toDto
 import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +21,9 @@ enum class SrsPhase { LOADING, REVIEW, NO_CARDS, FINISHED, ERROR, NOT_LOGGED_IN 
 data class SrsUiState(
     val phase: SrsPhase = SrsPhase.LOADING,
     val cards: List<SrsCardDto> = emptyList(),
+    val localCards: List<LocalSrsCard> = emptyList(),
+    /** True, wenn die Session offline über das lokale SM-2-Deck läuft. */
+    val isLocal: Boolean = false,
     val currentIndex: Int = 0,
     val showAnswer: Boolean = false,
     val reviewsDone: Int = 0,
@@ -41,7 +48,10 @@ class SrsViewModel(
 
     fun load() {
         if (!authRepository.isLoggedIn()) {
-            _state.value = SrsUiState(phase = SrsPhase.NOT_LOGGED_IN)
+            // ponytail: mockk (alte Tests) wirft bzw. liefert false bei unstubbed
+            // Property-Read -> getOrDefault(false) erhält den NOT_LOGGED_IN-Pfad.
+            val local = runCatching { srsRepository.localSrsEnabled }.getOrDefault(false)
+            if (local) loadLocal() else _state.value = SrsUiState(phase = SrsPhase.NOT_LOGGED_IN)
             return
         }
         viewModelScope.launch {
@@ -55,6 +65,19 @@ class SrsViewModel(
             }.onFailure {
                 _state.value = SrsUiState(phase = SrsPhase.ERROR, error = UiError.SRS_LOAD)
             }
+        }
+    }
+
+    /** Lokale SM-2-Karten laden (nicht angemeldet/offline). */
+    private fun loadLocal() {
+        val due = LocalSrsDeck.getDueCards(System.currentTimeMillis())
+        _state.value = if (due.isEmpty()) {
+            SrsUiState(phase = SrsPhase.NO_CARDS)
+        } else {
+            // ponytail: eigener LOCAL_REVIEW-Enum ist ohne SrsScreen nicht möglich
+            // (dessen when(phase)-Statement ist exhaustiv, Screen außerhalb des Scopes)
+            // -> REVIEW + isLocal-Flag; Banner braucht einen Folgetask im UI.
+            SrsUiState(phase = SrsPhase.REVIEW, cards = due.map { it.toDto() }, localCards = due, isLocal = true)
         }
     }
 
@@ -72,6 +95,10 @@ class SrsViewModel(
         if (s.phase != SrsPhase.REVIEW) return
         val card = s.currentCard ?: return
         if (!s.showAnswer) return
+        if (s.isLocal) {
+            rateLocal(s, quality)
+            return
+        }
         viewModelScope.launch {
             srsRepository.postReview(card.id, quality).onSuccess {
                 val reviewsDone = s.reviewsDone + 1
@@ -98,6 +125,29 @@ class SrsViewModel(
             }.onFailure {
                 _state.value = s.copy(error = UiError.SRS_SAVE)
             }
+        }
+    }
+
+    /** Offline-Review: SM-2 lokal anwenden, ohne API-Aufruf (kein XP). */
+    private fun rateLocal(s: SrsUiState, quality: Int) {
+        val localCard = s.localCards.getOrNull(s.currentIndex) ?: return
+        LocalSrsDeck.reviewCard(localCard, SrsQuality.fromValue(quality), System.currentTimeMillis())
+        val reviewsDone = s.reviewsDone + 1
+        val sessionFinished = SrsSession.isFinished(reviewsDone, s.cards.size)
+        _state.value = if (sessionFinished) {
+            SrsUiState(
+                phase = SrsPhase.FINISHED,
+                cards = s.cards,
+                localCards = s.localCards,
+                isLocal = true,
+                reviewsDone = reviewsDone,
+            )
+        } else {
+            s.copy(
+                currentIndex = s.currentIndex + 1,
+                showAnswer = false,
+                reviewsDone = reviewsDone,
+            )
         }
     }
 }

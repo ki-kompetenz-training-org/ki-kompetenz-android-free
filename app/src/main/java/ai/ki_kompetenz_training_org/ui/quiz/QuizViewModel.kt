@@ -10,6 +10,7 @@ import ai.ki_kompetenz_training_org.data.db.QuizResultEntity
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.QuizScoring
+import ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker
 import ai.ki_kompetenz_training_org.ui.common.UiError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,6 +51,8 @@ class QuizViewModel(
     private val contentRepository: ContentRepository,
     private val db: AppDatabase,
     private val gamificationRepository: GamificationRepository,
+    // Speist den KIKI-Kompetenz-Index; null = alt ohne Tracker (Tests/Legacy-Aufrufe)
+    private val masteryTracker: MasteryTracker? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(QuizUiState())
@@ -97,7 +100,11 @@ class QuizViewModel(
         if (s.phase != QuizPhase.PLAYING || s.selectedOption != null) return
         val question = s.questions.getOrNull(s.currentIndex) ?: return
         val isCorrect = optionIndex == question.correct
-        
+
+        if (question.domain.isNotEmpty()) {
+            masteryTracker?.recordResult(question.domain, isCorrect)
+        }
+
         // Cancel timer and stop countdown
         cancelTimer()
         
