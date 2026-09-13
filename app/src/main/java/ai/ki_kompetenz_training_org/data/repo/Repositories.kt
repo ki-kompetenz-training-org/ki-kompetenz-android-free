@@ -2,7 +2,6 @@ package ai.ki_kompetenz_training_org.data.repo
 
 import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.MyTeamResponseDto
-import ai.ki_kompetenz_training_org.data.api.SubscriptionStatusDto
 import ai.ki_kompetenz_training_org.data.api.TeamStatsResponseDto
 
 /**

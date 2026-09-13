@@ -5,7 +5,6 @@ import android.util.Log
 import ai.ki_kompetenz_training_org.data.prefs.TokenStore
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
 import ai.ki_kompetenz_training_org.BuildConfig
-import kotlinx.serialization.json.Json
 import okhttp3.Cache
 import okhttp3.Cookie
 import okhttp3.CookieJar

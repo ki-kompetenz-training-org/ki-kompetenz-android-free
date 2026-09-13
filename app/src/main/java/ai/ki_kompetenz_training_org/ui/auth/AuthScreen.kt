@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import ai.ki_kompetenz_training_org.BuildConfig
 import ai.ki_kompetenz_training_org.KiKompetenzApp
-import ai.ki_kompetenz_training_org.data.prefs.TokenStore
 
 /**
  * WebView-based OAuth login (mirrors the web SSO flow).

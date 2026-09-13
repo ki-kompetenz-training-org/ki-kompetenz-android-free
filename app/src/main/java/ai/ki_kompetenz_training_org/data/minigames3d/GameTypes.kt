@@ -1,7 +1,5 @@
 package ai.ki_kompetenz_training_org.data.minigames3d
 
-import ai.ki_kompetenz_training_org.data.minigames3d.LiteracyStatement
-
 /**
  * Classification log entry for post-game mastery update.
  * Shared between adaptive quiz and (former) 3D arena modes.
