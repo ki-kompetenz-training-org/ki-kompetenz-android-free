@@ -325,6 +325,11 @@
     <string name="games_arena_review">Recommended for review</string>
     <string name="games_arena_xp">Score: %1$d / Target %2$d  |  XP +%3$d</string>
     <string name="games_arena_badge">Real-time arena</string>
+    <string name="games_arena_fact">FACT</string>
+    <string name="games_arena_risk">RISK</string>
+    <string name="games_arena_fire">FIRE</string>
+    <string name="games_arena_fact_short">Fact</string>
+    <string name="games_arena_risk_short">Risk</string>
     <string name="games_adaptive_badge">Adaptive</string>
     <string name="games_adaptive_fact">Fact</string>
     <string name="games_adaptive_risk">Risk</string>

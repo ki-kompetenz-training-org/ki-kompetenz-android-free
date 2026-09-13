@@ -325,6 +325,11 @@
     <string name="games_arena_review">Zum Wiederholen empfohlen</string>
     <string name="games_arena_xp">Punkte: %1$d / Ziel %2$d  |  XP +%3$d</string>
     <string name="games_arena_badge">Echtzeit-Arena</string>
+    <string name="games_arena_fact">FAKT</string>
+    <string name="games_arena_risk">RISIKO</string>
+    <string name="games_arena_fire">FEUER</string>
+    <string name="games_arena_fact_short">Fakt</string>
+    <string name="games_arena_risk_short">Risiko</string>
     <string name="games_adaptive_badge">Adaptive</string>
     <string name="games_adaptive_fact">Fact</string>
     <string name="games_adaptive_risk">Risk</string>

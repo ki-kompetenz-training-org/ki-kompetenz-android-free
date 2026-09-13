@@ -137,7 +137,7 @@ private fun StartOverlayNew(game: MiniGame, vm: MiniGame3DViewModel, onBack: () 
                 fontWeight = FontWeight.SemiBold, color = CNew.white, textAlign = TextAlign.Center) 
             Text(game.description(lang), style = MaterialTheme.typography.bodyMedium, 
                 color = CNew.soft, textAlign = TextAlign.Center) 
-            Text(howToNew(mode, lang), style = MaterialTheme.typography.bodySmall, 
+            Text(howToNew(mode), style = MaterialTheme.typography.bodySmall, 
                 color = CNew.dim, textAlign = TextAlign.Center) 
             Spacer(modifier = Modifier.height(8.dp)) 
             Button(onClick = { vm.start() }, 
@@ -152,13 +152,11 @@ private fun StartOverlayNew(game: MiniGame, vm: MiniGame3DViewModel, onBack: () 
 }
 
 /** Touch-native instructions */
-private fun howToNew(mode: GameMode, lang: String): String = when (mode) { 
-    GameMode.ORB_HUNT -> if (lang == "de") "Tippe Orbs an zum Classification. Fakt oder Risiko?" 
-        else "Tap orbs to classify. Fact or risk?" 
-    GameMode.MAZE_RUN -> if (lang == "de") "Wische zum Bewegen. Am Ziel: Fakt oder Risiko?" 
-        else "Swipe to dash. At goal: fact or risk?" 
-    GameMode.TRUTH_SNIPE -> if (lang == "de") "Wische zum Bewegen, Tippe zum Schiessen. Zerstore Fakes!" 
-        else "Swipe to move, tap to shoot. Destroy fakes!" 
+@Composable
+private fun howToNew(mode: GameMode): String = when (mode) { 
+    GameMode.ORB_HUNT -> stringResource(R.string.games_arena_howto_orb)
+    GameMode.MAZE_RUN -> stringResource(R.string.games_arena_howto_maze)
+    GameMode.TRUTH_SNIPE -> stringResource(R.string.games_arena_howto_snipe)
 }
 
 @Composable 
@@ -264,7 +262,6 @@ private fun DrawScope.drawArenaNew(game: GameState?, mode: GameMode) {
     val scale = arena / (GameConfig.DEFAULT_ARENA_RADIUS * 2) 
     val cx = w / 2f 
     val cy = h / 2f 
-    val lang = currentLang() 
 
     fun sx(x: Double) = (cx + x * scale).toFloat() 
     fun sz(z: Double) = (cy + z * scale).toFloat() 
@@ -413,9 +410,8 @@ private fun StatementCardNew(
     text: String, isRisk: Boolean, domain: String?, 
     explanation: String?, decisionTimer: Double?, 
 ) { 
-    val lang = currentLang() 
-    val labelFakt = if (lang == "de") "Fakt" else "Fact" 
-    val labelRisiko = if (lang == "de") "Risiko" else "Risk" 
+    val labelFakt = stringResource(R.string.games_arena_fact_short) 
+    val labelRisiko = stringResource(R.string.games_arena_risk_short) 
     val desc = if (isRisk) labelRisiko else labelFakt 
     Column( 
         modifier = Modifier 
@@ -454,7 +450,6 @@ private fun BottomControlsNew(
     vm: MiniGame3DViewModel, 
     isPendingDecision: Boolean, 
 ) { 
-    val lang = currentLang() 
     val isSnipe = mode == GameMode.TRUTH_SNIPE 
     
     // Show classify buttons only when there's a pending decision
@@ -470,7 +465,7 @@ private fun BottomControlsNew(
                 shape = RoundedCornerShape(18.dp), 
                 colors = ButtonDefaults.buttonColors(containerColor = CNew.green, contentColor = CNew.white), 
             ) { 
-                Text(if (lang == "de") "FAKT" else "FACT", fontWeight = FontWeight.Bold) 
+                Text(stringResource(R.string.games_arena_fact), fontWeight = FontWeight.Bold) 
             } 
             Button( 
                 onClick = { vm.onClassify(ClassifyAction.RISK) }, 
@@ -478,7 +473,7 @@ private fun BottomControlsNew(
                 shape = RoundedCornerShape(18.dp), 
                 colors = ButtonDefaults.buttonColors(containerColor = CNew.red, contentColor = CNew.white), 
             ) { 
-                Text(if (lang == "de") "RISIKO" else "RISK", fontWeight = FontWeight.Bold) 
+                Text(stringResource(R.string.games_arena_risk), fontWeight = FontWeight.Bold) 
             } 
         } 
     } else if (isSnipe) { 
@@ -493,7 +488,7 @@ private fun BottomControlsNew(
                 shape = RoundedCornerShape(18.dp), 
                 colors = ButtonDefaults.buttonColors(containerColor = CNew.bullet, contentColor = CNew.bg), 
             ) { 
-                Text(if (lang == "de") "FEUER" else "FIRE", fontWeight = FontWeight.Bold) 
+                Text(stringResource(R.string.games_arena_fire), fontWeight = FontWeight.Bold) 
             } 
         } 
     }
@@ -507,7 +502,6 @@ private fun ResultOverlayNew(
     mode: GameMode, 
     finalScore: Int, 
 ) { 
-    val lang = currentLang() 
     Box(modifier = Modifier.fillMaxSize().background(CNew.bg.copy(alpha = 0.96f)).padding(24.dp), 
         contentAlignment = Alignment.Center) { 
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(10.dp)) { 
