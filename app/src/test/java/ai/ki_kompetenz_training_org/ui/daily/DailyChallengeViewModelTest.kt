@@ -2,7 +2,6 @@ package ai.ki_kompetenz_training_org.ui.daily
 
 import ai.ki_kompetenz_training_org.data.daily.DailyChallengeRepository
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk

@@ -3,7 +3,6 @@ package ai.ki_kompetenz_training_org.data.missions
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import android.content.SharedPreferences
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

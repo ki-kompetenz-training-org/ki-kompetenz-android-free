@@ -1,11 +1,8 @@
 package ai.ki_kompetenz_training_org.data.prefs
 
-import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.preferencesDataStoreFile
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -15,6 +12,7 @@ import io.mockk.mockk
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.lang.System
+import kotlinx.coroutines.plus
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SettingsStoreAudienceModeTest {

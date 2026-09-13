@@ -1,7 +1,6 @@
 package ai.ki_kompetenz_training_org.accessibility
 
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
-import ai.ki_kompetenz_training_org.data.minigames.currentLang
 import org.junit.Assert.*
 import org.junit.Test
 

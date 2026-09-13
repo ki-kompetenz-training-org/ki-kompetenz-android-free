@@ -2,8 +2,6 @@ package ai.ki_kompetenz_training_org.api
 
 import ai.ki_kompetenz_training_org.data.api.ApiService
 import ai.ki_kompetenz_training_org.data.api.LessonDetailDto
-import ai.ki_kompetenz_training_org.data.api.LessonsResponseDto
-import ai.ki_kompetenz_training_org.data.api.SubscriptionStatusDto
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

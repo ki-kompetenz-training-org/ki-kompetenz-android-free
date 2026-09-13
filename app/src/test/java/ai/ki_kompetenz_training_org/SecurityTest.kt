@@ -2,12 +2,9 @@ package ai.ki_kompetenz_training_org
 
 import ai.ki_kompetenz_training_org.data.db.AppDatabase
 import ai.ki_kompetenz_training_org.data.repo.ContentRepository
-import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.PremiumRepository
 import io.mockk.mockk
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 

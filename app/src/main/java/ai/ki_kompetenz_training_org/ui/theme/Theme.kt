@@ -10,7 +10,6 @@ import androidx.compose.ui.graphics.Color
 // Purple/blue brand gradient (matches the web theme)
 private val BrandPrimary = Color(0xFF4F46E5)      // indigo-600
 private val BrandPrimaryDark = Color(0xFF7C3AED)   // violet-600
-private val BrandBackground = Color(0xFFF9FAFB)
 
 private val LightColors = lightColorScheme(
     primary = BrandPrimary,

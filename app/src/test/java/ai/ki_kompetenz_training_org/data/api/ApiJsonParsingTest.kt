@@ -7,7 +7,6 @@ package ai.ki_kompetenz_training_org.data.api
 import com.google.common.truth.Truth.assertThat
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.junit.Assert.assertThrows
 import org.junit.Test
 
 /**

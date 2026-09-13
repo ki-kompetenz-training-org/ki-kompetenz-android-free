@@ -5,7 +5,6 @@ import ai.ki_kompetenz_training_org.data.api.SubscriptionStatusDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
