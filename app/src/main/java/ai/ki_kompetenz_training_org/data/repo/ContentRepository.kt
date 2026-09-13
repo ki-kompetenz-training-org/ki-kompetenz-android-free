@@ -66,12 +66,6 @@ class ContentRepository(
                 )
             }
 
-    suspend fun getCachedLesson(slug: String): LessonEntity? {
-        // TEMPORARY FIX: Database disabled due to Gradle cache corruption
-        // Loading lessons from API only to avoid crashes
-        return null
-    }
-
     /**
      * KI-Score-Quiz-Daten: primaer live aus der API, mit gebundeltem
      * Offline-Pool als Fallback ([KiScoreFallback]) — der KI-Score muss
