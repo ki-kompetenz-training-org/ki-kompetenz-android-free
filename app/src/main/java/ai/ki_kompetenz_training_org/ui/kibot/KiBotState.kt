@@ -29,11 +29,9 @@ enum class GrowthStage {
  */
 enum class EmotionalState {
     IDLE,        // Default: gentle bobbing
-    HAPPY,       // Check-in, correct answer
     CELEBRATING, // Streak milestone, perfect game
     CONFUSED,    // Wrong answer, API error
     SLEEPY,      // Not checked in 2+ days
-    THRILLED,    // Premium unlocked, big milestone
     ;
 
     companion object {
