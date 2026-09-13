@@ -11,7 +11,6 @@ class MiniGamesTest {
     fun `all 12 games are registered with 3 adaptive quiz games`() {
         assertEquals(12, MiniGames.ALL.size)
         assertEquals(3, MiniGames.ADAPTIVE.size)
-        assertEquals(0, MiniGames.ARENA3D.size)
     }
 
     @Test
@@ -49,7 +48,6 @@ class MiniGamesTest {
             assertEquals(0, game.rounds.size)
             assertEquals(MiniGameKind.ADAPTIVE_QUIZ, game.kind)
             assertTrue("Game ${game.id} should be adaptive", game.isAdaptiveQuiz)
-            assertTrue("Game ${game.id} missing threeMode", game.threeMode == null)
         }
     }
 

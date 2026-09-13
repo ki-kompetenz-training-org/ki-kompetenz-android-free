@@ -32,8 +32,8 @@ import ai.ki_kompetenz_training_org.data.lessons.Lesson13
 import ai.ki_kompetenz_training_org.data.lessons.Lesson14
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGameScreen
 import ai.ki_kompetenz_training_org.ui.minigames.AdaptiveQuizScreen
-import ai.ki_kompetenz_training_org.ui.minigames3d.MiniGame3DScreen
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGamesMenuScreen
+import ai.ki_kompetenz_training_org.ui.about.AboutScreen
 import ai.ki_kompetenz_training_org.ui.onboarding.OnboardingScreen
 import ai.ki_kompetenz_training_org.ui.premium.PremiumScreen
 import ai.ki_kompetenz_training_org.ui.quiz.QuizScreen
@@ -67,6 +67,7 @@ object Routes {
     const val FOR_KIDS_LESSON = "forkids/{lessonId}"
     const val FOR_SENIORS = "forseniors"
     const val FOR_SENIORS_LESSON = "forseniors/{lessonId}"
+    const val ABOUT = "about"
 
     fun lesson(slug: String) = "lesson/$slug"
     fun minigame(gameId: String) = "minigame/$gameId"
@@ -109,6 +110,7 @@ fun KiKompetenzNavHost(
                     },
                 onOpenForKids = { navController.navigate(Routes.FOR_KIDS) },
                 onOpenForSeniors = { navController.navigate(Routes.FOR_SENIORS) },
+                onOpenAbout = { navController.navigate(Routes.ABOUT) },
                 onOpenMiniGame = { gameId -> navController.navigate(Routes.minigame(gameId)) },
             )
         }
@@ -212,8 +214,6 @@ fun KiKompetenzNavHost(
             if (game != null) {
                 if (game.isAdaptiveQuiz) {
                     AdaptiveQuizScreen(game = game, onBack = { navController.popBackStack() })
-                } else if (game.isArena3D) {
-                    MiniGame3DScreen(game = game, onBack = { navController.popBackStack() })
                 } else {
                     MiniGameScreen(game = game, onBack = { navController.popBackStack() })
                 }
@@ -264,6 +264,9 @@ fun KiKompetenzNavHost(
             } else {
                 navController.popBackStack()
             }
+        }
+        composable(Routes.ABOUT) {
+            AboutScreen(onBack = { navController.popBackStack() })
         }
     }
 }

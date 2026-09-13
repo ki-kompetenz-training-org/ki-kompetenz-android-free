@@ -1,6 +1,5 @@
 package ai.ki_kompetenz_training_org.data.minigames
 
-import ai.ki_kompetenz_training_org.data.minigames3d.GameMode
 import java.util.Locale
 
 /**
@@ -28,7 +27,7 @@ data class MiniGameRound(
     fun explanation(lang: String): String = if (lang == "de") explanationDe else explanationEn
 }
 
-enum class MiniGameKind { QUIZ, ARENA_3D, FAKE_OR_REAL, ADAPTIVE_QUIZ }
+enum class MiniGameKind { QUIZ, FAKE_OR_REAL, ADAPTIVE_QUIZ }
 
 data class MiniGame(
     val id: String, 
@@ -39,15 +38,11 @@ data class MiniGame(
     val premium: Boolean = false,
     val difficulty: Difficulty = Difficulty.BEGINNER,
     val kind: MiniGameKind = MiniGameKind.QUIZ,
-    val threeMode: GameMode? = null,
     /** For ADAPTIVE_QUIZ: restrict statement selection to these LiteracyBank domains (null = all). */
     val domainFilter: List<String>? = null,
 ) {
     fun title(lang: String): String = if (lang == "de") titleDe else titleEn
     fun description(lang: String): String = if (lang == "de") descriptionDe else descriptionEn
-
-    /** True if this is a real-time arena (3D-style) minigame. */
-    val isArena3D: Boolean get() = kind == MiniGameKind.ARENA_3D && threeMode != null
 
     /** True for the Fake-or-Echt text game (10 random rounds per session). */
     val isFakeOrReal: Boolean get() = kind == MiniGameKind.FAKE_OR_REAL
@@ -950,7 +945,6 @@ object MiniGames {
     
     val FREE: List<MiniGame> = ALL.filter { !it.premium }
     val PREMIUM: List<MiniGame> = ALL.filter { it.premium }
-    val ARENA3D: List<MiniGame> = ALL.filter { it.isArena3D }
     val ADAPTIVE: List<MiniGame> = ALL.filter { it.isAdaptiveQuiz }
     
     fun byId(id: String): MiniGame? = ALL.firstOrNull { it.id == id }

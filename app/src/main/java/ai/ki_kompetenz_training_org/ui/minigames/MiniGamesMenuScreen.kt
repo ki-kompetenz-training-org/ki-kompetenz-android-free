@@ -189,8 +189,6 @@ private fun GameCard(
                 Text(
                     if (game.isAdaptiveQuiz) {
                         stringResource(R.string.games_adaptive_badge)
-                    } else if (game.isArena3D) {
-                        stringResource(R.string.games_arena_badge)
                     } else if (game.premium) {
                         if (locked) stringResource(R.string.games_premium_locked, game.rounds.size)
                         else stringResource(R.string.games_premium_round_count, game.rounds.size)
