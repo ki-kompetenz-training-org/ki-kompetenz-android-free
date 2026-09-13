@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.KiKompetenzApp
@@ -407,7 +406,6 @@ private fun ContentBlockRenderer(
 @Composable
 private fun TextBlock(block: ContentBlock.Text, locale: String) {
     val text = localized(locale, block.textDe, block.textEn)
-    val config = LocalConfiguration.current
 
     Text(
         text = renderSimpleMarkdown(text),

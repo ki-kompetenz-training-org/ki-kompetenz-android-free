@@ -10,7 +10,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -94,7 +93,6 @@ class MainActivity : ComponentActivity() {
                 }
 
                 // Show onboarding on first launch
-                val onboardingScope = rememberCoroutineScope()
                 val pendingLessonStart = rememberSaveable { mutableStateOf(false) }
                 var onboardingLangChanged by rememberSaveable { mutableStateOf(false) }
                 if (!onboardingDone) {

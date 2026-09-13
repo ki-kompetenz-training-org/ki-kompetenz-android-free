@@ -44,14 +44,6 @@ class MiniGameViewModel(
             game.rounds
         }
 
-    init {
-        viewModelScope.launch {
-            // count how many of the 3 games were already played (via badges)
-            val unlocked = gamification.observeBadgeState()
-            // simplest: track via played games badge presence
-        }
-    }
-
     fun selectOption(optionIndex: Int) {
         val s = _state.value
         if (s.phase != GamePhase.PLAYING || s.selectedOption != null) return
