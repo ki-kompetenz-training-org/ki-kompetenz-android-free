@@ -231,13 +231,6 @@ class GamificationRepository(
     fun observe(): Flow<GamificationEntity?> =
         db.gamificationDao().observe().flowOn(Dispatchers.IO)
 
-    fun observeBadges(): Flow<List<Badge>> =
-        db.gamificationDao().observe().map { entity ->
-            val unlocked = parseBadges(entity?.badgesJson)
-            Badges.all().map { it to (it.id in unlocked) }
-        }.map { pairs -> pairs.map { it.first } }
-            .flowOn(Dispatchers.IO) // placeholder — real UI uses observeBadgeState
-
     fun observeBadgeState(): Flow<List<Pair<Badge, Boolean>>> =
         db.gamificationDao().observe().map { entity ->
             val unlocked = parseBadges(entity?.badgesJson)

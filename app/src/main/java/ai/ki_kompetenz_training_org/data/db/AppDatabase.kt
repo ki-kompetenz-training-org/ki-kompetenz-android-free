@@ -100,9 +100,6 @@ interface QuizResultDao {
     @Insert
     suspend fun insert(result: QuizResultEntity): Long
 
-    @Query("SELECT * FROM quiz_results ORDER BY createdAt DESC LIMIT 20")
-    fun observeResults(): Flow<List<QuizResultEntity>>
-    // Note: Flow will be collected on Dispatchers.IO in the repository
 }
 
 @Dao
