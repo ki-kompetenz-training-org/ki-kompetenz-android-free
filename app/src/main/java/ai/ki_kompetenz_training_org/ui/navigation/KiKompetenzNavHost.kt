@@ -34,7 +34,6 @@ import ai.ki_kompetenz_training_org.ui.minigames.MiniGameScreen
 import ai.ki_kompetenz_training_org.ui.minigames.AdaptiveQuizScreen
 import ai.ki_kompetenz_training_org.ui.minigames.MiniGamesMenuScreen
 import ai.ki_kompetenz_training_org.ui.about.AboutScreen
-import ai.ki_kompetenz_training_org.ui.onboarding.OnboardingScreen
 import ai.ki_kompetenz_training_org.ui.premium.PremiumScreen
 import ai.ki_kompetenz_training_org.ui.quiz.QuizScreen
 import ai.ki_kompetenz_training_org.ui.srs.SrsScreen
@@ -46,7 +45,6 @@ import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
 
 import ai.ki_kompetenz_training_org.KiKompetenzApp
-import ai.ki_kompetenz_training_org.data.minigames.MiniGame
 import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
@@ -119,7 +117,6 @@ fun KiKompetenzNavHost(
         }
         composable(Routes.LESSONS) {
             LessonsScreen(
-                onBack = { navController.popBackStack() },
                 onOpenLesson = { slug -> navController.navigate(Routes.lesson(slug)) },
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
             )
@@ -203,7 +200,6 @@ fun KiKompetenzNavHost(
         }
         composable(Routes.MINIGAMES) {
             MiniGamesMenuScreen(
-                onBack = { navController.popBackStack() },
                 onOpenGame = { game -> navController.navigate(Routes.minigame(game.id)) },
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
             )
@@ -222,7 +218,7 @@ fun KiKompetenzNavHost(
             }
         }
         composable(Routes.GAMIFICATION) {
-            GamificationScreen(onBack = { navController.popBackStack() })
+            GamificationScreen()
         }
         composable(Routes.SRS) {
             SrsScreen(

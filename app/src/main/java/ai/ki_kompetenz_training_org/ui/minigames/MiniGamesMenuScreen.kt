@@ -60,7 +60,6 @@ class MiniGamesMenuViewModel(
 
 @Composable
 fun MiniGamesMenuScreen(
-    onBack: () -> Unit,
     onOpenGame: (MiniGame) -> Unit,
     onOpenPremium: () -> Unit = {},
 ) {

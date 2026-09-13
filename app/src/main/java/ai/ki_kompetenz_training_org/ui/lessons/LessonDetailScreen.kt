@@ -475,7 +475,6 @@ fun LessonDetailScreen(
                 if (vm.isPremium()) {
                     PremiumGate(
                         modifier = Modifier.padding(padding),
-                        lessonNumber = state.lesson!!.lesson,
                         onOpenPremium = onOpenPremium,
                     )
                 } else {
@@ -878,7 +877,7 @@ private fun stripInlineMd(line: String): String =
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-private fun PremiumGate(modifier: Modifier, lessonNumber: Int?, onOpenPremium: () -> Unit) {
+private fun PremiumGate(modifier: Modifier, onOpenPremium: () -> Unit) {
     Column(
         modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

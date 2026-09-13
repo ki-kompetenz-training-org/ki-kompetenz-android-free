@@ -192,7 +192,6 @@ fun KidsLessonScreen(lesson: KidsLesson, onBack: () -> Unit) {
                 SectionCard(
                     section = section,
                     sectionNumber = index + 1,
-                    totalSections = lesson.sections.size,
                     onComplete = { completedSections++ },
                 )
                 if (index < lesson.sections.lastIndex) Spacer(Modifier.height(12.dp))
@@ -233,7 +232,6 @@ fun KidsLessonScreen(lesson: KidsLesson, onBack: () -> Unit) {
 private fun SectionCard(
     section: ai.ki_kompetenz_training_org.data.forkids.KidsSection,
     sectionNumber: Int,
-    totalSections: Int,
     onComplete: () -> Unit,
 ) {
     var answeredQuiz by remember { mutableStateOf(false) }

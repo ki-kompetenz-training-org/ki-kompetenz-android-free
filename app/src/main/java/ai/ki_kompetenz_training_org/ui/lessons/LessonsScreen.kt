@@ -23,7 +23,6 @@ import ai.ki_kompetenz_training_org.KiKompetenzApp
 @Composable
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 fun LessonsScreen(
-    onBack: () -> Unit,
     onOpenLesson: (String) -> Unit,
     onOpenPremium: () -> Unit,
 ) {

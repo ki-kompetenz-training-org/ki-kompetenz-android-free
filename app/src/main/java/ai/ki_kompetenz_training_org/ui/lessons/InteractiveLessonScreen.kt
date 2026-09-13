@@ -176,7 +176,6 @@ fun InteractiveLessonScreen(
                     locale = locale,
                     sectionIndex = secIdx,
                     isCompleted = completedSectionsState.contains(secIdx),
-                    quizScore = quizScoresState.getOrDefault(secIdx, -1),
                     interactedBlocks = interactedBlocks,
                     onSectionComplete = { completedSectionsState.add(secIdx) },
                     onQuizScore = { score ->
@@ -317,7 +316,6 @@ private fun SectionBlock(
     locale: String,
     sectionIndex: Int,
     isCompleted: Boolean,
-    quizScore: Int,
     interactedBlocks: MutableMap<Pair<Int, Int>, Boolean>,
     onSectionComplete: () -> Unit,
     onQuizScore: (Int) -> Unit,
@@ -360,8 +358,6 @@ private fun SectionBlock(
                     ContentBlockRenderer(
                         block = block,
                         locale = locale,
-                        sectionIndex = sectionIndex,
-                        blockIndex = blockIdx,
                         onInteracted = {
                             interactedBlocks[Pair(sectionIndex, blockIdx)] = true
                             // Mark section as complete if all blocks interacted
@@ -388,8 +384,6 @@ private fun SectionBlock(
 private fun ContentBlockRenderer(
     block: ContentBlock,
     locale: String,
-    sectionIndex: Int,
-    blockIndex: Int,
     onInteracted: () -> Unit,
     onQuizScore: (Int) -> Unit,
 ) {
