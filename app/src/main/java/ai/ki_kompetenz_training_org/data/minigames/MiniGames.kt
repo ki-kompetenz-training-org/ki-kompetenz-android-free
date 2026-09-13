@@ -8,7 +8,7 @@ import java.util.Locale
  * - Immediate feedback with educational explanations
  * - Real-world scenarios (agentic AI focus)
  * - Bilingual support (de/en)
- * - 16 games: 8 free + 8 premium
+ * - 12 games (all free)
  * 
  * Based on ai-literacy-research findings:
  * - 4,414 papers analyzed across 20 disciplines
@@ -937,7 +937,7 @@ object MiniGames {
         dsgvo_check,
         // FAKE OR REAL (free)
         fake_or_real,
-        // ARENA 3D (free)
+        // ADAPTIVE QUIZ (free)
         orb_hunt,
         maze_run,
         truth_snipe,
