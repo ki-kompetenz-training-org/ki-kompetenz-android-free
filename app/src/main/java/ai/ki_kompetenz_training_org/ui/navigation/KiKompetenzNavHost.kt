@@ -49,7 +49,6 @@ import ai.ki_kompetenz_training_org.data.minigames.MiniGames
 import ai.ki_kompetenz_training_org.data.minigames.currentLang
 
 object Routes {
-    const val ONBOARDING = "onboarding"
     const val HOME = "home"
     const val QUIZ = "quiz"
     const val LESSONS = "lessons"
