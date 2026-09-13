@@ -4,10 +4,6 @@
 
     <!-- Home -->
     <string name="home_title">KI-Kompetenz</string>
-    <string name="home_hero_question">Wie KI-fit bist du?</string>
-    <string name="home_hero_answer">Finde es spielerisch heraus.</string>
-    <string name="home_quiz_cta">KI-Score spielen</string>
-    <string name="home_quiz_subtitle">Fragen · Level · Ergebnis teilen</string>
     <string name="quiz_subtitle">Wie KI-fit bist du?</string>
     <string name="home_level">⭐ Level %1$s</string>
     <string name="home_xp">%1$s XP</string>
@@ -15,32 +11,6 @@
     <string name="home_checkin">Daily Check-in</string>
     <string name="home_checked_in">✓ Gecheckt</string>
     <string name="home_login_cta">Anmelden für Team &amp; Premium</string>
-    <string name="home_premium_active">✓ Premium aktiv</string>
-    <string name="home_premium_upsell">Basic — Jetzt Premium freischalten</string>
-    <string name="home_feature_lessons">Lektionen</string>
-    <string name="home_feature_lessons_desc">14 Lektionen zur KI-Kompetenz — Lektion 1-8 kostenlos</string>
-    <string name="home_feature_lessons_action">Lektionen öffnen</string>
-    <string name="home_feature_quiz">KI-Score Quiz</string>
-    <string name="home_feature_quiz_desc">Fragen · Level · Ergebnis teilen</string>
-    <string name="home_feature_quiz_action">Quiz starten</string>
-    <string name="home_feature_games">KI-Mini-Spiele</string>
-    <string name="home_feature_games_desc">KI oder Mensch? · Fakt oder Halluzination? · Hochrisiko-Blitz</string>
-    <string name="home_feature_games_action">Spielen</string>
-    <string name="home_feature_profile">Profil &amp; Abzeichen</string>
-    <string name="home_feature_profile_desc">XP · Level · Tages-Serie · 10 Badges</string>
-    <string name="home_feature_profile_action">Ansehen</string>
-    <string name="home_feature_srs">Wiederholen (SRS)</string>
-    <string name="home_feature_srs_desc">Intervall-Wiederholung — Karten im optimalen Rhythmus</string>
-    <string name="home_feature_srs_action">Wiederholen</string>
-    <string name="home_feature_premium">Premium</string>
-    <string name="home_feature_premium_desc">Alle Lektionen · Intervall-Wiederholung · Zertifikat · Team-Ranking</string>
-    <string name="home_feature_premium_action">Premium ansehen</string>
-    <string name="home_feature_premium_action_active">Premium-Features nutzen</string>
-    <string name="home_feature_team">Team &amp; Ranking</string>
-    <string name="home_feature_team_desc">Wer ist im Team am KI-fitesten?</string>
-    <string name="home_feature_team_action">Team-Ranking öffnen</string>
-    <string name="home_dsgvo_note">DSGVO-konform: Im Team sind nur Name, Score und Level sichtbar. E-Mail-Adressen werden nie angezeigt.</string>
-    <string name="team">Team</string>
 
     <!-- Quiz (KI-Score) -->
     <string name="quiz_title">KI-Score</string>
@@ -49,7 +19,6 @@
     <string name="quiz_question_count">Frage %1$d von %2$d</string>
     <string name="quiz_correct_count">%1$d/%2$d richtig</string>
     <string name="quiz_no_questions">Keine Fragen verfügbar</string>
-    <string name="quiz_next">Nächste Frage</string>
     <string name="quiz_my_result">Mein Ergebnis</string>
     <string name="quiz_good_to_know">💡 Gut zu wissen: </string>
     <string name="quiz_correct">✅ Richtig! </string>
@@ -59,9 +28,6 @@
     <string name="quiz_stats_questions">Fragen</string>
     <string name="quiz_stats_minutes">Minuten</string>
     <string name="quiz_stats_levels">Level</string>
-    <string name="quiz_correct_answered">Richtig beantwortet</string>
-    <string name="quiz_hit_rate">Trefferquote</string>
-    <string name="quiz_score_share_text">Ergebnis teilen</string>
 
     <!-- Mini-Games -->
     <string name="games_title">KI-Mini-Spiele</string>
@@ -70,8 +36,6 @@
     <string name="games_round_count">%1$d Runden · +10 XP pro richtige Antwort · 💯 Perfekt-Bonus</string>
     <string name="games_premium_round_count">%1$d Runden · +15 XP pro richtige Antwort · 💯 Perfekt-Bonus</string>
     <string name="games_premium_locked">Premium erforderlich — %1$d Runden · +15 XP/richtig</string>
-    <string name="games_premium_header">⭐ Premium-Spiele</string>
-    <string name="games_premium_subtitle">Fortgeschrittene Deep-Dives mit höheren XP-Belohnungen (+15 statt +10 pro Antwort).</string>
     <string name="games_dsgvo_note">💡 Die Mini-Spiele sind Teil des Gamification-Systems — XP, Level und Badges werden lokal auf deinem Gerät gespeichert (DSGVO-konform, ohne Server).</string>
     <string name="game_round">Runde %1$d von %2$d</string>
     <string name="game_correct_count">%1$d/%2$d richtig</string>
@@ -83,7 +47,6 @@
     <string name="game_next_round">Nächste Runde</string>
     <string name="game_view_result">Ergebnis ansehen</string>
     <string name="game_correct_feedback">✅ Richtig! </string>
-    <string name="game_info_feedback">💡 Gut zu wissen: </string>
 
     <!-- Premium -->
     <string name="premium_title">Premium</string>
@@ -107,7 +70,6 @@
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Dein Profil</string>
-    <string name="profile_back">Zurück</string>
     <string name="profile_level">Level %1$s</string>
     <string name="profile_xp">%1$s XP</string>
     <string name="profile_xp_to_next">%1$s / %2$s XP bis Level %3$s</string>
@@ -121,7 +83,6 @@
     <string name="profile_dsgvo">DSGVO: XP, Level, Serie und Abzeichen werden ausschließlich lokal auf deinem Gerät gespeichert — keine Übermittlung an Server.</string>
     <string name="reminder_title">Lern-Erinnerung</string>
     <string name="reminder_desc">Tägliche Erinnerung an fällige Wiederholungskarten</string>
-    <string name="reminder_permission_hint">Benachrichtigungen sind in den Systemeinstellungen deaktiviert</string>
 
     <!-- Lessons -->
     <string name="lessons_title">Lektionen</string>
@@ -131,9 +92,7 @@
     <string name="lessons_unlock_cta">Alle Lektionen freischalten — Premium</string>
     <string name="lesson_mark_complete">✓ Lektion abschließen (+%1$d XP)</string>
     <string name="lesson_premium_gate_title">Premium-Lektion</string>
-    <string name="lesson_premium_gate_text">Lektion %1$s ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
     <string name="lesson_premium_cta">Jetzt Premium freischalten</string>
-    <string name="lesson_premium_price">€6,99/Monat pro Sitzplatz · jederzeit kündbar</string>
 
     <!-- Team -->
     <string name="team_title">Team &amp; Ranking</string>
@@ -157,7 +116,6 @@
     <string name="srs_login_required">Intervall-Wiederholung braucht ein Konto.</string>
     <string name="srs_login_note">Wiederholungskarten werden pro Nutzer gespeichert, damit dein Lernfortschritt über Geräte hinweg erhalten bleibt.</string>
     <string name="srs_login">Anmelden</string>
-    <string name="srs_all_done">🎉</string>
     <string name="srs_all_done_title">Alles erledigt!</string>
     <string name="srs_all_done_note">Keine Karten zur Wiederholung fällig. Schau morgen wieder vorbei oder lerne neue Lektionen.</string>
     <string name="srs_card_progress">Karte %1$d von %2$d</string>
@@ -176,26 +134,14 @@
 
     <!-- Navigation content descriptions -->
     <string name="nav_back">Zurück</string>
-    <string name="nav_team">Team</string>
 
     <!-- Common -->
     <string name="common_retry">Erneut versuchen</string>
     <string name="common_no_data">Keine Daten gefunden</string>
-    <string name="common_loading">Laden…</string>
     <string name="common_error">Einen Moment…</string>
-    <string name="common_premium_badge">Premium freischalten</string>
     <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
 
     <!-- Accessibility -->
-    <string name="a11y_streak_fire">Tages-Serie</string>
-    <string name="a11y_lessons_book">Lektionen</string>
-    <string name="a11y_quiz_result">Quiz-Ergebnis teilen</string>
-    <string name="a11y_star">Stern / Premium</string>
-    <string name="a11y_lock">Gesperrt</string>
-    <string name="a11y_check_circle">Bestätigt</string>
-    <string name="a11y_share">Teilen</string>
-    <string name="a11y_login">Anmelden</string>
-    <string name="a11y_points">Punkte</string>
     <string name="srs_no_cards">Keine Karte verfügbar</string>
 
     <!-- KiBot -->
@@ -233,31 +179,24 @@
     <string name="difficulty_expert">Experte</string>
 
     <!-- Quiz extracted -->
-    <string name="quiz_intro_subtitle">Wie KI-fit bist du?</string>
     <string name="quiz_intro_description">Teste dein Wissen zu Künstlicher Intelligenz, KI-Regulierung und KI im Arbeitsalltag. Am Ende erhältst du deinen persönlichen KI-Score zum Teilen!</string>
     <string name="quiz_next_question">Nächste Frage</string>
     <string name="quiz_stats_correct">Richtig</string>
     <string name="quiz_stats_points">Punkte</string>
     <string name="quiz_stats_max_combo">Max Combo</string>
     <string name="quiz_stats_lives_left">Leben übrig</string>
-    <string name="quiz_offline_retry">Erneut versuchen</string>
-    <string name="quiz_offline_play_games">Mini-Spiele offline spielen →</string>
 
     <!-- Kids extracted -->
     <string name="kids_title">ForKids</string>
     <string name="kids_coppa_title">Für Eltern — Datenschutz-Info</string>
     <string name="kids_coppa_text">Keine Daten werden gesendet. Alles bleibt lokal.</string>
-    <string name="kids_coppa_more">Mehr erfahren →</string>
     <string name="kids_heading">🤖 KI-Lernen für Kinder</string>
     <string name="kids_heading_desc">Spielerisch KI verstehen — COPPA-konform, lokal gespeichert, keine Datenweitergabe.</string>
     <string name="kids_done_title">Geschafft!</string>
     <string name="kids_done_text">Du hast diese Lektion abgeschlossen!</string>
     <string name="kids_dismiss">Verstanden</string>
-    <string name="kids_quiz_label">❓ Quiz</string>
-    <string name="kids_coppa_privacy">🔒</string>
 
     <!-- Profile expanded -->
-    <string name="profile_streak_label">Tages-Serie</string>
 
     <!-- Settings / Language -->
     <string name="settings_language">Sprache</string>
@@ -267,11 +206,7 @@
 
     <!-- Error states -->
     <string name="error_offline_title">Keine Verbindung</string>
-    <string name="error_offline_message">KI-Score braucht eine Internetverbindung zum Laden.</string>
-    <string name="error_offline_retry">Erneut versuchen</string>
-    <string name="error_offline_fallback">Mini-Spiele offline spielen →</string>
     <string name="error_generic_title">Etwas ist schiefgelaufen</string>
-    <string name="error_generic_retry">Erneut versuchen</string>
 
     <!-- Onboarding -->
     <string name="onboarding_kibot_body">KiBot entwickelt sich mit deinem Fortschritt: je mehr du lernst, desto mehr wachst es. Sammle XP, halte deine Tages-Serie und steige im Level auf.</string>
@@ -280,7 +215,6 @@
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_skip">Ueberspringen</string>
     <string name="onboarding_start_body">1. Mache den KI-Score-Test\n2. Arbeite die Lektionen durch\n3. Wiederhole mit Intervall-Wiederholung\n\nLos geht\'s!</string>
-    <string name="onboarding_start_cta">Jetzt starten</string>
     <string name="onboarding_start_subtitle">3 Schritte zum Erfolg</string>
     <string name="onboarding_start_title">Bereit zum Start?</string>
     <string name="onboarding_welcome_body">Lerne spielerisch alles ueber KI-Regulierung: Interaktive Lektionen, Mini-Spiele, KI-Score-Quiz und Intervall-Wiederholung. Verstehen statt auswendig lernen.</string>
@@ -303,20 +237,11 @@
     <string name="disclaimer_no_warranty">Alle Angaben ohne Gewaehr. Fuer rechtsverbindliche Auskuenfte wenden Sie sich an eine Fachanwaeltin oder einen Fachanwalt.</string>
     <string name="disclaimer_open_source">Quelle oeffnen</string>
     <string name="menu_about">Ueber die App</string>
-    <string name="daily_challenge_title">Taegliche Herausforderung</string>
-    <string name="daily_challenge_subtitle">Spiele das Mini-Spiel des Tages</string>
     <string name="daily_challenge_start">Starten</string>
-    <string name="daily_challenge_completed">Heute erledigt!</string>
-    <string name="daily_challenge_come_back">Morgen wieder da. Streak: %1$d</string>
-    <string name="daily_challenge_streak">Streak: %1$d</string>
-    <string name="daily_challenge_xp_preview">+%1$d XP</string>
-    <string name="daily_challenge_xp_earned">+%1$d XP verdient!</string>
-    <string name="games_start">Starten</string>
     <string name="games_adaptive_badge">Adaptive</string>
     <string name="games_adaptive_fact">Fact</string>
     <string name="games_adaptive_risk">Risk</string>
     <string name="games_adaptive_wrong">Wrong</string>
-    <string name="games_adaptive_domain">Domain</string>
     <string name="games_adaptive_weak">Recommended for review</string>
     <string name="games_adaptive_no_statements">No statements available</string>
     <string name="lesson_quiz_intro">Beantworte %1$d Fragen, um dein Wissen zu testen</string>

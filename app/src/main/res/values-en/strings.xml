@@ -4,42 +4,12 @@
 
     <!-- Home -->
     <string name="home_title">AI Competence</string>
-    <string name="home_hero_question">How AI-fit are you?</string>
-    <string name="home_hero_answer">Find out the playful way.</string>
-    <string name="home_quiz_cta">Take the AI Score</string>
-    <string name="home_quiz_subtitle">Questions · Levels · share your result</string>
     <string name="home_level">⭐ Level %1$s</string>
     <string name="home_xp">%1$s XP</string>
     <string name="home_streak">🔥 %1$s day streak</string>
     <string name="home_checkin">Daily check-in</string>
     <string name="home_checked_in">✓ Checked in</string>
     <string name="home_login_cta">Log in for team &amp; premium</string>
-    <string name="home_premium_active">✓ Premium active</string>
-    <string name="home_premium_upsell">Basic — Unlock Premium now</string>
-    <string name="home_feature_lessons">Lessons</string>
-    <string name="home_feature_lessons_desc">Lessons on AI competence — lessons 1-8 free</string>
-    <string name="home_feature_lessons_action">Open lessons</string>
-    <string name="home_feature_quiz">AI Score Quiz</string>
-    <string name="home_feature_quiz_desc">Questions · Levels · share your result</string>
-    <string name="home_feature_quiz_action">Start quiz</string>
-    <string name="home_feature_games">AI Mini-Games</string>
-    <string name="home_feature_games_desc">Human or AI? · Fact or Hallucination? · High-Risk Blitz</string>
-    <string name="home_feature_games_action">Play</string>
-    <string name="home_feature_profile">Profile &amp; Badges</string>
-    <string name="home_feature_profile_desc">XP · Level · Streak · 10 badges</string>
-    <string name="home_feature_profile_action">View</string>
-    <string name="home_feature_srs">Review (SRS)</string>
-    <string name="home_feature_srs_desc">Spaced repetition — cards in the optimal rhythm</string>
-    <string name="home_feature_srs_action">Review</string>
-    <string name="home_feature_premium">Premium</string>
-    <string name="home_feature_premium_desc">All lessons · Spaced repetition · Certificate · Team ranking</string>
-    <string name="home_feature_premium_action">View Premium</string>
-    <string name="home_feature_premium_action_active">Use Premium features</string>
-    <string name="home_feature_team">Team &amp; Ranking</string>
-    <string name="home_feature_team_desc">Who is the most AI-fit in your team?</string>
-    <string name="home_feature_team_action">Open team ranking</string>
-    <string name="home_dsgvo_note">GDPR-compliant: Only name, score and level are visible in a team. Email addresses are never shown.</string>
-    <string name="team">Team</string>
 
     <!-- Quiz (AI Score) -->
     <string name="quiz_title">AI Score</string>
@@ -49,7 +19,6 @@
     <string name="quiz_question_count">Question %1$d of %2$d</string>
     <string name="quiz_correct_count">%1$d/%2$d correct</string>
     <string name="quiz_no_questions">No questions available</string>
-    <string name="quiz_next">Next question</string>
     <string name="quiz_my_result">My result</string>
     <string name="quiz_good_to_know">💡 Good to know: </string>
     <string name="quiz_correct">✅ Correct! </string>
@@ -59,9 +28,6 @@
     <string name="quiz_stats_questions">Questions</string>
     <string name="quiz_stats_minutes">Minutes</string>
     <string name="quiz_stats_levels">Levels</string>
-    <string name="quiz_correct_answered">Answered correctly</string>
-    <string name="quiz_hit_rate">Hit rate</string>
-    <string name="quiz_score_share_text">Share result</string>
 
     <!-- Mini-Games -->
     <string name="games_title">AI Mini-Games</string>
@@ -70,8 +36,6 @@
     <string name="games_round_count">%1$d rounds · +10 XP per correct answer · 💯 perfect bonus</string>
     <string name="games_premium_round_count">%1$d rounds · +15 XP per correct answer · 💯 perfect bonus</string>
     <string name="games_premium_locked">Premium required — %1$d rounds · +15 XP/answer</string>
-    <string name="games_premium_header">⭐ Premium Games</string>
-    <string name="games_premium_subtitle">Advanced deep-dives with higher XP rewards (+15 instead of +10 per answer).</string>
     <string name="games_dsgvo_note">💡 The mini-games are part of the gamification system — XP, levels and badges are stored locally on your device (GDPR-compliant, no server).</string>
     <string name="game_round">Round %1$d of %2$d</string>
     <string name="game_correct_count">%1$d/%2$d correct</string>
@@ -83,7 +47,6 @@
     <string name="game_next_round">Next round</string>
     <string name="game_view_result">View result</string>
     <string name="game_correct_feedback">✅ Correct! </string>
-    <string name="game_info_feedback">💡 Good to know: </string>
 
     <!-- Premium -->
     <string name="premium_title">Premium</string>
@@ -108,7 +71,6 @@
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Your Profile</string>
-    <string name="profile_back">Back</string>
     <string name="profile_level">Level %1$s</string>
     <string name="profile_xp">%1$s XP</string>
     <string name="profile_xp_to_next">%1$s / %2$s XP to level %3$s</string>
@@ -122,7 +84,6 @@
     <string name="profile_dsgvo">GDPR: XP, level, streak and badges are stored exclusively on your device — no data is sent to servers.</string>
     <string name="reminder_title">Study reminder</string>
     <string name="reminder_desc">Daily reminder for due review cards</string>
-    <string name="reminder_permission_hint">Notifications are disabled in system settings</string>
 
     <!-- Lessons -->
     <string name="lessons_title">Lessons</string>
@@ -132,9 +93,7 @@
     <string name="lessons_unlock_cta">Unlock all lessons — Premium</string>
     <string name="lesson_mark_complete">✓ Complete lesson (+%1$d XP)</string>
     <string name="lesson_premium_gate_title">Premium lesson</string>
-    <string name="lesson_premium_gate_text">Lesson %1$s is part of the Premium training. Unlock Premium to get all lessons, spaced repetition and the certificate.</string>
     <string name="lesson_premium_cta">Unlock Premium now</string>
-    <string name="lesson_premium_price">€6.99/month per seat · cancel anytime</string>
 
     <!-- Team -->
     <string name="team_title">Team &amp; Ranking</string>
@@ -158,7 +117,6 @@
     <string name="srs_login_required">Spaced repetition requires an account.</string>
     <string name="srs_login_note">Review cards are stored per user so your learning progress stays in sync across devices.</string>
     <string name="srs_login">Log in</string>
-    <string name="srs_all_done">🎉</string>
     <string name="srs_all_done_title">All done!</string>
     <string name="srs_all_done_note">No cards due for review. Check back tomorrow or learn new lessons.</string>
     <string name="srs_card_progress">Card %1$d of %2$d</string>
@@ -177,26 +135,14 @@
 
     <!-- Navigation content descriptions -->
     <string name="nav_back">Back</string>
-    <string name="nav_team">Team</string>
 
     <!-- Common -->
     <string name="common_retry">Retry</string>
     <string name="common_no_data">No data found</string>
-    <string name="common_loading">Loading…</string>
     <string name="common_error">Please wait…</string>
-    <string name="common_premium_badge">Unlock Premium</string>
     <string name="common_premium_gate_desc">is part of the Premium training. Unlock Premium to access all lessons, Spaced Repetition, and the certificate.</string>
 
     <!-- Accessibility -->
-    <string name="a11y_streak_fire">Day streak</string>
-    <string name="a11y_lessons_book">Lessons</string>
-    <string name="a11y_quiz_result">Share quiz result</string>
-    <string name="a11y_star">Star / Premium</string>
-    <string name="a11y_lock">Locked</string>
-    <string name="a11y_check_circle">Confirmed</string>
-    <string name="a11y_share">Share</string>
-    <string name="a11y_login">Log in</string>
-    <string name="a11y_points">Points</string>
 
     <!-- KiBot -->
     <string name="kibot_level">Your AI companion · Level %1$d</string>
@@ -233,31 +179,24 @@
     <string name="difficulty_expert">Expert</string>
 
     <!-- Quiz extracted -->
-    <string name="quiz_intro_subtitle">How AI-fit are you?</string>
     <string name="quiz_intro_description">Test your knowledge of Artificial Intelligence, AI regulation, and AI in the workplace. At the end you will receive your personal AI Score to share!</string>
     <string name="quiz_next_question">Next question</string>
     <string name="quiz_stats_correct">Correct</string>
     <string name="quiz_stats_points">Points</string>
     <string name="quiz_stats_max_combo">Max Combo</string>
     <string name="quiz_stats_lives_left">Lives left</string>
-    <string name="quiz_offline_retry">Retry</string>
-    <string name="quiz_offline_play_games">Play mini-games offline →</string>
 
     <!-- Kids extracted -->
     <string name="kids_title">ForKids</string>
     <string name="kids_coppa_title">For Parents — Privacy Info</string>
     <string name="kids_coppa_text">No data is sent. Everything stays local.</string>
-    <string name="kids_coppa_more">Learn more →</string>
     <string name="kids_heading">🤖 AI Learning for Kids</string>
     <string name="kids_heading_desc">Discover AI through play — COPPA-compliant, stored locally, no data sharing.</string>
     <string name="kids_done_title">Well done!</string>
     <string name="kids_done_text">You completed this lesson!</string>
     <string name="kids_dismiss">Got it</string>
-    <string name="kids_quiz_label">❓ Quiz</string>
-    <string name="kids_coppa_privacy">🔒</string>
 
     <!-- Profile expanded -->
-    <string name="profile_streak_label">Day streak</string>
 
     <!-- Settings / Language -->
     <string name="settings_language">Language</string>
@@ -267,11 +206,7 @@
 
     <!-- Error states -->
     <string name="error_offline_title">No connection</string>
-    <string name="error_offline_message">AI Score needs an internet connection to load.</string>
-    <string name="error_offline_retry">Retry</string>
-    <string name="error_offline_fallback">Play mini-games offline →</string>
     <string name="error_generic_title">Something went wrong</string>
-    <string name="error_generic_retry">Retry</string>
 
     <!-- Onboarding -->
     <string name="onboarding_kibot_body">KiBot evolves with your progress: the more you learn, the more it grows. Earn XP, maintain your daily streak, and level up.</string>
@@ -280,7 +215,6 @@
     <string name="onboarding_next">Next</string>
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_start_body">1. Take the AI Score quiz\n2. Work through the lessons\n3. Review with spaced repetition\n\nLet\'s go!</string>
-    <string name="onboarding_start_cta">Get started</string>
     <string name="onboarding_start_subtitle">3 steps to success</string>
     <string name="onboarding_start_title">Ready to start?</string>
     <string name="onboarding_welcome_body">Learn everything about AI regulation in a fun way: 14 interactive lessons, mini-games, AI Score quiz, and spaced repetition. Understand, don\'t memorize.</string>
@@ -303,20 +237,11 @@
     <string name="disclaimer_no_warranty">All information is provided without guarantee. For legally binding advice, consult a qualified legal professional.</string>
     <string name="disclaimer_open_source">Open source</string>
     <string name="menu_about">About the app</string>
-    <string name="daily_challenge_title">Daily Challenge</string>
-    <string name="daily_challenge_subtitle">Play today\'s mini-game challenge</string>
     <string name="daily_challenge_start">Start</string>
-    <string name="daily_challenge_completed">Done for today!</string>
-    <string name="daily_challenge_come_back">Come back tomorrow. Streak: %1$d</string>
-    <string name="daily_challenge_streak">Streak: %1$d</string>
-    <string name="daily_challenge_xp_preview">+%1$d XP</string>
-    <string name="daily_challenge_xp_earned">+%1$d XP earned!</string>
-    <string name="games_start">Start</string>
     <string name="games_adaptive_badge">Adaptive</string>
     <string name="games_adaptive_fact">Fact</string>
     <string name="games_adaptive_risk">Risk</string>
     <string name="games_adaptive_wrong">Wrong</string>
-    <string name="games_adaptive_domain">Domain</string>
     <string name="games_adaptive_weak">Recommended for review</string>
     <string name="games_adaptive_no_statements">No statements available</string>
     <string name="lesson_quiz_intro">Answer %1$d questions to test your knowledge</string>
