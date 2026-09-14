@@ -101,6 +101,10 @@ android {
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+    testOptions {
+        // Log/BuildConfig calls return defaults in unit tests (no Robolectric)
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -133,6 +137,7 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.androidx.core.testing)
+    implementation(libs.play.review)
     
     // Testing & Quality
     testImplementation(libs.kotest.runner)
@@ -149,6 +154,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.core)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
