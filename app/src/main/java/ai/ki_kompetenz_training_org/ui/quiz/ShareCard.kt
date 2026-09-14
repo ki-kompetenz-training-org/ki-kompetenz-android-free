@@ -64,7 +64,7 @@ fun ShareCard(state: QuizUiState, tier: KiScoreTierDto?, modifier: Modifier = Mo
             Text(tier?.emoji ?: "\uD83E\uDD16", style = MaterialTheme.typography.displayMedium)
             Spacer(Modifier.height(8.dp))
             Text(
-                "${state.score}/100",
+                "${state.percentScore}/100",
                 color = Color.White,
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,

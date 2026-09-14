@@ -101,4 +101,20 @@ class QuizUiStateTierTest {
         )
         assertThat(s.score).isEqualTo(5000)
     }
+
+    // ── percentScore (Anzeige-Share-Badge-Quelle, 0 bis 100) ─────────────
+
+    @Test
+    fun `percentScore ist Antwort-Prozentsatz, NICHT Punkte (BUG-Fund 2026-09-14)`() {
+        val s = QuizUiState(answers = listOf(true, true, true, false, false, false, false, false, false, false), scorePoints = 830)
+        assertThat(s.percentScore).isEqualTo(30)
+        assertThat(s.score).isEqualTo(830)
+    }
+
+    @Test
+    fun `percentScore rundet korrekt und ist 0 ohne Antworten`() {
+        assertThat(QuizUiState(answers = List(3) { true }).percentScore).isEqualTo(100)
+        assertThat(QuizUiState(answers = listOf(true, false)).percentScore).isEqualTo(50)
+        assertThat(QuizUiState().percentScore).isEqualTo(0)
+    }
 }

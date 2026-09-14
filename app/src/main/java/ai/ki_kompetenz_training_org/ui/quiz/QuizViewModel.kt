@@ -40,6 +40,11 @@ data class QuizUiState(
 ) {
     val score: Int get() = scorePoints
 
+    // Anzeige-/Share-/Badge-Quelle: Antwort-Prozentsatz 0-100 (Website-Paritaet).
+    // BUG-Fund 2026-09-14 (Emulator-Run): Header/Share zeigten scorePoints ("830/100"),
+    // und der visionary-Badge ("81+ Punkte") loeste bei reinen Punkten immer aus.
+    val percentScore: Int get() = QuizScoring.scoreFor(answers)
+
     // Tier aus dem ANTWORT-PROZENTSATZ (Website-Paritaet) — nicht aus
     // scorePoints: die enthaelt Combo-/Zeit-Bonuspunkte und uebersteigt
     // nach wenigen richtigen Antworten die 100er-Tier-Skala, wodurch
@@ -197,7 +202,7 @@ class QuizViewModel(
 
     private fun finish() {
         val s = _state.value
-        val score = s.score
+        val score = s.percentScore  // DB + Badge-Semantik: Prozent (0-100), nicht Punkte
         val tier = s.tier
         _state.value = s.copy(phase = QuizPhase.RESULT)
         viewModelScope.launch {

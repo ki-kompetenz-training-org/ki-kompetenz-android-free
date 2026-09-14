@@ -294,7 +294,7 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
                 Text(stringResource(R.string.quiz_your_score), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    "${state.score}/100",
+                    "${state.percentScore}/100",
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Light,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -332,7 +332,7 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
 
         Button(
             onClick = {
-                val text = QuizShareText.build(state.score, tier?.emoji, tier?.title, state.sharePrefix, QuizShareText.LINK)
+                val text = QuizShareText.build(state.percentScore, tier?.emoji, tier?.title, state.sharePrefix, QuizShareText.LINK)
                 scope.launch {
                     val imageShared = try {
                         val bitmap = graphicsLayer.toImageBitmap()
