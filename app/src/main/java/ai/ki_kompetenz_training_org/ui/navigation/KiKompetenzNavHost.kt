@@ -124,7 +124,15 @@ fun KiKompetenzNavHost(
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
             )
         }
-        composable(Routes.LESSON) { backStackEntry ->
+        composable(
+            Routes.LESSON,
+            // Web-Lesson-Slugs == App-IDs ("lesson-3"): 1:1-Mapping. de = ohne Prefix,
+            // en = /en-Prefix. fr/zh existieren nur auf der Website, nicht in der App.
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "https://ki-kompetenz-training.org/ai-literacy/lessons/{slug}" },
+                navDeepLink { uriPattern = "https://ki-kompetenz-training.org/en/ai-literacy/lessons/{slug}" },
+            ),
+        ) { backStackEntry ->
             val slug = backStackEntry.arguments?.getString("slug") ?: ""
             // Interactive lessons (1-8) use rich content blocks
             val interactiveLessons = mapOf(
@@ -227,7 +235,9 @@ fun KiKompetenzNavHost(
             }
         }
         composable(Routes.GAMIFICATION) {
-            GamificationScreen()
+            GamificationScreen(
+                onOpenPremium = { navController.navigate(Routes.PREMIUM) },
+            )
         }
         composable(Routes.SRS) {
             SrsScreen(

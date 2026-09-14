@@ -42,7 +42,7 @@ import ai.ki_kompetenz_training_org.util.findActivity
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun GamificationScreen() {
+fun GamificationScreen(onOpenPremium: () -> Unit = {}) {
     val context = LocalContext.current
     val app = KiKompetenzApp.from(context)
     val vm: GamificationViewModel = viewModel {
@@ -263,11 +263,21 @@ fun GamificationScreen() {
                 }
             }
 
-            // Zertifikat-Export (gratis) — ponytail: premium gate only if monetization requires it.
+            // Zertifikat-Export — Premium-Gate (Auth + Subscription wie MiniGames;
+            // nicht eingeloggt/nicht Premium → Upsell statt Export).
             item {
                 val snapshot = state.latestSnapshot
                 if (snapshot != null) {
                     var showDialog by remember { mutableStateOf(false) }
+                    var showPremiumUpsell by remember { mutableStateOf(false) }
+                    var premiumChecked by remember { mutableStateOf(false) }
+                    var premium by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        if (app.authRepository.isLoggedIn()) {
+                            app.premiumRepository.isPremium().onSuccess { premium = it }
+                        }
+                        premiumChecked = true
+                    }
                     var certName by remember { mutableStateOf("") }
                     val config = LocalConfiguration.current
                     val domainLabels = stringArrayResource(R.array.radar_axes).toList()
@@ -289,6 +299,24 @@ fun GamificationScreen() {
                             context.contentResolver.openOutputStream(uri)?.use { writePdf(lines, it) }
                             Toast.makeText(context, R.string.certificate_saved, Toast.LENGTH_SHORT).show()
                         }
+                    }
+                    if (showPremiumUpsell) {
+                        AlertDialog(
+                            onDismissRequest = { showPremiumUpsell = false },
+                            title = { Text(stringResource(R.string.premium_title)) },
+                            text = { Text(stringResource(R.string.certificate_premium_body)) },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                    showPremiumUpsell = false
+                                    onOpenPremium()
+                                }) { Text(stringResource(R.string.premium_title)) }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showPremiumUpsell = false }) {
+                                    Text(stringResource(android.R.string.cancel))
+                                }
+                            },
+                        )
                     }
                     if (showDialog) {
                         AlertDialog(
@@ -317,7 +345,9 @@ fun GamificationScreen() {
                             },
                         )
                     }
-                    Button(onClick = { showDialog = true }, modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = {
+                        if (premiumChecked && !premium) showPremiumUpsell = true else showDialog = true
+                    }, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.certificate_export))
                     }
                 } else {

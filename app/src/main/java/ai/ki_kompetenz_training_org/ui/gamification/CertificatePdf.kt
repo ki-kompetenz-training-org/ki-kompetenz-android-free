@@ -10,7 +10,7 @@ import android.graphics.pdf.PdfDocument
 import java.io.OutputStream
 
 /**
- * Zertifikat-Export (gratis) — ponytail: premium gate only if monetization requires it.
+ * Zertifikat-Export — Premium-Gated (siehe GamificationScreen: Auth + Subscription).
  * [buildLines]/[parsePerDomain] sind rein und unit-testbar; [writePdf] ist ein duenner
  * android.graphics-Wrapper (nicht unit-testbar, kein Robolectric).
  */

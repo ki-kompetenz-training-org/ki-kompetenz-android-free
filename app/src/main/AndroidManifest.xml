@@ -50,6 +50,14 @@
                     android:host="ki-kompetenz-training.org"
                     android:pathPrefix="/mini-games"
                     android:scheme="https" />
+                <data
+                    android:host="ki-kompetenz-training.org"
+                    android:pathPrefix="/ai-literacy/lessons"
+                    android:scheme="https" />
+                <data
+                    android:host="ki-kompetenz-training.org"
+                    android:pathPrefix="/en/ai-literacy/lessons"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
     </application>
