@@ -3,6 +3,7 @@ package ai.ki_kompetenz_training_org.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.navDeepLink
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -111,7 +112,10 @@ fun KiKompetenzNavHost(
                 onOpenMiniGame = { gameId -> navController.navigate(Routes.minigame(gameId)) },
             )
         }
-        composable(Routes.QUIZ) {
+        composable(
+            Routes.QUIZ,
+            deepLinks = listOf(navDeepLink { uriPattern = "https://ki-kompetenz-training.org/ki-score" }),
+        ) {
             QuizScreen(onBack = { navController.popBackStack() })
         }
         composable(Routes.LESSONS) {
@@ -197,13 +201,19 @@ fun KiKompetenzNavHost(
         composable(Routes.AUTH) {
             AuthScreen(onBack = { navController.popBackStack() })
         }
-        composable(Routes.MINIGAMES) {
+        composable(
+            Routes.MINIGAMES,
+            deepLinks = listOf(navDeepLink { uriPattern = "https://ki-kompetenz-training.org/mini-games" }),
+        ) {
             MiniGamesMenuScreen(
                 onOpenGame = { game -> navController.navigate(Routes.minigame(game.id)) },
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
             )
         }
-        composable(Routes.MINIGAME) { backStackEntry ->
+        composable(
+            Routes.MINIGAME,
+            deepLinks = listOf(navDeepLink { uriPattern = "https://ki-kompetenz-training.org/mini-games/{gameId}" }),
+        ) { backStackEntry ->
             val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
             val game = MiniGames.byId(gameId)
             if (game != null) {
