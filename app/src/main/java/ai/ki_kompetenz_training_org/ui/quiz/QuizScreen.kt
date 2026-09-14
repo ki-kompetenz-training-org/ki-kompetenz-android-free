@@ -1,6 +1,7 @@
 package ai.ki_kompetenz_training_org.ui.quiz
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,10 +29,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.core.content.FileProvider
+import java.io.File
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.offset
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.ui.common.uiErrorMessage
 import ai.ki_kompetenz_training_org.ui.quiz.QuizConstants
+import ai.ki_kompetenz_training_org.util.ReviewHelper
+import ai.ki_kompetenz_training_org.util.findActivity
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color as ComposeColor
 
@@ -257,8 +268,16 @@ private fun PlayingContent(
 private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () -> Unit) {
     val tier = state.tier
     val context = LocalContext.current
+    val graphicsLayer = rememberGraphicsLayer()
+    val scope = rememberCoroutineScope()
+    // Peak emotional moment: system review dialog once, gated by ReviewHelper's
+    // own one-time flag + lesson threshold. Nothing to render.
+    LaunchedEffect(Unit) {
+        context.findActivity()?.let { ReviewHelper.maybeRequestReview(it, state.completedLessons) }
+    }
+    Box(modifier.fillMaxSize()) {
     Column(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+        Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
@@ -313,18 +332,34 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
 
         Button(
             onClick = {
-                val text = buildString {
-                    append(state.sharePrefix.replace("{score}", state.score.toString())
-                        .replace("{emoji}", tier?.emoji ?: "")
-                        .replace("{tier}", tier?.title ?: ""))
-                    append("\n\n")
-                    append("https://ki-kompetenz-training.org/ki-score")
+                val text = QuizShareText.build(state.score, tier?.emoji, tier?.title, state.sharePrefix, QuizShareText.LINK)
+                scope.launch {
+                    val imageShared = try {
+                        val bitmap = graphicsLayer.toImageBitmap()
+                        val file = File(context.cacheDir, "ki-score.png")
+                        file.outputStream().use { out ->
+                            bitmap.asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, out)
+                        }
+                        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "image/png"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            putExtra(Intent.EXTRA_TEXT, text)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.quiz_share)))
+                        true
+                    } catch (e: Exception) {
+                        false
+                    }
+                    if (!imageShared) {
+                        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, text)
+                        }
+                        context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.quiz_share)))
+                    }
                 }
-                val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                    type = "text/plain"
-                    putExtra(Intent.EXTRA_TEXT, text)
-                }
-                context.startActivity(Intent.createChooser(sendIntent, context.getString(R.string.quiz_share)))
             },
             modifier = Modifier.fillMaxWidth().height(50.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0A66C2)),
@@ -338,6 +373,22 @@ private fun ResultContent(modifier: Modifier, state: QuizUiState, onRestart: () 
 
         OutlinedButton(onClick = onRestart, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.quiz_play_again))
+        }
+    }
+
+        // Unsichtbar gerenderte Share-Karte; wird im graphicsLayer aufgenommen
+        // und beim Teilen als PNG exportiert. alpha(0) + Offset nach unten:
+        // kein leerer Platz im Layout, kein Touch-Konflikt mit dem Inhalt.
+        Box(
+            Modifier
+                .drawWithContent {
+                    graphicsLayer.record { this@drawWithContent.drawContent() }
+                    drawContent()
+                }
+                .alpha(0f)
+                .offset(y = 100000.dp)
+        ) {
+            ShareCard(state, tier)
         }
     }
 }

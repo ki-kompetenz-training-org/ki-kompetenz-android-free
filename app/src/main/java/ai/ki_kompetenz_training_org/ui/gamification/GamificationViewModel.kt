@@ -57,6 +57,8 @@ class GamificationViewModel(
         }
     }
 
+    suspend fun snapshotForCertificate(): CompetencySnapshotEntity? = competency?.latestSnapshot()
+
     fun dailyCheckIn() {
         viewModelScope.launch {
             gamification.dailyCheckIn()

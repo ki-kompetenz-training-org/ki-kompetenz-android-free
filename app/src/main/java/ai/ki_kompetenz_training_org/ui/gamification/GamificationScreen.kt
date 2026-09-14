@@ -13,7 +13,9 @@ import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.ui.gamification.LanguageSection
 import ai.ki_kompetenz_training_org.ui.theme.AudienceMode
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -256,6 +258,69 @@ fun GamificationScreen() {
                     CompetencyRadarCard(
                         kiki = snapshot.kiki,
                         domainScores = parseDomainScores(snapshot.perDomainJson, LiteracyBank.DOMAINS.size),
+                    )
+                }
+            }
+
+            // Zertifikat-Export (gratis) — ponytail: premium gate only if monetization requires it.
+            item {
+                val snapshot = state.latestSnapshot
+                if (snapshot != null) {
+                    var showDialog by remember { mutableStateOf(false) }
+                    var certName by remember { mutableStateOf("") }
+                    val config = LocalConfiguration.current
+                    val pdfLauncher = rememberLauncherForActivityResult(
+                        ActivityResultContracts.CreateDocument("application/pdf"),
+                    ) { uri ->
+                        if (uri != null) {
+                            val lines = CertificateContent.buildLines(
+                                kiki = snapshot.kiki,
+                                perDomain = parsePerDomain(snapshot.perDomainJson),
+                                domains = LiteracyBank.DOMAINS,
+                                name = certName,
+                                dateIso = java.time.Instant.ofEpochMilli(snapshot.createdAt)
+                                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate().toString(),
+                                localeTag = config.locales[0].toLanguageTag(),
+                            )
+                            context.contentResolver.openOutputStream(uri)?.use { writePdf(lines, it) }
+                            Toast.makeText(context, R.string.certificate_saved, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    if (showDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showDialog = false },
+                            title = { Text(stringResource(R.string.certificate_dialog_title)) },
+                            text = {
+                                OutlinedTextField(
+                                    value = certName,
+                                    onValueChange = { certName = it },
+                                    label = { Text(stringResource(R.string.certificate_name)) },
+                                    singleLine = true,
+                                )
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showDialog = false
+                                        pdfLauncher.launch("KI-Kompetenznachweis.pdf")
+                                    },
+                                ) { Text(stringResource(R.string.certificate_export)) }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showDialog = false }) {
+                                    Text(stringResource(android.R.string.cancel))
+                                }
+                            },
+                        )
+                    }
+                    Button(onClick = { showDialog = true }, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.certificate_export))
+                    }
+                } else {
+                    Text(
+                        stringResource(R.string.certificate_no_data),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }

@@ -352,4 +352,9 @@
     <string name="lesson_start_quiz">Test starten</string>
     <string name="lesson_quiz_title">📝 Mini-Test</string>
     <string name="lesson_fallback_title">Lektion</string>
+    <string name="certificate_export">Zertifikat exportieren</string>
+    <string name="certificate_name">Dein Name</string>
+    <string name="certificate_saved">PDF erstellt</string>
+    <string name="certificate_no_data">Noch keine Kompetenzdaten</string>
+    <string name="certificate_dialog_title">Zertifikat erstellen</string>
 </resources>

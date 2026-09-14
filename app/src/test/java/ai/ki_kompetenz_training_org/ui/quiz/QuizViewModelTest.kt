@@ -81,6 +81,28 @@ class QuizViewModelTest {
         assertEquals(QuizPhase.ERROR, vm.state.value.phase)
     }
 
+    private fun stubQuizData() {
+        coEvery { contentRepository.fetchKiScoreData() } returns
+            Result.success(KiScoreDataDto(questions = emptyList(), tiers = emptyList(), share = null))
+    }
+
+    @Test
+    fun `completedLessons loaded from repo into ui state`() = runTest {
+        stubQuizData()
+        coEvery { gamificationRepository.completedLessonCount() } returns 3
+        val vm = viewModel()
+        assertEquals(3, vm.state.value.completedLessons)
+        assertEquals(QuizPhase.INTRO, vm.state.value.phase)
+    }
+
+    @Test
+    fun `completedLessons stays 0 when repo throws`() = runTest {
+        stubQuizData()
+        coEvery { gamificationRepository.completedLessonCount() } throws Exception("db")
+        val vm = viewModel()
+        assertEquals(0, vm.state.value.completedLessons)
+    }
+
     @Test
     fun `retry after failure resets error on success`() = runTest {
         coEvery { contentRepository.fetchKiScoreData() } returns

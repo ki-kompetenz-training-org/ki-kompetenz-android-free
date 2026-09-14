@@ -333,6 +333,9 @@ class GamificationRepository(
         if (condition) unlockBadge(id)
     }
 
+    /** Public read access for review gating (e.g. ReviewHelper threshold). */
+    suspend fun completedLessonCount(): Int = db.gamificationDao().completedLessonCount()
+
     suspend fun markLessonCompleted(slug: String) {
         val completed = db.gamificationDao().completedLessonCount()
         db.gamificationDao().markLessonCompleted(slug)

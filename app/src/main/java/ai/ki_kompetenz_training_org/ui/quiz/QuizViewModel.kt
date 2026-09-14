@@ -36,6 +36,7 @@ data class QuizUiState(
     val maxCombo: Int = 0,
     val timeLeft: Int = QuizConstants.ROUND_SECONDS,
     val scorePoints: Int = 0,
+    val completedLessons: Int = 0,
 ) {
     val score: Int get() = scorePoints
 
@@ -60,9 +61,20 @@ class QuizViewModel(
     
     // Timer for countdown
     private var timerJob: Job? = null
+    // ponytail: simple var instead of state merging — both writers run on the
+    // main dispatcher, so this is race-free; revisit only if load() moves off-main.
+    private var completedLessonsLoaded = 0
 
     init {
         load()
+        // Review-Gating: einmalig Lesson-Anzahl laden; Fehler → 0 (kein Crash)
+        viewModelScope.launch {
+            runCatching { gamificationRepository.completedLessonCount() }
+                .onSuccess {
+                    completedLessonsLoaded = it
+                    _state.value = _state.value.copy(completedLessons = it)
+                }
+        }
     }
 
     fun load() {
@@ -73,9 +85,9 @@ class QuizViewModel(
             contentRepository.fetchKiScoreData().onSuccess { data ->
                 // Fragepool: 10 zufällige Fragen aus dem Pool (analog zur Website)
                 val questions = data.questions.shuffled().take(10)
-                _state.value = QuizUiState(phase = QuizPhase.INTRO, questions = questions, tiers = data.tiers, sharePrefix = data.share?.prefix ?: "")
+                _state.value = QuizUiState(phase = QuizPhase.INTRO, questions = questions, tiers = data.tiers, sharePrefix = data.share?.prefix ?: "", completedLessons = completedLessonsLoaded)
             }.onFailure {
-                _state.value = QuizUiState(phase = QuizPhase.ERROR, error = UiError.QUIZ_LOAD)
+                _state.value = QuizUiState(phase = QuizPhase.ERROR, error = UiError.QUIZ_LOAD, completedLessons = completedLessonsLoaded)
             }
         }
     }
