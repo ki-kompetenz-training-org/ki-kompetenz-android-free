@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.ui.gamification.LanguageSection
@@ -269,18 +270,21 @@ fun GamificationScreen() {
                     var showDialog by remember { mutableStateOf(false) }
                     var certName by remember { mutableStateOf("") }
                     val config = LocalConfiguration.current
+                    val domainLabels = stringArrayResource(R.array.radar_axes).toList()
                     val pdfLauncher = rememberLauncherForActivityResult(
                         ActivityResultContracts.CreateDocument("application/pdf"),
                     ) { uri ->
                         if (uri != null) {
+                            val locale = config.locales[0]
                             val lines = CertificateContent.buildLines(
                                 kiki = snapshot.kiki,
                                 perDomain = parsePerDomain(snapshot.perDomainJson),
-                                domains = LiteracyBank.DOMAINS,
+                                domains = domainLabels,
                                 name = certName,
-                                dateIso = java.time.Instant.ofEpochMilli(snapshot.createdAt)
-                                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate().toString(),
-                                localeTag = config.locales[0].toLanguageTag(),
+                                date = java.time.Instant.ofEpochMilli(snapshot.createdAt)
+                                    .atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                                    .format(java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM).withLocale(locale)),
+                                localeTag = locale.toLanguageTag(),
                             )
                             context.contentResolver.openOutputStream(uri)?.use { writePdf(lines, it) }
                             Toast.makeText(context, R.string.certificate_saved, Toast.LENGTH_SHORT).show()

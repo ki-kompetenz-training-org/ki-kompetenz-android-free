@@ -23,7 +23,7 @@ class CertificateContentTest {
             perDomain = perDomain,
             domains = domains,
             name = name,
-            dateIso = "2026-03-14",
+            date = "14.03.2026",
             localeTag = locale,
         )
 
@@ -32,7 +32,7 @@ class CertificateContentTest {
         val l = lines()
         assertThat(l).contains("KI-Kompetenz-Nachweis")
         assertThat(l).contains("Name: Max Mustermann")
-        assertThat(l).contains("Datum: 2026-03-14")
+        assertThat(l).contains("Datum: 14.03.2026")
         assertThat(l).contains("KI-Score (KIKI): 88/100")
     }
 
@@ -61,7 +61,7 @@ class CertificateContentTest {
         val l = lines(locale = "en-US")
         assertThat(l).contains("AI Literacy Certificate")
         assertThat(l).contains("Name: Max Mustermann")
-        assertThat(l).contains("Date: 2026-03-14")
+        assertThat(l).contains("Date: 14.03.2026")
         assertThat(l).contains("AI Score (KIKI): 88/100")
         assertThat(l).contains("Based on EU AI Act Art. 4 - AI literacy")
     }
@@ -74,10 +74,10 @@ class CertificateContentTest {
     @Test
     fun `Groessenungleichung wirft IllegalArgumentException`() {
         assertThrows(IllegalArgumentException::class.java) {
-            CertificateContent.buildLines(50, listOf(1, 2, 3), domains, "X", "2026-01-01", "de")
+            CertificateContent.buildLines(50, listOf(1, 2, 3), domains, "X", "01.01.2026", "de")
         }
         assertThrows(IllegalArgumentException::class.java) {
-            CertificateContent.buildLines(50, perDomain, domains.drop(1), "X", "2026-01-01", "de")
+            CertificateContent.buildLines(50, perDomain, domains.drop(1), "X", "01.01.2026", "de")
         }
     }
 
