@@ -166,7 +166,7 @@ object Badges {
         "mini_game" to BadgeText("Spiele dein erstes KI-Mini-Spiel", "Play your first AI mini-game", "Jouez à votre premier mini-jeu IA", "玩第一个 AI 小游戏"),
         "mini_game_all" to BadgeText("Spiele alle KI-Mini-Spiele", "Play all AI mini-games", "Jouez à tous les mini-jeux IA", "玩遍所有 AI 小游戏"),
         "fake_or_real" to BadgeText("Erkenne 10/10 Texte richtig", "Identify 10/10 texts correctly", "Identifiez 10/10 textes", "正确识别 10/10 文本"),
-        "visionary" to BadgeText("Erziele 81+ Punkte im KI-Score", "Score 81+ in the AI test", "Obtenez 81+ au test IA", "在 AI 测试中获得 81 分以上"),
+        "visionary" to BadgeText("Erziele 81+ % im KI-Score", "Score 81+ % in the AI test", "Obtenez 81+ % au test IA", "在 AI 测试中获得 81% 以上"),
     )
 
     private val ALL_BADGES: List<Pair<String, String>> = listOf(
