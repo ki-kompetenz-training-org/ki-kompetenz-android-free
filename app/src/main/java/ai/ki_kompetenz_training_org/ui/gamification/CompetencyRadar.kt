@@ -5,6 +5,9 @@
 package ai.ki_kompetenz_training_org.ui.gamification
 
 import android.graphics.Paint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -26,10 +31,13 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.ki_kompetenz_training_org.R
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -49,6 +57,19 @@ internal const val RADAR_MIN_DISPLAY = 6
 /** Hebt Scores unter [RADAR_MIN_DISPLAY] fuer die ZEICHNUNG auf den Floor an. */
 internal fun radarDisplayScores(scores: List<Int>): List<Int> =
     scores.map { maxOf(it, RADAR_MIN_DISPLAY) }
+
+/**
+ * KIKI-Tier (Emoji + Titel). Spiegelt die Schwellen aus KiScoreFallback
+ * (tiers 0/21/41/61/81) lokal nach, damit die Radar-Karte ohne Netz-Content
+ * labeln kann. Reine Funktion (unit-testbar).
+ */
+internal fun kikiTier(kiki: Int): Pair<String, String> = when (kiki.coerceIn(0, 100)) {
+    in 0..20 -> "🌱" to "KI-Laie"
+    in 21..40 -> "🔍" to "KI-Entdecker"
+    in 41..60 -> "⚙️" to "KI-Praktiker"
+    in 61..80 -> "💡" to "KI-Profi"
+    else -> "🚀" to "KI-Visionär"
+}
 
 /**
  * Parst perDomainJson ("[76, 12, ...]") in eine Score-Liste fester Laenge.
@@ -104,12 +125,15 @@ internal fun radarSmoothSegments(vertices: List<Offset>): List<Triple<Offset, Of
  * 9-Achsen-Radar (Canvas) der Domaenen-Scores 0..100.
  * Schwache Domaenen (< [RADAR_WEAK_THRESHOLD]) werden rot markiert
  * (Achse + Scheitelpunkt). Keine neue Library — reines Compose-Canvas.
+ * [semanticDescription] sorgt fuer TalkBack-Zugaenglichkeit (Canvas hat
+ * sonst keine Semantik).
  */
 @Composable
 fun CompetencyRadar(
     scores: List<Int>,
     modifier: Modifier = Modifier,
     axisLabels: List<String> = emptyList(),
+    semanticDescription: String = "",
 ) {
     val axisCount = scores.size.coerceAtLeast(1)
     val primary = Color(0xFF1565C0)
@@ -117,7 +141,14 @@ fun CompetencyRadar(
     val guide = Color(0x33000000)
     val labelPx = with(LocalDensity.current) { 10.sp.toPx() }
 
-    Canvas(modifier = modifier) {
+    // Polygon waechst beim ersten Erscheinen weich aus dem Zentrum
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        progress.animateTo(1f, tween(600, easing = FastOutSlowInEasing))
+    }
+    val radiusFactor = progress.value
+
+    Canvas(modifier = modifier.semantics { contentDescription = semanticDescription }) {
         val center = Offset(size.width / 2f, size.height / 2f)
         val radius = minOf(size.width, size.height) / 2f * 0.72f
 
@@ -144,9 +175,10 @@ fun CompetencyRadar(
         }
 
         // Daten-Polygon: geglaettet, mit Display-Floor gegen Zentrums-Kollaps
+        val dataRadius = radius * radiusFactor
         val dataPath = Path()
         val vertices = radarDisplayScores(scores)
-            .mapIndexed { i, s -> radarVertex(s, i, axisCount, center, radius) }
+            .mapIndexed { i, s -> radarVertex(s, i, axisCount, center, dataRadius) }
         val segments = radarSmoothSegments(vertices)
         if (segments.isNotEmpty()) {
             dataPath.moveTo(segments.first().first.x, segments.first().first.y)
@@ -201,13 +233,15 @@ fun CompetencyRadar(
 
 /**
  * Radar-Karte fuer den GamificationScreen: Titel, Radar-Canvas und eine
- * kompakte Legende (KIKI-Gesamtwert + schwach/strong Domaenen).
+ * kompakte Legende (KIKI-Gesamtwert + Tier, Delta zum Vor-Snapshot,
+ * schwach/stark Domaenen).
  */
 @Composable
 fun CompetencyRadarCard(
     kiki: Int,
     domainScores: List<Int>,
     modifier: Modifier = Modifier,
+    previousKiki: Int? = null,
 ) {
     val axisLabels = stringArrayResource(R.array.radar_axes).toList()
     val weakest = domainScores.withIndex()
@@ -217,6 +251,11 @@ fun CompetencyRadarCard(
         .filter { it.value >= RADAR_WEAK_THRESHOLD }
         .maxByOrNull { it.value }
         ?.let { axisLabels.getOrNull(it.index) }
+    val (tierEmoji, tierTitle) = kikiTier(kiki)
+    val radarDesc = remember(domainScores, axisLabels) {
+        domainScores.mapIndexed { i, s -> "${axisLabels.getOrNull(i) ?: "?"} $s%" }
+            .joinToString(", ")
+    }
 
     Card(modifier = modifier) {
         Column(
@@ -236,6 +275,7 @@ fun CompetencyRadarCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp),
+                semanticDescription = stringResource(R.string.radar_title) + ": " + radarDesc,
             )
             Spacer(Modifier.height(8.dp))
             Text(
@@ -243,6 +283,21 @@ fun CompetencyRadarCard(
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
             )
+            Text(
+                text = "$tierEmoji $tierTitle",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            if (previousKiki != null && previousKiki != kiki) {
+                val diff = kiki - previousKiki
+                val sign = if (diff > 0) "+" else "−"
+                Text(
+                    text = stringResource(R.string.radar_delta, sign + abs(diff).toString()),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (diff > 0) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.error,
+                )
+            }
             if (weakest.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.radar_weak_domain, weakest.joinToString(", ")),

@@ -34,6 +34,7 @@ data class GamificationUiState(
     val lessonProgress: Int = 0,
     val totalLessons: Int = 12,
     val latestSnapshot: CompetencySnapshotEntity? = null,
+    val previousKiki: Int? = null,
 )
 
 class GamificationViewModel(
@@ -50,9 +51,9 @@ class GamificationViewModel(
                 gamification.observe(),
                 gamification.observeBadgeState(),
                 gamification.observeLessonProgress(),
-                competency?.observeLatest() ?: flowOf(null),
-            ) { entity, badges, lessons, snapshot ->
-                buildState(entity, badges, lessons.size, snapshot)
+                competency?.observeSnapshots() ?: flowOf(emptyList()),
+            ) { entity, badges, lessons, snapshots ->
+                buildState(entity, badges, lessons.size, snapshots)
             }.collect { _state.value = it }
         }
     }
@@ -75,7 +76,7 @@ class GamificationViewModel(
         entity: GamificationEntity?,
         badges: List<Pair<Badge, Boolean>>,
         lessonCount: Int,
-        snapshot: CompetencySnapshotEntity? = null,
+        snapshots: List<CompetencySnapshotEntity> = emptyList(),
     ): GamificationUiState {
         val xp = entity?.xp ?: 0
         val level = GamificationRules.levelForXp(xp)
@@ -91,7 +92,8 @@ class GamificationViewModel(
             missions = readMissions(),
             badges = badges,
             lessonProgress = lessonCount,
-            latestSnapshot = snapshot,
+            latestSnapshot = snapshots.firstOrNull(),
+            previousKiki = snapshots.getOrNull(1)?.kiki,
         )
     }
 

@@ -319,6 +319,7 @@
     <string name="kiki_no_data">Nach deiner ersten Quiz-Session erscheint hier dein Lernfortschritt.</string>
     <string name="kiki_label">KI-Kompetenz-Index: %1$s</string>
     <string name="radar_title">KI-Kompetenz-Radar</string>
+    <string name="radar_delta">%1$s seit letztem Snapshot</string>
     <string name="radar_weak_domain">Schwach: %1$s</string>
     <string name="radar_strong_domain">Stark: %1$s</string>
     <string-array name="radar_axes">

@@ -259,6 +259,7 @@ fun GamificationScreen(onOpenPremium: () -> Unit = {}) {
                     CompetencyRadarCard(
                         kiki = snapshot.kiki,
                         domainScores = parseDomainScores(snapshot.perDomainJson, LiteracyBank.DOMAINS.size),
+                        previousKiki = state.previousKiki,
                     )
                 }
             }

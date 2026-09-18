@@ -119,6 +119,37 @@ class CompetencyRadarTest {
         assertThat(radarDisplayScores(emptyList())).isEmpty()
     }
 
+    // ── kikiTier ────────────────────────────────────────────────────────
+
+    @Test
+    fun `Tier-Grenzen spiegeln KiScoreFallback-Tiers`() {
+        assertThat(kikiTier(0).second).isEqualTo("KI-Laie")
+        assertThat(kikiTier(20).second).isEqualTo("KI-Laie")
+        assertThat(kikiTier(21).second).isEqualTo("KI-Entdecker")
+        assertThat(kikiTier(40).second).isEqualTo("KI-Entdecker")
+        assertThat(kikiTier(41).second).isEqualTo("KI-Praktiker")
+        assertThat(kikiTier(60).second).isEqualTo("KI-Praktiker")
+        assertThat(kikiTier(61).second).isEqualTo("KI-Profi")
+        assertThat(kikiTier(80).second).isEqualTo("KI-Profi")
+        assertThat(kikiTier(81).second).isEqualTo("KI-Visionär")
+        assertThat(kikiTier(100).second).isEqualTo("KI-Visionär")
+    }
+
+    @Test
+    fun `Tier ausserhalb 0-100 wird geklemmt`() {
+        assertThat(kikiTier(-5).second).isEqualTo("KI-Laie")
+        assertThat(kikiTier(150).second).isEqualTo("KI-Visionär")
+    }
+
+    @Test
+    fun `Jedes Tier hat Emoji und Titel`() {
+        for (kiki in listOf(0, 30, 50, 70, 95)) {
+            val (emoji, title) = kikiTier(kiki)
+            assertThat(emoji).isNotEmpty()
+            assertThat(title).isNotEmpty()
+        }
+    }
+
     // ── radarSmoothSegments ────────────────────────────────────────────────
 
     @Test

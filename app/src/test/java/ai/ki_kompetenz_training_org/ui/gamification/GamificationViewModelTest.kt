@@ -59,7 +59,7 @@ class GamificationViewModelTest {
         gamification = mockk()
         missionsRepo = mockk()
         competency = mockk()
-        every { competency.observeLatest() } returns flowOf(null)
+        every { competency.observeSnapshots() } returns flowOf(emptyList())
 
         // Grund-Stubbing: alle im init-Block kombinierten Flows + Leszugriffe.
         every { gamification.observe() } returns flowOf(GamificationEntity())
@@ -260,7 +260,7 @@ class GamificationViewModelTest {
             perDomainJson = "[76, 12, 40, 0, 0, 0, 0, 0, 0]",
             createdAt = 1234L,
         )
-        every { competency.observeLatest() } returns flowOf(snapshot)
+        every { competency.observeSnapshots() } returns flowOf(listOf(snapshot))
 
         val vm = createVm()
         advanceUntilIdle()
@@ -268,13 +268,30 @@ class GamificationViewModelTest {
         val latest = vm.state.value.latestSnapshot
         assertThat(latest).isNotNull()
         assertThat(latest!!.kiki).isEqualTo(61)
+        assertThat(vm.state.value.previousKiki).isNull()
+    }
+
+    @Test
+    fun `vorheriger Snapshot liefert previousKiki fuer Delta-Anzeige`() = runTest(dispatcher) {
+        val older = CompetencySnapshotEntity("2026-W35", 24, "[10, 0, 0, 0, 0, 0, 0, 0, 0]", 1000L)
+        val newer = CompetencySnapshotEntity("2026-W36", 42, "[50, 0, 0, 0, 0, 0, 0, 0, 0]", 2000L)
+        every { competency.observeSnapshots() } returns flowOf(listOf(newer, older))
+
+        val vm = createVm()
+        advanceUntilIdle()
+
+        assertThat(vm.state.value.latestSnapshot!!.kiki).isEqualTo(42)
+        assertThat(vm.state.value.previousKiki).isEqualTo(24)
     }
 
     @Test
     fun `ohne Competency-Daten bleibt latestSnapshot null`() = runTest(dispatcher) {
+        every { competency.observeSnapshots() } returns flowOf(emptyList())
+
         val vm = createVm()
         advanceUntilIdle()
 
         assertThat(vm.state.value.latestSnapshot).isNull()
+        assertThat(vm.state.value.previousKiki).isNull()
     }
 }
