@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import ai.ki_kompetenz_training_org.BuildConfig
 import ai.ki_kompetenz_training_org.R
 import ai.ki_kompetenz_training_org.ui.gamification.LanguageSection
 import ai.ki_kompetenz_training_org.ui.theme.AudienceMode
@@ -483,6 +484,47 @@ fun GamificationScreen(onOpenPremium: () -> Unit = {}) {
                         scope.launch { app.settingsStore.setLanguage(selected) }
                     },
                 )
+            }
+
+            // ── Update-Hinweis fuer Direkt-APK-Nutzer (kein Store, kein Auto-Update) ──
+            item {
+                val context = LocalContext.current
+                var latest by remember { mutableStateOf<Pair<Int, String>?>(null) }
+                LaunchedEffect(Unit) { latest = UpdateCheck.fetchLatestVersion() }
+                val newer = latest?.takeIf { it.first > BuildConfig.VERSION_CODE }
+                if (newer != null) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        ),
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text(
+                                text = stringResource(R.string.update_available_title, newer.second),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                text = stringResource(R.string.update_available_body),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Button(onClick = {
+                                runCatching {
+                                    context.startActivity(
+                                        android.content.Intent(
+                                            android.content.Intent.ACTION_VIEW,
+                                            android.net.Uri.parse(UpdateCheck.apkUrl(newer.first)),
+                                        ),
+                                    )
+                                }
+                            }) {
+                                Text(stringResource(R.string.update_download))
+                            }
+                        }
+                    }
+                }
             }
 
             item {

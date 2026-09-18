@@ -335,6 +335,9 @@
     <string name="kiki_no_data">Your learning progress will appear here after your first quiz session.</string>
     <string name="kiki_label">AI competency index: %1$s</string>
     <string name="radar_title">AI competency radar</string>
+    <string name="update_available_title">New version available: v%1</string>
+    <string name="update_available_body">You installed the app directly as an APK — this is where updates come from.</string>
+    <string name="update_download">Download</string>
     <string name="lesson_prompt_label">Your prompt</string>
     <string name="radar_delta">%1$s since last snapshot</string>
     <string name="radar_weak_domain">Weak: %1$s</string>
