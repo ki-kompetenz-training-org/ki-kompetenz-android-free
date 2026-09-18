@@ -99,4 +99,51 @@ class CompetencyRadarTest {
     fun `Schwellwert-Konstante ist 60`() {
         assertThat(RADAR_WEAK_THRESHOLD).isEqualTo(60)
     }
+
+    // ── radarDisplayScores ─────────────────────────────────────────────────
+
+    @Test
+    fun `Display-Floor hebt Null-Scores an`() {
+        assertThat(radarDisplayScores(listOf(0, 50, 100)))
+            .isEqualTo(listOf(RADAR_MIN_DISPLAY, 50, 100))
+    }
+
+    @Test
+    fun `Werte ueber dem Floor bleiben unveraendert`() {
+        assertThat(radarDisplayScores(listOf(6, 7, 99)))
+            .isEqualTo(listOf(6, 7, 99))
+    }
+
+    @Test
+    fun `leere Liste bleibt leer`() {
+        assertThat(radarDisplayScores(emptyList())).isEmpty()
+    }
+
+    // ── radarSmoothSegments ────────────────────────────────────────────────
+
+    @Test
+    fun `weniger als 3 Scheitelpunkte liefern keine Segmente`() {
+        assertThat(radarSmoothSegments(emptyList())).isEmpty()
+        assertThat(radarSmoothSegments(listOf(center, Offset(200f, 100f)))).isEmpty()
+    }
+
+    @Test
+    fun `Dreieck - Segmente laufen ueber Kanten-Mittelpunkte`() {
+        val a = Offset(100f, 50f)
+        val b = Offset(200f, 150f)
+        val c = Offset(0f, 150f)
+        val segs = radarSmoothSegments(listOf(a, b, c))
+        assertThat(segs).hasSize(3)
+        // Segment für a: Start = Mitte(c,a), Kontrolle = a, Ende = Mitte(a,b)
+        val (start, control, end) = segs[0]
+        assertThat(start).isEqualTo(Offset(50f, 100f))
+        assertThat(control).isEqualTo(a)
+        assertThat(end).isEqualTo(Offset(150f, 100f))
+        // Segment für b: Start = Ende des Vorgaengers
+        assertThat(segs[1].first).isEqualTo(Offset(150f, 100f))
+        assertThat(segs[1].second).isEqualTo(b)
+        assertThat(segs[1].third).isEqualTo(Offset(100f, 150f))
+        // Segment für c schliesst den Ring zum Start des ersten Segments
+        assertThat(segs[2].third).isEqualTo(Offset(50f, 100f))
+    }
 }

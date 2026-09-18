@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
@@ -33,6 +35,20 @@ import kotlin.math.sin
 
 /** Score-Schwelle, ab der eine Domaene als "schwach" (rot) markiert wird. */
 internal const val RADAR_WEAK_THRESHOLD = 60
+
+/**
+ * Anzeige-Floor in Prozent: Scheitelpunkte mit Score 0 liegen sonst ALLE exakt
+ * im Zentrum — mit wenigen Datenpunkten entartet das Polygon zu einer Nadel
+ * (PXL-Befund 2026-09-18, KIKI 10 mit 8 Null-Domaenen).
+ *
+ * ponytail: reiner Anzeige-Floor, Rechen-/Zertifikatsdaten bleiben unberuehrt;
+ * echten Verlauf verzerren Werte < 12 optisch kaum.
+ */
+internal const val RADAR_MIN_DISPLAY = 6
+
+/** Hebt Scores unter [RADAR_MIN_DISPLAY] fuer die ZEICHNUNG auf den Floor an. */
+internal fun radarDisplayScores(scores: List<Int>): List<Int> =
+    scores.map { maxOf(it, RADAR_MIN_DISPLAY) }
 
 /**
  * Parst perDomainJson ("[76, 12, ...]") in eine Score-Liste fester Laenge.
@@ -68,6 +84,23 @@ internal fun radarVertex(
 }
 
 /**
+ * Glaettet das Daten-Polygon zu einem geschlossenen Bézier-Ring: pro Scheitelpunkt
+ * ein Segment (Start, Kontrollpunkt=Scheitelpunkt, Ende) ueber die Kanten-
+ * Mittelpunkte — der klassische weiche Radar-Look ohne Miter-Spiesschen.
+ * Reine Funktion (unit-testbar); < 3 Punkte => leer (Aufrufer faellt auf Linien zurueck).
+ */
+internal fun radarSmoothSegments(vertices: List<Offset>): List<Triple<Offset, Offset, Offset>> {
+    if (vertices.size < 3) return emptyList()
+    fun mid(a: Offset, b: Offset) = Offset((a.x + b.x) / 2f, (a.y + b.y) / 2f)
+    return vertices.indices.map { i ->
+        val prev = vertices[(i + vertices.size - 1) % vertices.size]
+        val v = vertices[i]
+        val next = vertices[(i + 1) % vertices.size]
+        Triple(mid(prev, v), v, mid(v, next))
+    }
+}
+
+/**
  * 9-Achsen-Radar (Canvas) der Domaenen-Scores 0..100.
  * Schwache Domaenen (< [RADAR_WEAK_THRESHOLD]) werden rot markiert
  * (Achse + Scheitelpunkt). Keine neue Library — reines Compose-Canvas.
@@ -99,8 +132,7 @@ fun CompetencyRadar(
             drawPath(path, guide, style = Stroke(width = 1.dp.toPx()))
         }
 
-        // Achsen + Markierung schwacher Domaenen + Daten-Polygon
-        val dataPath = Path()
+        // Achsen + Markierung schwacher Domaenen
         scores.forEachIndexed { i, score ->
             val isWeak = score < RADAR_WEAK_THRESHOLD
             val edge = radarVertex(100, i, axisCount, center, radius)
@@ -109,15 +141,43 @@ fun CompetencyRadar(
             } else {
                 drawLine(guide, center, edge, strokeWidth = 1.dp.toPx())
             }
-            val v = radarVertex(score, i, axisCount, center, radius)
-            if (i == 0) dataPath.moveTo(v.x, v.y) else dataPath.lineTo(v.x, v.y)
-            if (isWeak) {
+        }
+
+        // Daten-Polygon: geglaettet, mit Display-Floor gegen Zentrums-Kollaps
+        val dataPath = Path()
+        val vertices = radarDisplayScores(scores)
+            .mapIndexed { i, s -> radarVertex(s, i, axisCount, center, radius) }
+        val segments = radarSmoothSegments(vertices)
+        if (segments.isNotEmpty()) {
+            dataPath.moveTo(segments.first().first.x, segments.first().first.y)
+            segments.forEach { (_, control, end) ->
+                dataPath.quadraticBezierTo(control.x, control.y, end.x, end.y)
+            }
+            dataPath.close()
+        } else {
+            vertices.forEachIndexed { i, v ->
+                if (i == 0) dataPath.moveTo(v.x, v.y) else dataPath.lineTo(v.x, v.y)
+            }
+            dataPath.close()
+        }
+        drawPath(dataPath, primary.copy(alpha = 0.22f))
+        drawPath(
+            dataPath,
+            primary,
+            style = Stroke(
+                width = 2.dp.toPx(),
+                join = StrokeJoin.Round,
+                cap = StrokeCap.Round,
+            ),
+        )
+
+        // rote Punkte schwacher Domaenen sitzen auf dem (gefloorten) Polygon
+        scores.forEachIndexed { i, score ->
+            if (score < RADAR_WEAK_THRESHOLD) {
+                val v = vertices[i]
                 drawCircle(weak, radius = 4.dp.toPx(), center = v)
             }
         }
-        dataPath.close()
-        drawPath(dataPath, primary.copy(alpha = 0.22f))
-        drawPath(dataPath, primary, style = Stroke(width = 2.dp.toPx()))
 
         // Achsen-Labels (kurz, aus strings.xml) via nativeCanvas
         val androidCanvas = drawContext.canvas.nativeCanvas
