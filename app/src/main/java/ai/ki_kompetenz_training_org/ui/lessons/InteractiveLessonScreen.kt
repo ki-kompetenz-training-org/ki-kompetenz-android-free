@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import ai.ki_kompetenz_training_org.KiKompetenzApp
 import ai.ki_kompetenz_training_org.R
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.ui.rewards.RewardDialogHost
 import ai.ki_kompetenz_training_org.data.lessons.*
 import androidx.compose.ui.text.font.FontWeight
@@ -73,8 +74,20 @@ fun InteractiveLessonScreen(
     val rewardCenter = KiKompetenzApp.from(LocalContext.current).rewardCenter
     // GAP-1: Quiz-Ergebnisse speisen den KIKI-Kompetenz-Index pro Domain
     val context = LocalContext.current
+    val app = KiKompetenzApp.from(context)
+    val prefs = context.getSharedPreferences("kikompetenz_gamification", Context.MODE_PRIVATE)
     val masteryTracker = remember {
-        MasteryTracker(context.getSharedPreferences("kikompetenz_gamification", Context.MODE_PRIVATE))
+        MasteryTracker(prefs)
+    }
+    // Lektionen schreiben auch den Wochen-Snapshot (Radar/KIKI/Zertifikat) —
+    // nicht nur die adaptiven Spiele. Weekly-Upsert, siehe CompetencyRepository.
+    val competencyRepo = remember {
+        CompetencyRepository(
+            snapshotDao = app.db.competencySnapshotDao(),
+            tracker = masteryTracker,
+            prefs = prefs,
+            gamification = app.gamificationRepository,
+        )
     }
     RewardDialogHost(rewardCenter = rewardCenter)
     val scrollState = rememberScrollState()
@@ -188,6 +201,7 @@ fun InteractiveLessonScreen(
                         quizScoresState[secIdx] = score
                         if (lesson.primaryDomain.isNotEmpty()) {
                             masteryTracker.recordResult(lesson.primaryDomain, score >= 70)
+                            scope.launch { competencyRepo.recordFromTracker() }
                         }
                         // Recalculate
                         allQuizzesPassed = InteractiveLessonLogic.isLessonPassed(lesson, quizScoresState)
@@ -532,8 +546,7 @@ private fun PromptExerciseBlock(block: ContentBlock.PromptExercise, locale: Stri
                 onValueChange = { answer = it },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
-                // ponytail: Label hartkodiert — strings.xml ist außerhalb des Task-Scopes
-                label = { Text(localized(locale, "Dein Prompt", "Your prompt")) },
+                label = { Text(stringResource(R.string.lesson_prompt_label)) },
             )
             if (revealed) {
                 Spacer(Modifier.height(8.dp))
