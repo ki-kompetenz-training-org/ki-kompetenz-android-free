@@ -101,7 +101,16 @@ class KiKompetenzApp : Application() {
             getSharedPreferences("kikompetenz_missions", android.content.Context.MODE_PRIVATE),
             gamificationRepository,
         )
-        srsRepository = SrsRepository(api)
+        val srsPrefs = getSharedPreferences("kiki_srs_local", android.content.Context.MODE_PRIVATE)
+        srsRepository = SrsRepository(
+            api,
+            persistence = object : ai.ki_kompetenz_training_org.data.repo.LocalSrsPersistence {
+                override fun load(): String? = srsPrefs.getString("deck", null)
+                override fun save(json: String) {
+                    srsPrefs.edit().putString("deck", json).apply()
+                }
+            },
+        )
 
         // Create notification channels early
         NotificationHelper.createChannels(this)

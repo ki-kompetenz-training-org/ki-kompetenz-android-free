@@ -122,6 +122,9 @@ interface GamificationDao {
     @Query("SELECT COUNT(*) FROM lesson_progress")
     suspend fun completedLessonCount(): Int
 
+    @Query("SELECT slug FROM lesson_progress")
+    suspend fun completedLessonSlugs(): List<String>
+
     @Query("INSERT OR REPLACE INTO lesson_progress (slug, completedAt) VALUES (:slug, :completedAt)")
     suspend fun markLessonCompleted(slug: String, completedAt: Long = System.currentTimeMillis())
 }

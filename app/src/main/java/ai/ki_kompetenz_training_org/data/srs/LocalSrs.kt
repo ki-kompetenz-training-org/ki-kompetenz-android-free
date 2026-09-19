@@ -5,12 +5,17 @@
 package ai.ki_kompetenz_training_org.data.srs
 
 import ai.ki_kompetenz_training_org.data.repo.SrsQuality
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.json.Json
 import kotlin.math.roundToInt
 
 /**
  * Lokale SM-2-Lernkarte für den Offline-Fallback.
  * Bewusst Android-frei (pure Kotlin), damit der Algorithmus unit-testbar ist.
  */
+@Serializable
 data class LocalSrsCard(
     val id: String,
     val question: String,
@@ -241,4 +246,20 @@ object LocalSrsDeck {
     /** Ein Review offline anwenden (reine Funktion). */
     fun reviewCard(card: LocalSrsCard, quality: SrsQuality, now: Long): LocalSrsCard =
         LocalSrsAlgorithm.update(card, quality, now)
+
+    private val stateJson = Json { ignoreUnknownKeys = true }
+    private val stateSerializer =
+        MapSerializer(String.serializer(), LocalSrsCard.serializer())
+
+    /** SM-2-Fortschritt als JSON persistieren (SharedPreferences-Wert). */
+    fun serializeState(state: Map<String, LocalSrsCard>): String =
+        stateJson.encodeToString(stateSerializer, state)
+
+    /** Gespeicherten Zustand laden; defekt/leer -> kein Fortschritt (still). */
+    fun deserializeState(json: String?): Map<String, LocalSrsCard> =
+        runCatching { stateJson.decodeFromString(stateSerializer, json ?: "") }.getOrDefault(emptyMap())
+
+    /** Gespeicherte Karten per id ueber die gebuendelten stuelpen. */
+    fun mergeState(saved: Map<String, LocalSrsCard>): List<LocalSrsCard> =
+        BUNDLED_CARDS.map { saved[it.id] ?: it }
 }

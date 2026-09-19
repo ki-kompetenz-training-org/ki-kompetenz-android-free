@@ -9,6 +9,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -236,12 +237,23 @@ fun CompetencyRadar(
  * kompakte Legende (KIKI-Gesamtwert + Tier, Delta zum Vor-Snapshot,
  * schwach/stark Domaenen).
  */
+/**
+ * Lern-Loop-CTA: schwächste Domäne unter [RADAR_WEAK_THRESHOLD] mit vorhandenem
+ * Achsen-Label — null, wenn nichts schwach ist (kein Button).
+ */
+fun radarCtaDomain(domainScores: List<Int>, axisLabels: List<String>): String? =
+    domainScores.withIndex()
+        .filter { it.value < RADAR_WEAK_THRESHOLD }
+        .minByOrNull { it.value }
+        ?.let { axisLabels.getOrNull(it.index) }
+
 @Composable
 fun CompetencyRadarCard(
     kiki: Int,
     domainScores: List<Int>,
     modifier: Modifier = Modifier,
     previousKiki: Int? = null,
+    onOpenLesson: (domain: String) -> Unit = {},
 ) {
     val axisLabels = stringArrayResource(R.array.radar_axes).toList()
     val weakest = domainScores.withIndex()
@@ -304,6 +316,12 @@ fun CompetencyRadarCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                 )
+            }
+            radarCtaDomain(domainScores, axisLabels)?.let { ctaDomain ->
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = { onOpenLesson(ctaDomain) }) {
+                    Text(stringResource(R.string.radar_open_lesson, ctaDomain))
+                }
             }
             if (strongest != null) {
                 Text(

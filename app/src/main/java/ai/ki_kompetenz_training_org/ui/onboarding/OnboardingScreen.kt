@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -194,7 +195,7 @@ private fun LanguageChoice(
 
 @Composable
 private fun OnboardingSteps(onCompleted: (startLesson1: Boolean) -> Unit) {
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    val pagerState = rememberPagerState(pageCount = { 4 })
     val scope = rememberCoroutineScope()
 
     val pages = listOf(
@@ -209,6 +210,13 @@ private fun OnboardingSteps(onCompleted: (startLesson1: Boolean) -> Unit) {
             title = stringResource(R.string.onboarding_kibot_title),
             subtitle = stringResource(R.string.onboarding_kibot_subtitle),
             body = stringResource(R.string.onboarding_kibot_body),
+        ),
+        OnboardingPage(
+            icon = Icons.Default.SportsEsports,
+            title = stringResource(R.string.onboarding_radar_title),
+            subtitle = stringResource(R.string.onboarding_radar_subtitle),
+            body = stringResource(R.string.onboarding_radar_body),
+            radarPreview = true,
         ),
         OnboardingPage(
             icon = Icons.AutoMirrored.Filled.MenuBook,
@@ -317,20 +325,31 @@ private fun OnboardingPageContent(page: OnboardingPage) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // Icon in a circle
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(96.dp),
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    // a11y: dekorative Illustration — der Seitentitel beschreibt die Seite
-                    page.icon,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                )
+        if (page.radarPreview) {
+            // Teaser mit echtem Radar + Beispielwerten (a11y: Titel beschreibt die Seite)
+            ai.ki_kompetenz_training_org.ui.gamification.CompetencyRadar(
+                scores = listOf(35, 25, 40, 45, 30, 35, 25, 40, 30),
+                axisLabels = stringArrayResource(R.array.radar_axes).toList(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+            )
+        } else {
+            // Icon in a circle
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(96.dp),
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        // a11y: dekorative Illustration — der Seitentitel beschreibt die Seite
+                        page.icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                    )
+                }
             }
         }
         Spacer(Modifier.height(32.dp))
@@ -364,4 +383,6 @@ private data class OnboardingPage(
     val title: String,
     val subtitle: String,
     val body: String,
+    // C-Radar-Teaser: echtes Radar-Composable statt Icon (null -> Icon-Kreis)
+    val radarPreview: Boolean = false,
 )

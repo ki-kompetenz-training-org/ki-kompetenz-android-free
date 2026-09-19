@@ -36,6 +36,18 @@ object BundledLessons {
         Lesson14.lesson.copy(primaryDomain = "KI-Tools im Arbeitsalltag"),
     )
 
+    /**
+     * Lern-Loop: erste (niedrigste Nummer) unabgeschlossene Lektion einer
+     * Kompetenz-Domaene. Alle abgeschlossen -> niedrigste zur Wiederholung.
+     * Keine Lektion in der Domaene -> null (Aufrufer zeigt Uebersicht).
+     */
+    fun firstLessonForDomain(domain: String, completedIds: Set<String> = emptySet()): InteractiveLesson? {
+        val ofDomain = all.filter { it.primaryDomain == domain }
+        if (ofDomain.isEmpty()) return null
+        return ofDomain.filter { it.id !in completedIds }.minByOrNull { it.lessonNumber }
+            ?: ofDomain.minByOrNull { it.lessonNumber }
+    }
+
     private val json = Json { ignoreUnknownKeys = true }
 
     private val byIdMap: Map<String, InteractiveLesson> by lazy {

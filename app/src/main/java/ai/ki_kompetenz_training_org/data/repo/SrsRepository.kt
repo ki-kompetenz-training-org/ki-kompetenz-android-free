@@ -21,7 +21,16 @@ enum class SrsQuality(val value: Int, val emoji: String, val label: String) {
     }
 }
 
-class SrsRepository(private val api: ApiService) {
+/** Laedt/speichert den lokalen SM-2-Fortschritt (z. B. SharedPreferences-Adapter). */
+interface LocalSrsPersistence {
+    fun load(): String?
+    fun save(json: String)
+}
+
+class SrsRepository(private val api: ApiService, private val persistence: LocalSrsPersistence? = null) {
+
+    private fun localState(): Map<String, LocalSrsCard> =
+        persistence?.let { LocalSrsDeck.deserializeState(it.load()) } ?: emptyMap()
 
     /** Offline-Fallback-Schalter: lokale SM-2-Karten statt API bei Fehlern. */
     var localSrsEnabled: Boolean = true
@@ -31,7 +40,8 @@ class SrsRepository(private val api: ApiService) {
         if (remote.isSuccess) return remote
         // Fallback: API nicht erreichbar -> lokale SM-2-Karten aus dem Deck.
         return if (localSrsEnabled) {
-            Result.success(LocalSrsDeck.getDueCards(System.currentTimeMillis()).map { it.toDto() })
+            val deck = LocalSrsDeck.mergeState(localState())
+            Result.success(LocalSrsDeck.getDueCards(System.currentTimeMillis(), deck).map { it.toDto() })
         } else {
             remote
         }
@@ -43,9 +53,14 @@ class SrsRepository(private val api: ApiService) {
         if (remote.isSuccess) return remote
         // Fallback: nur für lokal bekannte Karten sinnvoll (lokales SM-2-Update).
         return if (localSrsEnabled) {
-            val local = LocalSrsDeck.BUNDLED_CARDS.firstOrNull { it.id == cardId }
+            val local = LocalSrsDeck.mergeState(localState()).firstOrNull { it.id == cardId }
             if (local != null) {
-                LocalSrsDeck.reviewCard(local, SrsQuality.fromValue(quality), System.currentTimeMillis())
+                // BUGFIX: das SM-2-Update wurde bisher verworfen — Offline-Reviews
+                // aenderten die Faelligkeit nie. Jetzt: Update anwenden UND persistieren.
+                val updated = LocalSrsDeck.reviewCard(local, SrsQuality.fromValue(quality), System.currentTimeMillis())
+                persistence?.save(
+                    LocalSrsDeck.serializeState(localState() + (updated.id to updated)),
+                )
                 Result.success(Unit)
             } else {
                 remote

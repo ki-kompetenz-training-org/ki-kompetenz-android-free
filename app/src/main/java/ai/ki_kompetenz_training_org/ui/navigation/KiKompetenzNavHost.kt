@@ -235,8 +235,17 @@ fun KiKompetenzNavHost(
             }
         }
         composable(Routes.GAMIFICATION) {
+            val scope = androidx.compose.runtime.rememberCoroutineScope()
             GamificationScreen(
                 onOpenPremium = { navController.navigate(Routes.PREMIUM) },
+                onOpenLessonDomain = { domain ->
+                    scope.launch {
+                        val done = app.gamificationRepository.completedLessonSlugs().toSet()
+                        val target = ai.ki_kompetenz_training_org.data.lessons.BundledLessons
+                            .firstLessonForDomain(domain, done)
+                        navController.navigate(if (target != null) Routes.lesson(target.id) else Routes.LESSONS)
+                    }
+                },
             )
         }
         composable(Routes.SRS) {

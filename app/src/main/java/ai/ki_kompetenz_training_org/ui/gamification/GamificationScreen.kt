@@ -43,7 +43,7 @@ import ai.ki_kompetenz_training_org.util.findActivity
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun GamificationScreen(onOpenPremium: () -> Unit = {}) {
+fun GamificationScreen(onOpenPremium: () -> Unit = {}, onOpenLessonDomain: (domain: String) -> Unit = {}) {
     val context = LocalContext.current
     val app = KiKompetenzApp.from(context)
     val vm: GamificationViewModel = viewModel {
@@ -261,6 +261,7 @@ fun GamificationScreen(onOpenPremium: () -> Unit = {}) {
                         kiki = snapshot.kiki,
                         domainScores = parseDomainScores(snapshot.perDomainJson, LiteracyBank.DOMAINS.size),
                         previousKiki = state.previousKiki,
+                        onOpenLesson = onOpenLessonDomain,
                     )
                 }
             }

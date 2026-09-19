@@ -157,4 +157,26 @@ class BundledLessonsTest {
         val lesson12 = BundledLessons.byId("lesson-12")!!
         assertThat(lesson12.cognitiveLevel).isEqualTo(CognitiveLevel.MASTERY)
     }
+
+    @Test
+    fun `firstLessonForDomain liefert niedrigste Lektionsnummer der Domäne`() {
+        val l = BundledLessons.firstLessonForDomain("Grundlagen der KI")!!
+        assertThat(l.lessonNumber).isEqualTo(1)
+    }
+
+    @Test
+    fun `firstLessonForDomain ueberspringt abgeschlossene und wiederholt niedrigste wenn alle fertig`() {
+        val g = BundledLessons.all.filter { it.primaryDomain == "Grundlagen der KI" }.map { it.id }.toSet()
+        // ohne Completions -> L1
+        assertThat(BundledLessons.firstLessonForDomain("Grundlagen der KI", emptySet())!!.lessonNumber).isEqualTo(1)
+        // L1 abgeschlossen -> naechste unabgeschlossene (L2)
+        assertThat(BundledLessons.firstLessonForDomain("Grundlagen der KI", setOf("lesson-1"))!!.lessonNumber).isEqualTo(2)
+        // alle abgeschlossen -> niedrigste zur Wiederholung
+        assertThat(BundledLessons.firstLessonForDomain("Grundlagen der KI", g)!!.lessonNumber).isEqualTo(1)
+    }
+
+    @Test
+    fun `firstLessonForDomain ohne Lektion liefert null`() {
+        assertThat(BundledLessons.firstLessonForDomain("Nicht-Vorhandene-Domaene")).isNull()
+    }
 }

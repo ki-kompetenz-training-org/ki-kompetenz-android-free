@@ -216,6 +216,9 @@
     <string name="onboarding_skip">Ueberspringen</string>
     <string name="onboarding_start_body">1. Mache den KI-Score-Test\n2. Arbeite die Lektionen durch\n3. Wiederhole mit Intervall-Wiederholung\n\nLos geht\'s!</string>
     <string name="onboarding_start_subtitle">3 Schritte zum Erfolg</string>
+    <string name="onboarding_radar_title">Dein KI-Kompetenz-Radar</string>
+    <string name="onboarding_radar_subtitle">Messe deinen Fortschritt</string>
+    <string name="onboarding_radar_body">Lektionen und Mini-Games speisen deinen KIKI-Index — Woche für Woche wächst dein Radar über 9 Domänen.</string>
     <string name="onboarding_start_title">Bereit zum Start?</string>
     <string name="onboarding_welcome_body">Lerne spielerisch alles ueber KI-Regulierung: Interaktive Lektionen, Mini-Spiele, KI-Score-Quiz und Intervall-Wiederholung. Verstehen statt auswendig lernen.</string>
     <string name="onboarding_welcome_subtitle">Dein Trainer fuer KI-Kompetenz</string>
@@ -340,6 +343,7 @@
     <string name="update_download">Download</string>
     <string name="lesson_prompt_label">Dein Prompt</string>
     <string name="radar_delta">%1$s seit letztem Snapshot</string>
+    <string name="radar_open_lesson">Lektion zu „%1$s" starten</string>
     <string name="radar_weak_domain">Schwach: %1$s</string>
     <string name="radar_strong_domain">Stark: %1$s</string>
     <string-array name="radar_axes">

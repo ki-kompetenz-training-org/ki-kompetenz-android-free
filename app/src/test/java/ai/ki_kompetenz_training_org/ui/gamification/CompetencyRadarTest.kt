@@ -177,4 +177,17 @@ class CompetencyRadarTest {
         // Segment für c schliesst den Ring zum Start des ersten Segments
         assertThat(segs[2].third).isEqualTo(Offset(50f, 100f))
     }
+
+    @Test
+    fun `radarCtaDomain liefert schwächste Domäne unter Schwelle mit Label`() {
+        val labels = listOf("A", "B", "C", "D")
+        assertThat(radarCtaDomain(listOf(80, 45, 30, 90), labels)).isEqualTo("C")
+    }
+
+    @Test
+    fun `radarCtaDomain ohne schwache Domäne oder ohne Label liefert null`() {
+        val labels = listOf("A", "B")
+        assertThat(radarCtaDomain(listOf(70, 80), labels)).isNull()
+        assertThat(radarCtaDomain(listOf(80, 10), listOf("A"))).isNull()
+    }
 }
