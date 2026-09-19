@@ -29,7 +29,19 @@ import ai.ki_kompetenz_training_org.notification.NotificationPermissionBanner
 fun SrsScreen(onBack: () -> Unit, onLogin: () -> Unit, onOpenLessons: () -> Unit = {}) {
     val app = KiKompetenzApp.from(LocalContext.current)
     val vm: SrsViewModel = viewModel {
-        SrsViewModel(app.authRepository, app.srsRepository, app.gamificationRepository)
+        // SRS-Reviews schreiben den Wochen-Snapshot (Muster: InteractiveLessonScreen)
+        val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+        SrsViewModel(
+            app.authRepository,
+            app.srsRepository,
+            app.gamificationRepository,
+            ai.ki_kompetenz_training_org.data.repo.CompetencyRepository(
+                snapshotDao = app.db.competencySnapshotDao(),
+                tracker = ai.ki_kompetenz_training_org.data.minigames3d.MasteryTracker(prefs),
+                prefs = prefs,
+                gamification = app.gamificationRepository,
+            ),
+        )
     }
     val state by vm.state.collectAsState()
 

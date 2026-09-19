@@ -254,6 +254,8 @@ fun CompetencyRadarCard(
     modifier: Modifier = Modifier,
     previousKiki: Int? = null,
     onOpenLesson: (domain: String) -> Unit = {},
+    lessonsCompleted: Int = -1,
+    lessonsTotal: Int = 0,
 ) {
     val axisLabels = stringArrayResource(R.array.radar_axes).toList()
     val weakest = domainScores.withIndex()
@@ -322,6 +324,12 @@ fun CompetencyRadarCard(
                 Button(onClick = { onOpenLesson(ctaDomain) }) {
                     Text(stringResource(R.string.radar_open_lesson, ctaDomain))
                 }
+            }
+            if (lessonsCompleted >= 0 && lessonsTotal > 0) {
+                Text(
+                    stringResource(R.string.radar_lessons_progress, lessonsCompleted, lessonsTotal),
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
             if (strongest != null) {
                 Text(

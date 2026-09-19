@@ -32,6 +32,19 @@ class SrsRepository(private val api: ApiService, private val persistence: LocalS
     private fun localState(): Map<String, LocalSrsCard> =
         persistence?.let { LocalSrsDeck.deserializeState(it.load()) } ?: emptyMap()
 
+    /**
+     * Offline-Review OHNE API: SM-2-Update auf dem aktuellen (ggf. schon
+     * fortgeschrittenen) Zustand anwenden und persistieren. Null, wenn die
+     * Karte lokal unbekannt ist. Deckt auch nicht eingeloggte Nutzer ab
+     * (rateLocal im ViewModel).
+     */
+    fun reviewLocalPersisted(cardId: String, quality: Int): LocalSrsCard? {
+        val current = LocalSrsDeck.mergeState(localState()).firstOrNull { it.id == cardId } ?: return null
+        val updated = LocalSrsDeck.reviewCard(current, SrsQuality.fromValue(quality), System.currentTimeMillis())
+        persistence?.save(LocalSrsDeck.serializeState(localState() + (updated.id to updated)))
+        return updated
+    }
+
     /** Offline-Fallback-Schalter: lokale SM-2-Karten statt API bei Fehlern. */
     var localSrsEnabled: Boolean = true
 

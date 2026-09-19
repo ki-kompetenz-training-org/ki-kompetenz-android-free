@@ -327,6 +327,7 @@
     <string name="update_download">Download</string>
     <string name="lesson_prompt_label">Dein Prompt</string>
     <string name="radar_delta">%1$s seit letztem Snapshot</string>
+    <string name="radar_lessons_progress">%1$d/%2$d Lektionen abgeschlossen</string>
     <string name="radar_open_lesson">Lektion zu „%1$s" starten</string>
     <string name="radar_weak_domain">Schwach: %1$s</string>
     <string name="radar_strong_domain">Stark: %1$s</string>

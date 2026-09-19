@@ -46,6 +46,10 @@ import ai.ki_kompetenz_training_org.util.findActivity
 fun GamificationScreen(onOpenPremium: () -> Unit = {}, onOpenLessonDomain: (domain: String) -> Unit = {}) {
     val context = LocalContext.current
     val app = KiKompetenzApp.from(context)
+    var lessonsDone by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        runCatching { app.gamificationRepository.completedLessonCount() }.onSuccess { lessonsDone = it }
+    }
     val vm: GamificationViewModel = viewModel {
         val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
         val competencyRepo = CompetencyRepository(
@@ -262,6 +266,8 @@ fun GamificationScreen(onOpenPremium: () -> Unit = {}, onOpenLessonDomain: (doma
                         domainScores = parseDomainScores(snapshot.perDomainJson, LiteracyBank.DOMAINS.size),
                         previousKiki = state.previousKiki,
                         onOpenLesson = onOpenLessonDomain,
+                        lessonsCompleted = lessonsDone,
+                        lessonsTotal = ai.ki_kompetenz_training_org.data.lessons.BundledLessons.all.size,
                     )
                 }
             }

@@ -46,6 +46,17 @@ class CompetencyRepository(
      * Ein bestehender Snapshot derselben Woche wird aktualisiert und behaelt
      * seinen [CompetencySnapshotEntity.createdAt]. Danach laeuft der XP-Trigger.
      */
+    /**
+     * Ein Lern-Event (SRS-Review, Lektions-Quiz) in Tracker UND Wochen-Snapshot
+     * schreiben. Guard: nur echte Radar-Domänen — Server-SRS liefert teils
+     * Lektions-IDs als lessonId, die keine Phantom-Achsen erzeugen dürfen.
+     */
+    suspend fun recordReview(domain: String, correct: Boolean): CompetencySnapshotEntity? {
+        if (domain !in ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank.DOMAINS) return null
+        tracker.recordResult(domain, correct)
+        return recordFromTracker()
+    }
+
     suspend fun recordFromTracker(): CompetencySnapshotEntity {
         val scores = LiteracyBank.DOMAINS.map {
             CompetencyMath.domainScore(tracker.getMastery(it).m, tracker.getMastery(it).total)

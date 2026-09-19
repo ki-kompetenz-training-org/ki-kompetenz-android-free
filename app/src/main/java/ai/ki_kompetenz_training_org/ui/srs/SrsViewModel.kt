@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ai.ki_kompetenz_training_org.data.api.SrsCardDto
 import ai.ki_kompetenz_training_org.data.repo.AuthRepository
+import ai.ki_kompetenz_training_org.data.repo.CompetencyRepository
 import ai.ki_kompetenz_training_org.data.repo.GamificationRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsRepository
 import ai.ki_kompetenz_training_org.data.repo.SrsSession
@@ -37,6 +38,7 @@ class SrsViewModel(
     private val authRepository: AuthRepository,
     private val srsRepository: SrsRepository,
     private val gamificationRepository: GamificationRepository,
+    private val competencyRepository: CompetencyRepository? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SrsUiState())
@@ -101,6 +103,7 @@ class SrsViewModel(
         }
         viewModelScope.launch {
             srsRepository.postReview(card.id, quality).onSuccess {
+                recordCompetency(card.lessonId, quality)
                 val reviewsDone = s.reviewsDone + 1
                 val sessionFinished = SrsSession.isFinished(reviewsDone, s.cards.size)
                 gamificationRepository.onSrsReview(sessionFinished, s.cards.size)
@@ -128,10 +131,20 @@ class SrsViewModel(
         }
     }
 
+
+    /** SRS-Reviews zaehlen fuer Radar/KIKI (Domae nen-Guard im Repository). */
+    private fun recordCompetency(lessonId: String, quality: Int) {
+        val repo = competencyRepository ?: return
+        viewModelScope.launch { repo.recordReview(lessonId, quality >= 3) }
+    }
+
     /** Offline-Review: SM-2 lokal anwenden, ohne API-Aufruf (kein XP). */
     private fun rateLocal(s: SrsUiState, quality: Int) {
         val localCard = s.localCards.getOrNull(s.currentIndex) ?: return
-        LocalSrsDeck.reviewCard(localCard, SrsQuality.fromValue(quality), System.currentTimeMillis())
+        // Persistierter SM-2-Pfad (statt verwerfendem Direktaufruf) — nicht
+        // eingeloggte Nutzer behalten sonst ihren Fortschritt nicht.
+        srsRepository.reviewLocalPersisted(localCard.id, quality)
+        recordCompetency(localCard.lessonId, quality)
         val reviewsDone = s.reviewsDone + 1
         val sessionFinished = SrsSession.isFinished(reviewsDone, s.cards.size)
         _state.value = if (sessionFinished) {

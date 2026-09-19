@@ -343,6 +343,7 @@
     <string name="update_download">Download</string>
     <string name="lesson_prompt_label">Your prompt</string>
     <string name="radar_delta">%1$s since last snapshot</string>
+    <string name="radar_lessons_progress">%1$d/%2$d lessons completed</string>
     <string name="radar_open_lesson">Start lesson on "%1$s"</string>
     <string name="radar_weak_domain">Weak: %1$s</string>
     <string name="radar_strong_domain">Strong: %1$s</string>

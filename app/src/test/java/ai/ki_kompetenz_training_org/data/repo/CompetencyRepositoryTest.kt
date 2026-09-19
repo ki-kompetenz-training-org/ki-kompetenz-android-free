@@ -211,4 +211,29 @@ class CompetencyRepositoryTest {
             prefs.getStringSet(CompetencyRepository.KEY_REWARDED, mutableSetOf()) ?: emptySet()
         assertThat(rewarded).isEmpty()
     }
+
+    // ── recordReview (SRS/Lektion-Events, v1.9.1) ───────────────────────────
+
+    @Test
+    fun recordReview_bekannte_domaene_schreibt_tracker_und_snapshot() = runTest {
+        val repo = repository()
+        val domain = ai.ki_kompetenz_training_org.data.minigames3d.LiteracyBank.DOMAINS.first()
+
+        repo.recordReview(domain, correct = true)
+
+        assertThat(dao.rows).hasSize(1)
+        val snapshot = dao.rows.first()
+        // Domainscore ist nach einem richtigen Ergebnis > 0
+        val scores = snapshot.perDomainJson.trim('[', ']').split(',').map { it.toDouble() }
+        assertThat(scores.first()).isGreaterThan(0.0)
+    }
+
+    @Test
+    fun recordReview_unbekannte_lessonId_ignoriert_statt_Phantomdomaene() = runTest {
+        val repo = repository()
+
+        repo.recordReview("lesson-3", correct = true)
+
+        assertThat(dao.rows).isEmpty()
+    }
 }

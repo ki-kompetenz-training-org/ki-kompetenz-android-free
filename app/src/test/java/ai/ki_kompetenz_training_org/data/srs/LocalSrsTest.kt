@@ -219,6 +219,8 @@ class LocalSrsTest {
         val gamification: GamificationRepository = mockk(relaxed = true)
 
         init {
+            // v1.9.1: rateLocal persistiert jetzt ueber das Repository
+            every { srs.reviewLocalPersisted(any(), any()) } returns null
             Dispatchers.setMain(dispatcher)
         }
     }
