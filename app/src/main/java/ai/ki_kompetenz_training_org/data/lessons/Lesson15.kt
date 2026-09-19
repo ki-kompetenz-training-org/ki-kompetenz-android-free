@@ -85,6 +85,22 @@ object Lesson15 {
                         explanationEn = "Correct! Unrestricted tool access without rules is the classic compliance failure.",
                     ),
                     ContentBlock.RiskThermometer(),
+                    ContentBlock.TrueFalse(
+                        statementDe = "Die neue Produkthaftungsrichtlinie (2024) erfasst KI-Software ausdruecklich.",
+                        statementEn = "The new Product Liability Directive (2024) explicitly covers AI software.",
+                        isTrue = true,
+                        explanationDe = "Richtig — auch immaterielle Schaeden werden ersatzfaehig.",
+                        explanationEn = "Correct — immaterial damages also become compensable.",
+                    ),
+                    ContentBlock.Quiz(
+                        questionDe = "Wer haftet fuer fehlerhafte Eingabedaten beim Einsatz eines KI-Systems?",
+                        questionEn = "Who is liable for faulty input data when deploying an AI system?",
+                        options = listOf(
+                            QuizOption("Der Betreiber (Deployer)", "The deployer", isCorrect = true), QuizOption("Der Anbieter", "The provider", isCorrect = false), QuizOption("Der Endkunde", "The end customer", isCorrect = false), QuizOption("Niemand", "Nobody", isCorrect = false),
+                        ),
+                        explanationDe = "Richtig — inputseitige Pruefung ist Betreiberpflicht (Art. 26).",
+                        explanationEn = "Correct — checking input is a deployer duty (Art. 26).",
+                    ),
                 ),
             ),
         ),

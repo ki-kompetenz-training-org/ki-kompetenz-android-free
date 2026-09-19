@@ -9,6 +9,8 @@ import ai.ki_kompetenz_training_org.data.api.SrsCardDto
 import ai.ki_kompetenz_training_org.data.api.SrsDueResponseDto
 import ai.ki_kompetenz_training_org.data.api.SrsReviewRequestDto
 import ai.ki_kompetenz_training_org.data.api.SrsReviewResponseDto
+import ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck
+import ai.ki_kompetenz_training_org.data.srs.LocalSrsEvent
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -126,6 +128,9 @@ class SrsRepositoryTest {
         var saved: String? = null
         override fun load(): String? = saved
         override fun save(json: String) { saved = json }
+        var outbox: String? = null
+        override fun loadOutbox(): String? = outbox
+        override fun saveOutbox(json: String) { outbox = json }
     }
 
     @Test
@@ -176,5 +181,71 @@ class SrsRepositoryTest {
 
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrThrow().map { it.id }).doesNotContain("local-basics-1")
+    }
+
+    // ── Offline-Outbox -> Server-Replay (v1.11.0) ──────────────────────
+
+    @Test
+    fun `offline Review reiht Event in die Outbox ein`() = runTest {
+        val persistence = FakePersistence()
+        val repo = SrsRepository(api, persistence)
+
+        repo.reviewLocalPersisted("local-basics-1", 4)
+
+        val events = LocalSrsDeck.deserializeOutbox(persistence.outbox)
+        assertThat(events).hasSize(1)
+        assertThat(events[0].cardId).isEqualTo("local-basics-1")
+        assertThat(events[0].quality).isEqualTo(4)
+    }
+
+    @Test
+    fun `getDueCards - online flusht Outbox an den Server und leert sie`() = runTest {
+        val persistence = FakePersistence()
+        persistence.outbox = LocalSrsDeck.serializeOutbox(
+            listOf(LocalSrsEvent("local-basics-1", 4)),
+        )
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.getDueCards() } returns SrsDueResponseDto(cards = emptyList(), count = 0)
+        coEvery { api.postReview(any()) } returns SrsReviewResponseDto(success = true)
+        val slot = slot<SrsReviewRequestDto>()
+        coEvery { api.postReview(capture(slot)) } returns SrsReviewResponseDto(success = true)
+
+        val result = repo.getDueCards()
+
+        assertThat(result.isSuccess).isTrue()
+        coVerify(exactly = 1) { api.postReview(any()) }
+        assertThat(slot.captured.cardId).isEqualTo("local-basics-1")
+        assertThat(slot.captured.quality).isEqualTo(4)
+        assertThat(LocalSrsDeck.deserializeOutbox(persistence.outbox)).isEmpty()
+    }
+
+    @Test
+    fun `Flush - Netzwerkfehler haelt das Event in der Outbox`() = runTest {
+        val persistence = FakePersistence()
+        persistence.outbox = LocalSrsDeck.serializeOutbox(
+            listOf(LocalSrsEvent("local-basics-1", 4)),
+        )
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.getDueCards() } returns SrsDueResponseDto(cards = emptyList(), count = 0)
+        coEvery { api.postReview(any()) } throws java.io.IOException("flaky")
+
+        repo.getDueCards()
+
+        assertThat(LocalSrsDeck.deserializeOutbox(persistence.outbox)).hasSize(1)
+    }
+
+    @Test
+    fun `Flush - Server lehnt unbekannte Karte ab und das Event wird verworfen`() = runTest {
+        val persistence = FakePersistence()
+        persistence.outbox = LocalSrsDeck.serializeOutbox(
+            listOf(LocalSrsEvent("gibts-nicht", 4)),
+        )
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.getDueCards() } returns SrsDueResponseDto(cards = emptyList(), count = 0)
+        coEvery { api.postReview(any()) } returns SrsReviewResponseDto(success = false)
+
+        repo.getDueCards()
+
+        assertThat(LocalSrsDeck.deserializeOutbox(persistence.outbox)).isEmpty()
     }
 }

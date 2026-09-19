@@ -73,6 +73,28 @@ object Lesson16 {
                         ),
                     ),
                     ContentBlock.RiskThermometer(),
+                    ContentBlock.TrueFalse(
+                        statementDe = "KI ersetzt eher ganze Berufe als einzelne Taetigkeiten.",
+                        statementEn = "AI replaces entire professions rather than individual tasks.",
+                        isTrue = false,
+                        explanationDe = "Falsch — ersetzt werden ueberwiegend Taetigkeiten; Berufe verschieben sich.",
+                        explanationEn = "False — mostly tasks are replaced; professions shift.",
+                    ),
+                    ContentBlock.KnowledgeCheck(
+                        questionDe = "Was regelt Art. 50 AI Act fuer KI-generierte Inhalte?",
+                        questionEn = "What does Art. 50 AI Act regulate for AI-generated content?",
+                        answerDe = "Kennzeichnungspflichten: KI-generierte und manipulierte Inhalte muessen als solche erkennbar sein; Deepfakes brauchen eine Kennzeichnung.",
+                        answerEn = "Labeling duties: AI-generated and manipulated content must be recognizable as such; deepfakes require labeling.",
+                    ),
+                    ContentBlock.Quiz(
+                        questionDe = "Was ist ein konkreter Vorteil von KI-Tutoren in der Bildung?",
+                        questionEn = "What is a concrete benefit of AI tutors in education?",
+                        options = listOf(
+                            QuizOption("Personalisierte Lernpfade", "Personalized learning paths", isCorrect = true), QuizOption("Hoeherer Energieverbrauch", "Higher energy consumption", isCorrect = false), QuizOption("Weniger Lehrpersonal", "Fewer teachers", isCorrect = false), QuizOption("Garantiert fehlerfreie Bewertung", "Guaranteed error-free grading", isCorrect = false),
+                        ),
+                        explanationDe = "Richtig — Individualisierung ist der Kernvorteil.",
+                        explanationEn = "Correct — individualization is the core benefit.",
+                    ),
                 ),
             ),
         ),

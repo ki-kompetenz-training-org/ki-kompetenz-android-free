@@ -109,6 +109,10 @@ class KiKompetenzApp : Application() {
                 override fun save(json: String) {
                     srsPrefs.edit().putString("deck", json).apply()
                 }
+                override fun loadOutbox(): String? = srsPrefs.getString("outbox", null)
+                override fun saveOutbox(json: String) {
+                    srsPrefs.edit().putString("outbox", json).apply()
+                }
             },
         )
 

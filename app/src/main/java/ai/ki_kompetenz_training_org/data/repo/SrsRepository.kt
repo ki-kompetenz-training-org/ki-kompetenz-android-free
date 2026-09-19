@@ -25,6 +25,9 @@ enum class SrsQuality(val value: Int, val emoji: String, val label: String) {
 interface LocalSrsPersistence {
     fun load(): String?
     fun save(json: String)
+    /** Outbox offline gespielter Reviews (Server-Replay, v1.11.0). Defaults: keine. */
+    fun loadOutbox(): String? = null
+    fun saveOutbox(json: String) {}
 }
 
 class SrsRepository(private val api: ApiService, private val persistence: LocalSrsPersistence? = null) {
@@ -41,8 +44,39 @@ class SrsRepository(private val api: ApiService, private val persistence: LocalS
     fun reviewLocalPersisted(cardId: String, quality: Int): LocalSrsCard? {
         val current = LocalSrsDeck.mergeState(localState()).firstOrNull { it.id == cardId } ?: return null
         val updated = LocalSrsDeck.reviewCard(current, SrsQuality.fromValue(quality), System.currentTimeMillis())
-        persistence?.save(LocalSrsDeck.serializeState(localState() + (updated.id to updated)))
+        persistLocalReview(cardId, quality, updated)
         return updated
+    }
+
+    /** SM-2-Zustand speichern UND Event für den Server-Replay einreihen. */
+    private fun persistLocalReview(cardId: String, quality: Int, updated: LocalSrsCard) {
+        persistence?.save(LocalSrsDeck.serializeState(localState() + (updated.id to updated)))
+        persistence?.saveOutbox(
+            LocalSrsDeck.serializeOutbox(
+                LocalSrsDeck.deserializeOutbox(persistence.loadOutbox()) +
+                    LocalSrsDeck.LocalSrsEvent(cardId, quality),
+            ),
+        )
+    }
+
+    /**
+     * Offline gespielte Reviews an den Server nachziehen. Verbrauchte Events
+     * (Server-ok oder Server-Ablehnung) fallen aus der Outbox; bei
+     * Netzwerkfehlern bleiben sie für den naechsten Versuch.
+     */
+    private suspend fun flushOutbox() {
+        val events = LocalSrsDeck.deserializeOutbox(persistence?.loadOutbox())
+        if (events.isEmpty()) return
+        val remaining = mutableListOf<LocalSrsDeck.LocalSrsEvent>()
+        for (e in events) {
+            // Erfolg -> konsumiert; Netzwerkfehler (Exception) -> behalten;
+            // Server-Ablehnung (success=false, z. B. unbekannte Karte) -> konsumiert.
+            val networkFailure = runCatching {
+                api.postReview(SrsReviewRequestDto(cardId = e.cardId, quality = e.quality)).success
+            }.isFailure
+            if (networkFailure) remaining += e
+        }
+        persistence?.saveOutbox(LocalSrsDeck.serializeOutbox(remaining))
     }
 
     /** Offline-Fallback-Schalter: lokale SM-2-Karten statt API bei Fehlern. */
@@ -50,7 +84,10 @@ class SrsRepository(private val api: ApiService, private val persistence: LocalS
 
     suspend fun getDueCards(): Result<List<SrsCardDto>> {
         val remote = runCatching { api.getDueCards().cards }
-        if (remote.isSuccess) return remote
+        if (remote.isSuccess) {
+            flushOutbox() // offline gespielte Reviews nachziehen (v1.11.0)
+            return remote
+        }
         // Fallback: API nicht erreichbar -> lokale SM-2-Karten aus dem Deck.
         return if (localSrsEnabled) {
             val deck = LocalSrsDeck.mergeState(localState())
@@ -71,9 +108,7 @@ class SrsRepository(private val api: ApiService, private val persistence: LocalS
                 // BUGFIX: das SM-2-Update wurde bisher verworfen — Offline-Reviews
                 // aenderten die Faelligkeit nie. Jetzt: Update anwenden UND persistieren.
                 val updated = LocalSrsDeck.reviewCard(local, SrsQuality.fromValue(quality), System.currentTimeMillis())
-                persistence?.save(
-                    LocalSrsDeck.serializeState(localState() + (updated.id to updated)),
-                )
+                persistLocalReview(cardId, quality, updated)
                 Result.success(Unit)
             } else {
                 remote

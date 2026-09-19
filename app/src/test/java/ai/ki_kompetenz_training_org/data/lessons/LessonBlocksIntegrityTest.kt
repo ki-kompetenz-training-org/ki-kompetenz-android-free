@@ -62,6 +62,21 @@ class LessonBlocksIntegrityTest {
     // ── Catalog sanity (precondition for everything below) ─────────────────
 
     @Test
+    fun `every lesson has at least five interactive blocks`() {
+        val thin = allLessons.mapNotNull { lesson ->
+            val count = lesson.sections.sumOf { section ->
+                section.blocks.count {
+                    it is ContentBlock.Quiz || it is ContentBlock.FillBlank ||
+                        it is ContentBlock.TrueFalse || it is ContentBlock.Classification ||
+                        it is ContentBlock.KnowledgeCheck
+                }
+            }
+            if (count >= 5) null else "${lesson.id}: $count"
+        }
+        assertWithMessage("lessons below 5 interactive blocks: $thin").that(thin).isEmpty()
+    }
+
+    @Test
     fun `catalog bundles all sixteen lessons with expected ids`() {
         val expectedIds = (1..16).map { "lesson-$it" }
         assertWithMessage("BundledLessons.all must contain the 16 bundled lessons in order")

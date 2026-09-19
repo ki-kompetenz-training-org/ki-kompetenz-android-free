@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.builtins.ListSerializer
 import kotlin.math.roundToInt
 
 /**
@@ -259,7 +260,23 @@ object LocalSrsDeck {
     fun deserializeState(json: String?): Map<String, LocalSrsCard> =
         runCatching { stateJson.decodeFromString(stateSerializer, json ?: "") }.getOrDefault(emptyMap())
 
+    /** Ein einzelnes offline gespieltes Review (für den Server-Replay). */
+    @Serializable
+    data class LocalSrsEvent(val cardId: String, val quality: Int)
+
+    private val outboxSerializer = ListSerializer(LocalSrsEvent.serializer())
+
+    /** Offline-Reviews als Outbox-JSON (SharedPreferences-Wert). */
+    fun serializeOutbox(events: List<LocalSrsEvent>): String =
+        stateJson.encodeToString(outboxSerializer, events)
+
+    fun deserializeOutbox(json: String?): List<LocalSrsEvent> =
+        runCatching { stateJson.decodeFromString(outboxSerializer, json ?: "") }.getOrDefault(emptyList())
+
     /** Gespeicherte Karten per id ueber die gebuendelten stuelpen. */
     fun mergeState(saved: Map<String, LocalSrsCard>): List<LocalSrsCard> =
         BUNDLED_CARDS.map { saved[it.id] ?: it }
 }
+
+/** Outbox-Event (Top-Level-Alias für Screens/Tests). */
+typealias LocalSrsEvent = LocalSrsDeck.LocalSrsEvent
