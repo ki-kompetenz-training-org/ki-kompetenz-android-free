@@ -105,10 +105,10 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `total lessons falls back to 14 while list is empty`() {
+    fun `total lessons falls back to 16 while list is empty`() {
         val state = createViewModel().state.value
 
-        assertEquals(14, state.totalLessons)
+        assertEquals(16, state.totalLessons)
     }
 
     @Test

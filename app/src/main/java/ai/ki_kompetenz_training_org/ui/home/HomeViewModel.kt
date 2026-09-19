@@ -30,7 +30,7 @@ data class HomeUiState(
     val lastCheckInDay: String? = null,
     val missions: List<ai.ki_kompetenz_training_org.ui.gamification.MissionUi> = emptyList(),
     val lessonProgress: Int = 0,
-    val totalLessons: Int = 14,
+    val totalLessons: Int = 16,
     val lastLesson: LastLessonUi? = null,
 )
 
@@ -86,7 +86,7 @@ class HomeViewModel(
                 _state.value = _state.value.copy(
                     loading = false,
                     lastLesson = lastLessonUi,
-                    totalLessons = if (total > 0) total else 14,
+                    totalLessons = if (total > 0) total else 16,
                 )
             }
         }

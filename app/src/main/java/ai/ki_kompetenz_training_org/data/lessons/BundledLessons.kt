@@ -34,6 +34,8 @@ object BundledLessons {
         Lesson12.lesson.copy(primaryDomain = "Transparenzpflichten"),
         Lesson13.lesson.copy(primaryDomain = "Grundlagen der KI"),
         Lesson14.lesson.copy(primaryDomain = "KI-Tools im Arbeitsalltag"),
+        Lesson15.lesson.copy(primaryDomain = "Haftung & Compliance"),
+        Lesson16.lesson.copy(primaryDomain = "KI im erweiterten Kontext"),
     )
 
     /**

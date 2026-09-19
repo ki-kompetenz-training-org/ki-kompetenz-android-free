@@ -57,6 +57,18 @@ fun QuizScreen(onBack: () -> Unit) {
         QuizViewModel(app.contentRepository, app.db, app.gamificationRepository, masteryTracker = MasteryTracker(prefs))
     }
     val state by vm.state.collectAsState()
+    // Quiz-Ergebnisse speisen den Wochen-Snapshot (Radar/KIKI) — Muster: InteractiveLessonScreen
+    val competencyRepo = remember {
+        ai.ki_kompetenz_training_org.data.repo.CompetencyRepository(
+            snapshotDao = app.db.competencySnapshotDao(),
+            tracker = MasteryTracker(prefs),
+            prefs = prefs,
+            gamification = app.gamificationRepository,
+        )
+    }
+    LaunchedEffect(state.phase) {
+        if (state.phase == QuizPhase.RESULT) competencyRepo.recordFromTracker()
+    }
     val context = LocalContext.current
     // Reward celebrations show at result moments, never during a round
     RewardDialogHost(rewardCenter = app.rewardCenter)

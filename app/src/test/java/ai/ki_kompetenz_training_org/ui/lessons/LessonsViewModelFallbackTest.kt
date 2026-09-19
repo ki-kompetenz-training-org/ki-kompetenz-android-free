@@ -131,7 +131,7 @@ class LessonsViewModelFallbackTest {
         val state = vm.state.value
         // KEIN Fehler: gebündelte Lektionen sind vorhanden
         assertThat(state.loadFailed).isFalse()
-        assertThat(state.lessons).hasSize(14)
+        assertThat(state.lessons).hasSize(16)
         assertThat(state.lessons.map { it.slug }).contains("lesson-1")
         assertThat(state.loading).isFalse()
     }
@@ -204,7 +204,7 @@ class LessonsViewModelFallbackTest {
         vm.retry()
         awaitSettled(vm)
         assertThat(vm.state.value.loadFailed).isFalse()
-        assertThat(vm.state.value.lessons).hasSize(14)
+        assertThat(vm.state.value.lessons).hasSize(16)
     }
 
     // ── Weitere Szenarien (Nachtrag 2026-09-01) ──────────────────────────

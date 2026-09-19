@@ -50,11 +50,25 @@ fun MiniGameScreen(game: MiniGame, onBack: () -> Unit) {
             app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
         )
     }
+    val prefs = remember {
+        app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
+    }
     val vm: MiniGameViewModel = viewModel(key = game.id) {
-        val prefs = app.getSharedPreferences("kikompetenz_gamification", android.content.Context.MODE_PRIVATE)
         MiniGameViewModel(game, app.gamificationRepository, dailyRepo, masteryTracker = MasteryTracker(prefs))
     }
     val state by vm.state.collectAsState()
+    // Minigame-Ergebnisse speisen den Wochen-Snapshot (Radar/KIKI)
+    val competencyRepo = remember {
+        ai.ki_kompetenz_training_org.data.repo.CompetencyRepository(
+            snapshotDao = app.db.competencySnapshotDao(),
+            tracker = MasteryTracker(prefs),
+            prefs = prefs,
+            gamification = app.gamificationRepository,
+        )
+    }
+    LaunchedEffect(state.phase) {
+        if (state.phase == GamePhase.RESULT) competencyRepo.recordFromTracker()
+    }
     RewardDialogHost(rewardCenter = app.rewardCenter)
 
     Scaffold(

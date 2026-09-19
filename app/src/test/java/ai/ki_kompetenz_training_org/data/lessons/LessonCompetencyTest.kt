@@ -19,7 +19,7 @@ class LessonCompetencyTest {
 
     @Test
     fun `alle 14 Lektionen haben eine nicht-leere primaryDomain aus LiteracyBank DOMAINS`() {
-        assertThat(BundledLessons.all).hasSize(14)
+        assertThat(BundledLessons.all).hasSize(16)
         BundledLessons.all.forEach { lesson ->
             assertThat(lesson.primaryDomain).isNotEmpty()
             assertThat(LiteracyBank.DOMAINS).contains(lesson.primaryDomain)
@@ -43,6 +43,8 @@ class LessonCompetencyTest {
             12 to "Transparenzpflichten",
             13 to "Grundlagen der KI",
             14 to "KI-Tools im Arbeitsalltag",
+            15 to "Haftung & Compliance",
+            16 to "KI im erweiterten Kontext",
         )
         BundledLessons.all.forEach { lesson ->
             assertThat(lesson.primaryDomain).isEqualTo(expected[lesson.lessonNumber])

@@ -21,19 +21,19 @@ class BundledLessonsTest {
 
     @Test
     fun `bündelt genau 14 Lektionen`() {
-        assertThat(BundledLessons.all).hasSize(14)
+        assertThat(BundledLessons.all).hasSize(16)
     }
 
     @Test
     fun `IDs sind lesson-1 bis lesson-14`() {
         val ids = BundledLessons.all.map { it.id }
-        assertThat(ids).containsExactlyElementsIn((1..14).map { "lesson-$it" })
+        assertThat(ids).containsExactlyElementsIn((1..16).map { "lesson-$it" })
     }
 
     @Test
     fun `Lektionnummern sind 1 bis 14 und eindeutig`() {
         val numbers = BundledLessons.all.map { it.lessonNumber }
-        assertThat(numbers).containsExactlyElementsIn((1..14).toList())
+        assertThat(numbers).containsExactlyElementsIn((1..16).toList())
     }
 
     @Test
@@ -86,8 +86,8 @@ class BundledLessonsTest {
     @Test
     fun `asEntities bildet alle 14 Lektionen 1-zu-1 ab`() {
         val entities = BundledLessons.asEntities()
-        assertThat(entities).hasSize(14)
-        assertThat(entities.map { it.slug }).containsExactlyElementsIn((1..14).map { "lesson-$it" })
+        assertThat(entities).hasSize(16)
+        assertThat(entities.map { it.slug }).containsExactlyElementsIn((1..16).map { "lesson-$it" })
     }
 
     @Test
@@ -149,7 +149,7 @@ class BundledLessonsTest {
             it.cognitiveLevel == CognitiveLevel.APPLICATION
         }.map { it.lessonNumber }
         // L9 (Strategie/ROI), L10 (Prompt Engineering), L11 (Audit), L13 (LLM/RAG-Anwendung), L14 (Green AI)
-        assertThat(applicationLessons).containsExactly(9, 10, 11, 13, 14)
+        assertThat(applicationLessons).containsExactly(9, 10, 11, 13, 14, 15, 16)
     }
 
     @Test

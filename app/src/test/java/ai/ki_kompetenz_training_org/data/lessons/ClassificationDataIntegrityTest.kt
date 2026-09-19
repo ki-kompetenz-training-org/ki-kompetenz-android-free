@@ -83,9 +83,9 @@ class ClassificationDataIntegrityTest {
     // ── Catalog precondition ───────────────────────────────────────────────
 
     @Test
-    fun `catalog bundles all fourteen lessons with expected ids`() {
-        val expectedIds = (1..14).map { "lesson-$it" }
-        assertWithMessage("BundledLessons.all must contain the 14 bundled lessons in order")
+    fun `catalog bundles all sixteen lessons with expected ids`() {
+        val expectedIds = (1..16).map { "lesson-$it" }
+        assertWithMessage("BundledLessons.all must contain the 16 bundled lessons in order")
             .that(allLessons.map { it.id })
             .containsExactlyElementsIn(expectedIds)
             .inOrder()
