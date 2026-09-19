@@ -118,4 +118,63 @@ class SrsRepositoryTest {
         assertThat(result.isFailure).isTrue()
         coVerify(exactly = 1) { api.postReview(any()) }
     }
+
+    // ── Offline-Persistenz (v1.9.0 BUGFIX) ───────────────────────────────
+
+    /** In-Memory-Fake statt SharedPreferences. */
+    private class FakePersistence : LocalSrsPersistence {
+        var saved: String? = null
+        override fun load(): String? = saved
+        override fun save(json: String) { saved = json }
+    }
+
+    @Test
+    fun `postReview - offline Review persistiert das SM-2-Update statt es zu verwerfen`() = runTest {
+        val persistence = FakePersistence()
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.postReview(any()) } throws java.io.IOException("offline")
+
+        val result = repo.postReview(cardId = "local-basics-1", quality = 4) // EASY
+
+        assertThat(result.isSuccess).isTrue()
+        val saved = ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck
+            .deserializeState(persistence.saved)
+        val card = saved.getValue("local-basics-1")
+        // vorher verworfen: repetitions blieb 0, nextReview unveraendert
+        assertThat(card.repetitions).isEqualTo(1)
+        assertThat(card.nextReview).isGreaterThan(0L)
+    }
+
+    @Test
+    fun `postReview - zweites offline Review baut auf gespeichertem Zustand auf`() = runTest {
+        val persistence = FakePersistence()
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.postReview(any()) } throws java.io.IOException("offline")
+        repo.postReview(cardId = "local-basics-1", quality = 4) // EASY -> rep 1, interval 1
+        repo.postReview(cardId = "local-basics-1", quality = 4) // EASY -> rep 2, interval 6
+
+        val saved = ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck
+            .deserializeState(persistence.saved)
+        assertThat(saved.getValue("local-basics-1").repetitions).isEqualTo(2)
+        assertThat(saved.getValue("local-basics-1").interval).isEqualTo(6)
+    }
+
+    @Test
+    fun `getDueCards - gespeicherte zukuenftige Karte ist offline nicht faellig`() = runTest {
+        val nextWeek = System.currentTimeMillis() + 7L * 86_400_000
+        val scheduled = ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck.BUNDLED_CARDS
+            .first { it.id == "local-basics-1" }
+            .copy(nextReview = nextWeek)
+        val persistence = FakePersistence().apply {
+            saved = ai.ki_kompetenz_training_org.data.srs.LocalSrsDeck
+                .serializeState(mapOf(scheduled.id to scheduled))
+        }
+        val repo = SrsRepository(api, persistence)
+        coEvery { api.getDueCards() } throws java.io.IOException("offline")
+
+        val result = repo.getDueCards()
+
+        assertThat(result.isSuccess).isTrue()
+        assertThat(result.getOrThrow().map { it.id }).doesNotContain("local-basics-1")
+    }
 }
