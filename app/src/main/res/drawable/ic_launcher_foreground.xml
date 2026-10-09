@@ -25,6 +25,14 @@
         android:strokeLineCap="round"
         android:pathData="M29,54 A33,33 0 0,1 79,54" />
 
+    <!-- KKT-Wortmarke (Stroke-Letters, in der Safe-Zone) -->
+    <path
+        android:strokeColor="#F4F7FB"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M36,66 L36,80 M44.5,66 L36,73 L44.5,80 M49.5,66 L49.5,80 M58,66 L49.5,73 L58,80 M63,66 L72,66 M67.5,66 L67.5,80" />
+
     <!-- Rosa Kometenpunkte (Fibonacci-Abstufung) -->
     <path
         android:fillColor="#EC4899"
