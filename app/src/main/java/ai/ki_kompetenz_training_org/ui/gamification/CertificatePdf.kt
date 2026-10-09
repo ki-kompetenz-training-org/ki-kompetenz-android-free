@@ -30,12 +30,12 @@ object CertificateContent {
         }
         val en = localeTag.startsWith("en", ignoreCase = true)
         return buildList {
-            add(if (en) "AI Literacy Certificate" else "KI-Kompetenz-Nachweis")
+            add(if (en) "AI Literacy Learning Record" else "Lernnachweis KI-Kompetenz")
             add("Name: ${name.ifBlank { "-" }}")
             add(if (en) "Date: $date" else "Datum: $date")
             add(if (en) "AI Score (KIKI): $kiki/100" else "KI-Score (KIKI): $kiki/100")
             domains.forEachIndexed { i, domain -> add("$domain: ${perDomain[i]}/100") }
-            add(if (en) "Based on EU AI Act Art. 4 - AI literacy" else "Grundlage: EU AI Act Art. 4 - KI-Kompetenz")
+            add(if (en) "Topics: EU AI Act Art. 4 - AI literacy" else "Themen: EU AI Act Art. 4 - KI-Kompetenz")
             add("https://ki-kompetenz-training.org")
         }
     }

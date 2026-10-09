@@ -57,8 +57,8 @@
     <string name="premium_f1_desc">Kompletter KI-Kompetenz-Lehrplan</string>
     <string name="premium_f2">Praxis-Fragen</string>
     <string name="premium_f2_desc">Intervall-Wiederholung für nachhaltiges Lernen</string>
-    <string name="premium_f3">Audit-fähiges Zertifikat</string>
-    <string name="premium_f3_desc">Persönlicher KI-Kompetenz-Nachweis</string>
+    <string name="premium_f3">Lernnachweis als PDF</string>
+    <string name="premium_f3_desc">Übersicht deiner Lernfortschritte</string>
     <string name="premium_f4">Team-Dashboard &amp; Ranking</string>
     <string name="premium_f4_desc">Wer ist im Team am KI-fitesten?</string>
     <string name="premium_f5">Jährliche Auffrischung</string>
@@ -363,7 +363,7 @@
     <string name="lesson_quiz_title">📝 Mini-Test</string>
     <string name="lesson_fallback_title">Lektion</string>
     <string name="certificate_export">Zertifikat exportieren</string>
-    <string name="certificate_premium_body">Das PDF-Zertifikat ist Teil von Premium — damit bekommst du alle Lektionen, alle Mini-Games und deinen offiziellen KI-Kompetenz-Nachweis.</string>
+    <string name="certificate_premium_body">Der PDF-Lernnachweis ist Teil von Premium — damit bekommst du alle Lektionen, alle Mini-Games und eine Übersicht deiner Fortschritte.</string>
     <string name="certificate_name">Dein Name</string>
     <string name="certificate_saved">PDF erstellt</string>
     <string name="certificate_no_data">Noch keine Kompetenzdaten</string>

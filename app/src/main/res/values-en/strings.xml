@@ -57,8 +57,8 @@
     <string name="premium_f1_desc">Complete AI competence curriculum</string>
     <string name="premium_f2">Practice questions</string>
     <string name="premium_f2_desc">Spaced repetition for lasting learning</string>
-    <string name="premium_f3">Audit-ready certificate</string>
-    <string name="premium_f3_desc">Personal AI competence proof</string>
+    <string name="premium_f3">Learning record as PDF</string>
+    <string name="premium_f3_desc">Overview of your learning progress</string>
     <string name="premium_f4">Team dashboard &amp; ranking</string>
     <string name="premium_f4_desc">Who is the most AI-fit in your team?</string>
     <string name="premium_f5">Annual refresher</string>
@@ -363,7 +363,7 @@
     <string name="lesson_quiz_title">📝 Mini Quiz</string>
     <string name="lesson_fallback_title">Lesson</string>
     <string name="certificate_export">Export certificate</string>
-    <string name="certificate_premium_body">The PDF certificate is part of Premium — get all lessons, all mini-games and your official AI literacy certificate.</string>
+    <string name="certificate_premium_body">The PDF learning record is part of Premium — get all lessons, all mini-games and an overview of your progress.</string>
     <string name="certificate_name">Your name</string>
     <string name="certificate_saved">PDF created</string>
     <string name="certificate_no_data">No competency data yet</string>

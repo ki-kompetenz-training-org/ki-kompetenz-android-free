@@ -30,7 +30,7 @@ class CertificateContentTest {
     @Test
     fun `Titel, Name, Datum und KIKI-Zeile sind enthalten`() {
         val l = lines()
-        assertThat(l).contains("KI-Kompetenz-Nachweis")
+        assertThat(l).contains("Lernnachweis KI-Kompetenz")
         assertThat(l).contains("Name: Max Mustermann")
         assertThat(l).contains("Datum: 14.03.2026")
         assertThat(l).contains("KI-Score (KIKI): 88/100")
@@ -52,18 +52,18 @@ class CertificateContentTest {
     @Test
     fun `Fusszeile mit EU AI Act Art 4 und Link`() {
         val l = lines()
-        assertThat(l).contains("Grundlage: EU AI Act Art. 4 - KI-Kompetenz")
+        assertThat(l).contains("Themen: EU AI Act Art. 4 - KI-Kompetenz")
         assertThat(l).contains("https://ki-kompetenz-training.org")
     }
 
     @Test
     fun `en-Locale nutzt englische Formulierungen`() {
         val l = lines(locale = "en-US")
-        assertThat(l).contains("AI Literacy Certificate")
+        assertThat(l).contains("AI Literacy Learning Record")
         assertThat(l).contains("Name: Max Mustermann")
         assertThat(l).contains("Date: 14.03.2026")
         assertThat(l).contains("AI Score (KIKI): 88/100")
-        assertThat(l).contains("Based on EU AI Act Art. 4 - AI literacy")
+        assertThat(l).contains("Topics: EU AI Act Art. 4 - AI literacy")
     }
 
     @Test
