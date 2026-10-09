@@ -66,7 +66,7 @@
     <string name="premium_f6">Jederzeit kündbar</string>
     <string name="premium_f6_desc">Monatlich, ohne Bindung</string>
     <string name="premium_cta">Premium in der Google-Play-App entdecken</string>
-    <string name="premium_trust">KI-Kompetenz-Training (Google Play). Premium sicher über den Web-Store (Stripe) freischalten — alle 14 Lektionen + Intervall-Wiederholung + Zertifikat.</string>
+    <string name="premium_trust">KI-Kompetenz-Training (Google Play). Premium sicher über den Web-Store (Stripe) freischalten — alle 16 Lektionen + Intervall-Wiederholung + Zertifikat.</string>
 
     <!-- Gamification / Profile -->
     <string name="profile_title">Dein Profil</string>
@@ -87,7 +87,7 @@
     <!-- Lessons -->
     <string name="lessons_title">Lektionen</string>
     <string name="lessons_back">Zurück</string>
-    <string name="lessons_subtitle">14 Lektionen zur KI-Kompetenz Art. 4 — Lektion 1-8 sind kostenlos (Basic), Lektion 9-14 sind Premium.</string>
+    <string name="lessons_subtitle">16 Lektionen zur KI-Kompetenz Art. 4 — Lektion 1-8 sind kostenlos (Basic), Lektion 9-16 sind Premium.</string>
     <string name="lessons_premium">Premium</string>
     <string name="lessons_unlock_cta">Alle Lektionen freischalten — Premium</string>
     <string name="lesson_mark_complete">✓ Lektion abschließen (+%1$d XP)</string>
@@ -139,7 +139,7 @@
     <string name="common_retry">Erneut versuchen</string>
     <string name="common_no_data">Keine Daten gefunden</string>
     <string name="common_error">Einen Moment…</string>
-    <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 14 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
+    <string name="common_premium_gate_desc">ist Teil des Premium-Trainings. Schalte Premium frei, um alle 16 Lektionen, Intervall-Wiederholung und das Zertifikat zu erhalten.</string>
 
     <!-- Accessibility -->
     <string name="srs_no_cards">Keine Karte verfügbar</string>

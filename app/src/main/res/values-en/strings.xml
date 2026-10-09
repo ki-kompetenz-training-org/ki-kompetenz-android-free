@@ -53,7 +53,7 @@
     <string name="premium_back">Back</string>
     <string name="premium_plan_name">AI Quiz — Premium</string>
     <string name="premium_price">€6.99/month per seat · billed per user</string>
-    <string name="premium_f1">14 interactive lessons</string>
+    <string name="premium_f1">16 interactive lessons</string>
     <string name="premium_f1_desc">Complete AI competence curriculum</string>
     <string name="premium_f2">Practice questions</string>
     <string name="premium_f2_desc">Spaced repetition for lasting learning</string>
@@ -88,7 +88,7 @@
     <!-- Lessons -->
     <string name="lessons_title">Lessons</string>
     <string name="lessons_back">Back</string>
-    <string name="lessons_subtitle">Lessons on AI competence — lessons 1-8 are free (Basic), lessons 9-14 are Premium.</string>
+    <string name="lessons_subtitle">Lessons on AI competence — lessons 1-8 are free (Basic), lessons 9-16 are Premium.</string>
     <string name="lessons_premium">Premium</string>
     <string name="lessons_unlock_cta">Unlock all lessons — Premium</string>
     <string name="lesson_mark_complete">✓ Complete lesson (+%1$d XP)</string>
@@ -220,7 +220,7 @@
     <string name="onboarding_radar_subtitle">Measure your progress</string>
     <string name="onboarding_radar_body">Lessons and mini-games feed your KIKI index — your radar grows across 9 domains, week by week.</string>
     <string name="onboarding_start_title">Ready to start?</string>
-    <string name="onboarding_welcome_body">Learn everything about AI regulation in a fun way: 14 interactive lessons, mini-games, AI Score quiz, and spaced repetition. Understand, don\'t memorize.</string>
+    <string name="onboarding_welcome_body">Learn everything about AI regulation in a fun way: 16 interactive lessons, mini-games, AI Score quiz, and spaced repetition. Understand, don\'t memorize.</string>
     <string name="onboarding_welcome_subtitle">Your AI competence trainer</string>
     <string name="onboarding_welcome_title">Welcome to AI Competence</string>
     <string name="notif_channel_srs">Review reminders</string>
